@@ -1,7 +1,9 @@
-type TradeStatus = "pending" | "accepted" | "completed" | "declined";
+export type TradeStatus ="pending" | "accepted" | "completed" | "declined";
 
 type StatusPillProps = {
   status: TradeStatus;
+  // Overrides the default text, e.g. "Counter" on a pending trade or "Done" on a completed one.
+  label?: string;
   className?: string;
 };
 
@@ -12,8 +14,9 @@ const statusStyles: Record<TradeStatus, { label: string; className: string }> = 
   declined: { label: "Declined", className: "bg-line text-ink-600" },
 };
 
-export default function StatusPill({ status, className }: StatusPillProps) {
-  const { label, className: statusClassName } = statusStyles[status];
+export default function StatusPill({ status, label: labelOverride, className }: StatusPillProps) {
+  const { label: defaultLabel, className: statusClassName } = statusStyles[status];
+  const label = labelOverride ?? defaultLabel;
 
   return (
     <span

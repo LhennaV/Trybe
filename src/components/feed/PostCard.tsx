@@ -1,0 +1,57 @@
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowsLeftRight, Camera } from "@phosphor-icons/react/dist/ssr";
+import Avatar from "@/components/ui/Avatar";
+import LikeButton from "./LikeButton";
+import type { FeedPost } from "./samplePosts";
+
+// Photo boxes keep the Figma proportions (174px wide, 236px or 168px tall)
+// so the layout doesn't jump while images load.
+const photoAspect = {
+  tall: "aspect-[174/236]",
+  short: "aspect-[174/168]",
+};
+
+export default function PostCard({ post }: { post: FeedPost }) {
+  return (
+    <article className="flex flex-col gap-2">
+      <Link href={`/posts/${post.id}`} className="flex flex-col gap-2 rounded-photo">
+        <div
+          className={`relative w-full overflow-hidden rounded-photo bg-brand-box-soft ${photoAspect[post.photoShape]}`}
+        >
+          {post.photoUrl ? (
+            <Image
+              src={post.photoUrl}
+              alt={post.title}
+              fill
+              sizes="(min-width: 1024px) 20vw, 50vw"
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex size-full items-center justify-center text-brand-box-dark/40">
+              <Camera size={32} weight="bold" aria-hidden />
+            </div>
+          )}
+
+          {/* Inspiration-only posts get no pill, so the two types read differently. */}
+          {post.upForTrade && (
+            <span className="absolute top-2 left-2 flex items-center gap-1 rounded-chip bg-surface-white py-[5px] pr-2.5 pl-2 text-caption font-extrabold text-brand-plum">
+              <ArrowsLeftRight size={12} weight="bold" aria-hidden />
+              Up for trade
+            </span>
+          )}
+        </div>
+
+        <h3 className="text-body-s font-bold text-ink-900">{post.title}</h3>
+      </Link>
+
+      <div className="flex items-center gap-1.5">
+        <Avatar name={post.authorHandle} size={20} />
+        <span className="min-w-0 flex-1 truncate text-caption text-ink-600">
+          @{post.authorHandle}
+        </span>
+        <LikeButton postTitle={post.title} />
+      </div>
+    </article>
+  );
+}

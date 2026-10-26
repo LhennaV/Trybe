@@ -27,7 +27,7 @@ function NavTab({ item, active }: { item: NavItem; active: boolean }) {
 // (or the safe area, if it's bigger).
 export default function BottomNav() {
   const pathname = usePathname();
-  const [feed, explore, trades, profile] = NAV_ITEMS;
+  const [feed, explore, trades, profile] = NAV_ITEMS.filter((item) => !item.desktopOnly);
 
   return (
     <nav
