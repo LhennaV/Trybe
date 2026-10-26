@@ -83,6 +83,12 @@ describe("handleRoute", () => {
     expect((await read(await handler(new Request("http://x"), undefined))).body).toEqual({ data: "hi" });
   });
 
+  it("lets Next.js control-flow errors through instead of turning them into a 500", async () => {
+    const { notFound } = await import("next/navigation");
+    const handler = handleRoute(async () => notFound());
+    await expect(handler(new Request("http://x"), undefined)).rejects.toThrow();
+  });
+
   it("turns a thrown error into an error response", async () => {
     const handler = handleRoute(async () => {
       throw new AppError("TRADE_NOT_FOUND");

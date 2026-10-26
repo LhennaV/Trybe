@@ -1,5 +1,6 @@
 import "server-only";
 import * as Sentry from "@sentry/nextjs";
+import { unstable_rethrow } from "next/navigation";
 import { z } from "zod";
 import {
   ERROR_MESSAGES,
@@ -69,6 +70,10 @@ export function handleRoute<Ctx = unknown>(handler: (request: Request, ctx: Ctx)
     try {
       return await handler(request, ctx);
     } catch (error) {
+      // Let Next's own control-flow errors through (redirect, notFound, and the
+      // signal `connection()` uses to stop a build-time prerender). Catching
+      // them would turn them into fake 500s and send them to Sentry.
+      unstable_rethrow(error);
       return toErrorResponse(error);
     }
   };
