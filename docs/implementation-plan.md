@@ -68,7 +68,7 @@ shared contracts and mock data without blocking each other.
 - [x] **[BE]** Next.js app in repo root, `src/` structure, CODEOWNERS
 - [x] **[BE]** Add `AGENTS.md`, `docs/technical-requirements.md`, this plan
 - [x] **[BE]** Update `README.md`: stack, setup steps, pnpm only, branch rules
-- [ ] **[BE]** Create Supabase dev project
+- [x] **[BE]** Create Supabase dev project
 - [x] **[BE]** Set up Drizzle, database connection (pooled and direct), first empty migration
 - [x] **[BE]** `.env.example` with every variable from TRD section 17
 - [ ] **[BE]** Deploy to Vercel, preview deploys on pull requests
@@ -78,10 +78,10 @@ shared contracts and mock data without blocking each other.
 - [x] **[BE]** `src/shared/contracts/common.ts`: response shape, error codes, pagination
 - [ ] **[Both]** Draft contracts for users, items, posts, trades in `src/shared/contracts/`
 - [ ] **[BE]** Mock data file built from the contracts
-- [ ] **[FE]** Design tokens in `src/app/globals.css` with `@theme`, hex values from Figma
-- [ ] **[FE]** Fonts with `next/font`: Lilita One and Nunito
-- [ ] **[FE]** Layout shell: bottom nav on mobile, sidebar on desktop
-- [ ] **[FE]** Base components: Button, Input, Chip, Badge, Avatar, Card, Sheet, Toggle
+- [x] **[FE]** Design tokens in `src/app/globals.css` with `@theme`, hex values from Figma
+- [x] **[FE]** Fonts with `next/font`: Lilita One and Nunito
+- [x] **[FE]** Layout shell: bottom nav on mobile, sidebar on desktop
+- [x] **[FE]** Base components: Button, Input, Chip, Badge, Avatar, Card, Sheet, Toggle
 - [ ] **[Both]** Turn on branch protection for `main` (pull request and review required)
 
 ### Done when
