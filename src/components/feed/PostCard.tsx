@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowsLeftRight, Camera, Heart } from "@phosphor-icons/react/dist/ssr";
 import type { FeedPost } from "./samplePosts";
 
@@ -12,33 +13,35 @@ const photoAspect = {
 export default function PostCard({ post }: { post: FeedPost }) {
   return (
     <article className="flex flex-col gap-2">
-      <div
-        className={`relative w-full overflow-hidden rounded-photo bg-brand-box-soft ${photoAspect[post.photoShape]}`}
-      >
-        {post.photoUrl ? (
-          <Image
-            src={post.photoUrl}
-            alt={post.title}
-            fill
-            sizes="(min-width: 1024px) 20vw, 50vw"
-            className="object-cover"
-          />
-        ) : (
-          <div className="flex size-full items-center justify-center text-brand-box-dark/40">
-            <Camera size={32} weight="bold" aria-hidden />
-          </div>
-        )}
+      <Link href={`/posts/${post.id}`} className="flex flex-col gap-2 rounded-photo">
+        <div
+          className={`relative w-full overflow-hidden rounded-photo bg-brand-box-soft ${photoAspect[post.photoShape]}`}
+        >
+          {post.photoUrl ? (
+            <Image
+              src={post.photoUrl}
+              alt={post.title}
+              fill
+              sizes="(min-width: 1024px) 20vw, 50vw"
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex size-full items-center justify-center text-brand-box-dark/40">
+              <Camera size={32} weight="bold" aria-hidden />
+            </div>
+          )}
 
-        {/* Inspiration-only posts get no pill, so the two types read differently. */}
-        {post.upForTrade && (
-          <span className="absolute top-2 left-2 flex items-center gap-1 rounded-chip bg-surface-white py-[5px] pr-2.5 pl-2 text-caption font-extrabold text-brand-plum">
-            <ArrowsLeftRight size={12} weight="bold" aria-hidden />
-            Up for trade
-          </span>
-        )}
-      </div>
+          {/* Inspiration-only posts get no pill, so the two types read differently. */}
+          {post.upForTrade && (
+            <span className="absolute top-2 left-2 flex items-center gap-1 rounded-chip bg-surface-white py-[5px] pr-2.5 pl-2 text-caption font-extrabold text-brand-plum">
+              <ArrowsLeftRight size={12} weight="bold" aria-hidden />
+              Up for trade
+            </span>
+          )}
+        </div>
 
-      <h3 className="text-body-s font-bold text-ink-900">{post.title}</h3>
+        <h3 className="text-body-s font-bold text-ink-900">{post.title}</h3>
+      </Link>
 
       <div className="flex items-center gap-1.5">
         <span className="size-5 shrink-0 rounded-chip bg-brand-blush" aria-hidden />
