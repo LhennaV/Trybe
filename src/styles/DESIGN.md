@@ -44,7 +44,7 @@ Section labels above groups ("YOU GET", "THEME", "PRIVACY & SAFETY") are `text-l
 
 ## Colors and themes
 
-These token names replace the `trybe-*` names listed in `AGENTS.md`. They match the Figma variables.
+These token names match the Figma variables.
 
 Colors are CSS variables in `src/app/globals.css`, exposed to Tailwind with `@theme inline` (for example `--color-brand-plum: var(--brand-plum);`). **Never hardcode a hex value in a component.** Use the Tailwind classes (`bg-brand-plum`, `text-ink-600`, `border-line`) so every color switches with the theme.
 

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lilita_One, Nunito } from "next/font/google";
 import AppearanceSync from "@/components/theme/AppearanceSync";
 import { appearanceScript } from "@/components/theme/appearance";
@@ -19,8 +19,13 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Trybe",
+  title: { default: "Trybe", template: "%s · Trybe" },
   description: "Curiosity killed the cat. Trybe brought it back.",
+};
+
+// viewport-fit=cover lets env(safe-area-inset-bottom) work for the bottom nav.
+export const viewport: Viewport = {
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

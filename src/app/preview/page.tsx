@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import LevelBadge from "@/components/badges/LevelBadge";
 import { TRADER_LEVELS } from "@/components/badges/levels";
 import ThemeSwitcher from "@/components/theme/ThemeSwitcher";
@@ -6,8 +7,13 @@ import Chip from "@/components/ui/Chip";
 import Input from "@/components/ui/Input";
 import StatusPill from "@/components/ui/StatusPill";
 
-// Temporary preview of the base UI components until the real feed exists.
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Component preview",
+  robots: { index: false },
+};
+
+// Dev page for checking the base UI components in every theme.
+export default function Preview() {
   return (
     <main className="mx-auto flex w-full max-w-md flex-col gap-8 px-4 py-10">
       <header className="flex flex-col gap-1">
