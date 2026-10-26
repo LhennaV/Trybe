@@ -5,8 +5,9 @@ import { ImageResponse } from "next/og";
 // App icons for the browser tab, the PWA manifest, and Play Store packaging:
 // Storm in the box (Figma "App Logo v1" › App Icon) on a lavender tile.
 // Served at /icon/32, /icon/192, /icon/512, and /icon/maskable.
+// The 32px browser tab icon has no tile, so Storm sits right on the tab.
 const ICONS = [
-  { id: "32", size: 32, padding: 0.08 },
+  { id: "32", size: 32, padding: 0 },
   { id: "192", size: 192, padding: 0.12 },
   { id: "512", size: 512, padding: 0.12 },
   // Maskable icons get cropped to a circle or squircle, so keep Storm inside the safe zone.
@@ -38,7 +39,8 @@ export default async function Icon({ id }: { id: Promise<string | number> }) {
           alignItems: "center",
           justifyContent: "center",
           // Brand lavender. Icons are images, so they can't use the CSS tokens.
-          background: "#C49CF2",
+          // Home screen icons need the tile (iOS fills transparency with black).
+          background: icon.id === "32" ? "transparent" : "#C49CF2",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
