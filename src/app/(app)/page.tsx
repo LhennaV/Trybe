@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import FeedGrid from "@/components/feed/FeedGrid";
 import FeedHeader from "@/components/feed/FeedHeader";
 import FeedSearch from "@/components/feed/FeedSearch";
 import HobbyFilter from "@/components/feed/HobbyFilter";
@@ -16,13 +15,13 @@ export default function FeedPage() {
       <h1 className="sr-only">Feed</h1>
       <FeedHeader />
       <FeedSearch />
-      <HobbyFilter />
-      <MatchBanner
-        title="3 pottery setups up for trade near you"
-        subtitle="Matches the hobby you want to try"
-        href="/explore"
-      />
-      <FeedGrid posts={SAMPLE_POSTS} />
+      <HobbyFilter posts={SAMPLE_POSTS}>
+        <MatchBanner
+          title="3 pottery setups up for trade near you"
+          subtitle="Matches the hobby you want to try"
+          href="/explore"
+        />
+      </HobbyFilter>
     </div>
   );
 }

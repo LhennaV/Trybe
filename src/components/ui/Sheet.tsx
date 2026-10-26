@@ -32,7 +32,7 @@ export default function Sheet({ open, onClose, label, children }: SheetProps) {
         if (event.target === event.currentTarget) onClose();
       }}
       className={[
-        "m-0 mt-auto w-full max-w-none bg-surface-white text-ink-900 backdrop:bg-overlay-scrim/45",
+        "m-0 mt-auto max-h-[92dvh] w-full max-w-none overflow-y-auto bg-surface-white text-ink-900 backdrop:bg-overlay-scrim/45",
         "rounded-t-sheet px-4 pt-2.5 pb-[max(30px,env(safe-area-inset-bottom))]",
         "lg:m-auto lg:w-[540px] lg:rounded-sheet lg:p-7 lg:shadow-modal",
         // Slide up on mobile, fade and scale from 98% on desktop. Opacity only with reduced motion.

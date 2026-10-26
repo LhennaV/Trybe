@@ -2,15 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import {
-  BookmarkSimple,
-  Camera,
-  CaretLeft,
-  DotsThree,
-  Heart,
-  MapPin,
-  Tag,
-} from "@phosphor-icons/react/dist/ssr";
+import { Camera, CaretLeft, DotsThree, MapPin, Tag } from "@phosphor-icons/react/dist/ssr";
+import LikeButton from "@/components/feed/LikeButton";
+import SaveButton from "@/components/posts/SaveButton";
 import { SAMPLE_POSTS } from "@/components/feed/samplePosts";
 import { getSamplePost } from "@/components/posts/samplePostDetails";
 import Avatar from "@/components/ui/Avatar";
@@ -76,9 +70,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
           <IconButton href="/" label="Back to feed">
             <CaretLeft size={20} weight="bold" aria-hidden />
           </IconButton>
-          <IconButton label="Save post" className="ml-auto">
-            <BookmarkSimple size={20} weight="bold" aria-hidden />
-          </IconButton>
+          <SaveButton postTitle={post.title} />
           <IconButton label="More options">
             <DotsThree size={20} weight="bold" aria-hidden />
           </IconButton>
@@ -154,14 +146,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white">
         <div className="mx-auto flex max-w-md items-center gap-3 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
-          <button
-            type="button"
-            aria-label={`Like this post, ${post.likeCount} likes`}
-            className="flex min-h-11 items-center gap-1.5 text-body-s font-bold text-ink-600"
-          >
-            <Heart size={22} weight="bold" className="text-status-danger" aria-hidden />
-            {post.likeCount}
-          </button>
+          <LikeButton postTitle={post.title} initialCount={post.likeCount} size={22} />
           {/* Inspiration-only posts have nothing to trade, so there's no trade button. */}
           {tradeableCount > 0 && (
             <Button className="flex-1">Propose a trade</Button>

@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowsLeftRight, Camera, Heart } from "@phosphor-icons/react/dist/ssr";
+import { ArrowsLeftRight, Camera } from "@phosphor-icons/react/dist/ssr";
 import Avatar from "@/components/ui/Avatar";
+import LikeButton from "./LikeButton";
 import type { FeedPost } from "./samplePosts";
 
 // Photo boxes keep the Figma proportions (174px wide, 236px or 168px tall)
@@ -49,14 +50,7 @@ export default function PostCard({ post }: { post: FeedPost }) {
         <span className="min-w-0 flex-1 truncate text-caption text-ink-600">
           @{post.authorHandle}
         </span>
-        {/* Likes aren't wired up yet. The ::before grows the 16px icon to a 44px tap target. */}
-        <button
-          type="button"
-          aria-label={`Like ${post.title}`}
-          className="relative text-ink-400 before:absolute before:-inset-3.5"
-        >
-          <Heart size={16} weight="bold" aria-hidden />
-        </button>
+        <LikeButton postTitle={post.title} />
       </div>
     </article>
   );

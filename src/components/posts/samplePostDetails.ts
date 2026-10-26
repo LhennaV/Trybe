@@ -75,7 +75,7 @@ export function getSamplePost(id: string): PostDetail | null {
     caption: "",
     photoCount: 1,
     author: { handle: post.authorHandle, city: "Quezon City", rating: 0, tradeCount: 0 },
-    hobbies: [],
+    hobbies: [post.hobby],
     tools: [],
     likeCount: 0,
   };
