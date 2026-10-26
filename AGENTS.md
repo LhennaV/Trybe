@@ -145,8 +145,9 @@ These are required, not optional:
 - Tap targets at least 44px, even when the icon is smaller.
 - No hover-only interactions.
 - Bottom navigation on mobile, sidebar on desktop.
-- Use named tokens (`trybe-lavender`, `trybe-coral`, `trybe-yellow`,
-  `trybe-mint`, `trybe-sky`, `trybe-cream`), never raw hex in components.
+- Use the named tokens in `src/styles/DESIGN.md` (`brand-plum`, `ink-600`,
+  `line`, and so on), never raw hex in components. They match the Figma
+  variables.
 - Fonts: Lilita One for headings and the wordmark, Nunito for body and UI.
 - Tone: playful and witty, not corporate.
 - Check text contrast, especially light gray on cream.
@@ -162,9 +163,11 @@ These are required, not optional:
 
 ## Git workflow
 
-- Short branches per feature: `feat/feed-card`, `fix/trade-locking`,
-  `chore/...`
-- Open a pull request into `main`. CODEOWNERS assigns the reviewer.
+- One working branch per person, not a new branch per feature. Lhenna works
+  on `frontend`. Tristan works on his own backend branch.
+- Do not create new branches unless the owner of the work asks for one.
+- Open a pull request from that branch into `main`. After it merges, update
+  the branch from `main` and keep working on it.
 - Do not push directly to `main`.
 
 ## Not in v1
@@ -180,3 +183,13 @@ These are required, not optional:
 - "Wanted near you" posts
 - "Replies in ~1 hr", dark mode, weekly email digest
 - Minimum user age
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
