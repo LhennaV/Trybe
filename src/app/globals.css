@@ -1,25 +1,170 @@
 @import "tailwindcss";
 
+/* Color values per theme. See src/styles/DESIGN.md for what each token is for. */
+
+/* Light (default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand-plum: #674390;
+  --brand-plum-dark: #4a2e6b;
+  --brand-lavender: #c49cf2;
+  --brand-lavender-soft: #f1e7fd;
+  --brand-cream: #fff9f2;
+  --brand-box: #f5b76a;
+  --brand-box-dark: #c38442;
+  --brand-box-soft: #fdebd3;
+  --brand-blush: #fcb4bf;
+  --ink-900: #2b2433;
+  --ink-600: #5e5669;
+  --ink-400: #756d82;
+  --line: #ece4f2;
+  --surface-white: #ffffff;
+  --status-success: #23764a;
+  --status-success-soft: #e2f4ea;
+  --status-warning: #9a5d08;
+  --status-warning-soft: #fcf0dc;
+  --status-danger: #c94a4a;
+  --overlay-scrim: #120b18;
+}
+
+/* Dark */
+[data-theme="dark"] {
+  --brand-plum: #c7a6f2;
+  --brand-plum-dark: #e7dafb;
+  --brand-lavender: #3a2b52;
+  --brand-lavender-soft: #2d2340;
+  --brand-cream: #17131d;
+  --brand-box: #d9a15e;
+  --brand-box-dark: #e8b97f;
+  --brand-box-soft: #3a2e22;
+  --brand-blush: #b5707e;
+  --ink-900: #f3eef8;
+  --ink-600: #b8afc4;
+  --ink-400: #9890a4;
+  --line: #352d40;
+  --surface-white: #221c2a;
+  --status-success: #6bcb97;
+  --status-success-soft: #1e3328;
+  --status-warning: #e8ae5c;
+  --status-warning-soft: #3a2e1c;
+  --status-danger: #f07a7a;
+  --overlay-scrim: #120b18;
+}
+
+/* Light + high contrast */
+[data-contrast="high"] {
+  --brand-plum: #4a2370;
+  --brand-plum-dark: #2a1240;
+  --brand-lavender: #b98af0;
+  --brand-lavender-soft: #eadcfb;
+  --brand-cream: #ffffff;
+  --brand-box: #e8a04c;
+  --brand-box-dark: #7a4a12;
+  --brand-box-soft: #fbe3c2;
+  --brand-blush: #f49aaa;
+  --ink-900: #120b18;
+  --ink-600: #3a3044;
+  --ink-400: #5a5066;
+  --line: #6e6679;
+  --surface-white: #ffffff;
+  --status-success: #1f6b42;
+  --status-success-soft: #d3efdf;
+  --status-warning: #8a5300;
+  --status-warning-soft: #fae6c2;
+  --status-danger: #a32626;
+  --overlay-scrim: #000000;
+}
+
+/* Dark + high contrast */
+[data-theme="dark"][data-contrast="high"] {
+  --brand-plum: #dcc6ff;
+  --brand-plum-dark: #f4ecff;
+  --brand-lavender: #4b3570;
+  --brand-lavender-soft: #2a1f3d;
+  --brand-cream: #000000;
+  --brand-box: #f5c27f;
+  --brand-box-dark: #ffd39a;
+  --brand-box-soft: #3d2e1a;
+  --brand-blush: #e89aa8;
+  --ink-900: #ffffff;
+  --ink-600: #e6dfee;
+  --ink-400: #c4bad0;
+  --line: #a39bae;
+  --surface-white: #121014;
+  --status-success: #8be0b0;
+  --status-success-soft: #12301f;
+  --status-warning: #ffc870;
+  --status-warning-soft: #3a2a10;
+  --status-danger: #ff9a9a;
+  --overlay-scrim: #000000;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-nunito);
   --font-display: var(--font-lilita);
+
+  --color-brand-plum: var(--brand-plum);
+  --color-brand-plum-dark: var(--brand-plum-dark);
+  --color-brand-lavender: var(--brand-lavender);
+  --color-brand-lavender-soft: var(--brand-lavender-soft);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-box: var(--brand-box);
+  --color-brand-box-dark: var(--brand-box-dark);
+  --color-brand-box-soft: var(--brand-box-soft);
+  --color-brand-blush: var(--brand-blush);
+  --color-ink-900: var(--ink-900);
+  --color-ink-600: var(--ink-600);
+  --color-ink-400: var(--ink-400);
+  --color-line: var(--line);
+  --color-surface-white: var(--surface-white);
+  --color-status-success: var(--status-success);
+  --color-status-success-soft: var(--status-success-soft);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-soft: var(--status-warning-soft);
+  --color-status-danger: var(--status-danger);
+  --color-overlay-scrim: var(--overlay-scrim);
+
+  --shadow-button: 0 3px 0 0 var(--brand-plum-dark);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* Type scale. Display sizes are paired with font-display. */
+  --text-display-xl: 2.5rem;
+  --text-display-xl--line-height: 2.75rem;
+  --text-display-l: 1.75rem;
+  --text-display-l--line-height: 2rem;
+  --text-display-m: 1.375rem;
+  --text-display-m--line-height: 1.625rem;
+  --text-title-m: 1.0625rem;
+  --text-title-m--line-height: 1.375rem;
+  --text-title-m--font-weight: 800;
+  --text-body-m: 0.9375rem;
+  --text-body-m--line-height: 1.3125rem;
+  --text-body-s: 0.8125rem;
+  --text-body-s--line-height: 1.125rem;
+  --text-label-s: 0.75rem;
+  --text-label-s--line-height: 1rem;
+  --text-label-s--font-weight: 600;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 0.875rem;
+
+  --radius-chip: 999px;
+  --radius-input: 14px;
+  --radius-button: 14px;
+  --radius-card: 16px;
+  --radius-photo: 18px;
+  --radius-sheet: 28px;
+
+  --shadow-button-danger: 0 3px 0 0 #8c3333;
+  --shadow-modal: 0 20px 60px rgb(43 36 51 / 0.25);
+  --shadow-dropdown: 0 12px 40px rgb(43 36 51 / 0.18);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--brand-cream);
+  color: var(--ink-900);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-plum);
+  outline-offset: 2px;
 }
