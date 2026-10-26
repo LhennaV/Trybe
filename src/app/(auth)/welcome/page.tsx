@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import BrandLogo from "@/components/auth/BrandLogo";
 import { buttonClassName } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
@@ -13,15 +13,8 @@ export default function WelcomePage() {
     <div className="flex min-h-dvh flex-1 flex-col bg-brand-lavender lg:bg-brand-cream">
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center px-4 pt-2 pb-[max(40px,env(safe-area-inset-bottom))] lg:max-w-[360px] lg:flex-none lg:py-0 lg:my-auto">
         <div className="flex-1 lg:hidden" />
-        {/* The logo bleeds past the side padding, like in Figma. Desktop shows it in the brand panel. */}
-        <Image
-          src="/brand/storm-logo.png"
-          alt="Trybe. Curiosity killed the cat. Trybe brought it back."
-          width={390}
-          height={378}
-          priority
-          className="-mx-4 h-auto w-[calc(100%+32px)] max-w-none lg:hidden"
-        />
+        {/* Desktop shows the logo in the brand panel. */}
+        <BrandLogo className="lg:hidden" />
         <h1 className="mt-7 w-[300px] text-center text-title-m text-brand-plum-dark lg:mt-0 lg:mb-8 lg:w-auto lg:font-display lg:text-display-l lg:font-normal lg:text-brand-plum">
           Trade the gear you&apos;ve outgrown for the hobby you&apos;re curious about.
         </h1>

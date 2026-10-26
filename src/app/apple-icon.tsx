@@ -7,7 +7,7 @@ export const contentType = "image/png";
 
 // Home screen icon for iPhone (installed from Safari).
 export default async function AppleIcon() {
-  const png = await readFile(join(process.cwd(), "public/brand/app-icon.png"));
+  const png = await readFile(join(process.cwd(), "public/brand/storm-icon.png"));
   const src = `data:image/png;base64,${png.toString("base64")}`;
 
   return new ImageResponse(
@@ -23,7 +23,7 @@ export default async function AppleIcon() {
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} width={140} height={136} alt="" />
+        <img src={src} width={140} height={135} alt="" />
       </div>
     ),
     size,
