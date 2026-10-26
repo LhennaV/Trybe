@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Lilita_One, Nunito } from "next/font/google";
+import AppearanceSync from "@/components/theme/AppearanceSync";
+import { appearanceScript } from "@/components/theme/appearance";
 import "./globals.css";
 
 const lilita = Lilita_One({
@@ -25,9 +27,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      data-theme="light"
+      suppressHydrationWarning
       className={`${lilita.variable} ${nunito.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: appearanceScript }} />
+      </head>
+      <body className="min-h-full flex flex-col">
+        <AppearanceSync />
+        {children}
+      </body>
     </html>
   );
 }

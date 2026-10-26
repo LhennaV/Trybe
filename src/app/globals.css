@@ -4,6 +4,7 @@
 
 /* Light (default) */
 :root {
+  color-scheme: light;
   --brand-plum: #674390;
   --brand-plum-dark: #4a2e6b;
   --brand-lavender: #c49cf2;
@@ -28,6 +29,7 @@
 
 /* Dark */
 [data-theme="dark"] {
+  color-scheme: dark;
   --brand-plum: #c7a6f2;
   --brand-plum-dark: #e7dafb;
   --brand-lavender: #3a2b52;

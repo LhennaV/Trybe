@@ -1,6 +1,10 @@
+import LevelBadge from "@/components/badges/LevelBadge";
+import { TRADER_LEVELS } from "@/components/badges/levels";
+import ThemeSwitcher from "@/components/theme/ThemeSwitcher";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import Input from "@/components/ui/Input";
+import StatusPill from "@/components/ui/StatusPill";
 
 // Temporary preview of the base UI components until the real feed exists.
 export default function Home() {
@@ -12,6 +16,11 @@ export default function Home() {
           Curiosity killed the cat. Trybe brought it back.
         </p>
       </header>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-label-s uppercase text-ink-400">Appearance</h2>
+        <ThemeSwitcher />
+      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-label-s uppercase text-ink-400">Buttons</h2>
@@ -37,6 +46,25 @@ export default function Home() {
           <Chip>Film photography</Chip>
           <Chip>Knitting</Chip>
           <Chip selected>Woodworking</Chip>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-label-s uppercase text-ink-400">Trade status</h2>
+        <div className="flex flex-wrap gap-2">
+          <StatusPill status="pending" />
+          <StatusPill status="accepted" />
+          <StatusPill status="completed" />
+          <StatusPill status="declined" />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-label-s uppercase text-ink-400">Trader levels</h2>
+        <div className="flex flex-wrap gap-2">
+          {TRADER_LEVELS.map((level) => (
+            <LevelBadge key={level.level} completedTrades={level.minTrades} />
+          ))}
         </div>
       </section>
 
