@@ -2,8 +2,10 @@
 
 /* Color values per theme. See src/styles/DESIGN.md for what each token is for. */
 
-/* Light (default) */
-:root {
+/* Light (default). Also matches a nested [data-theme="light"], so a small
+   preview (like the theme swatches in Settings) can show light inside dark. */
+:root,
+[data-theme="light"] {
   color-scheme: light;
   --brand-plum: #674390;
   --brand-plum-dark: #4a2e6b;

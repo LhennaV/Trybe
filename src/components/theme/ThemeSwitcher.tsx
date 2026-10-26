@@ -1,14 +1,8 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import Chip from "@/components/ui/Chip";
-import {
-  APPEARANCE_CHANGE_EVENT,
-  parseAppearance,
-  readStoredAppearance,
-  saveAppearance,
-  type ThemeChoice,
-} from "./appearance";
+import { saveAppearance, type ThemeChoice } from "./appearance";
+import { useAppearance } from "./useAppearance";
 
 const themeOptions: { value: ThemeChoice; label: string }[] = [
   { value: "light", label: "Light" },
@@ -16,18 +10,10 @@ const themeOptions: { value: ThemeChoice; label: string }[] = [
   { value: "auto", label: "Auto" },
 ];
 
-function subscribe(onChange: () => void) {
-  window.addEventListener("storage", onChange);
-  window.addEventListener(APPEARANCE_CHANGE_EVENT, onChange);
-  return () => {
-    window.removeEventListener("storage", onChange);
-    window.removeEventListener(APPEARANCE_CHANGE_EVENT, onChange);
-  };
-}
-
+// Compact switcher for the component preview page. The real one lives in
+// Settings › Appearance.
 export default function ThemeSwitcher() {
-  const raw = useSyncExternalStore(subscribe, readStoredAppearance, () => null);
-  const appearance = parseAppearance(raw);
+  const appearance = useAppearance();
 
   return (
     <div className="flex flex-col gap-3">

@@ -33,7 +33,7 @@ export default function MyProfilePage() {
         }
         actions={
           <Link
-            href="/profile/edit"
+            href="/settings/profile"
             className="flex min-h-11 items-center rounded-button bg-brand-lavender-soft px-[22px] text-body-m font-bold text-brand-plum"
           >
             Edit profile
