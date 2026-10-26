@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useId, useState } from "react";
 import { ArrowsLeftRight, Camera, Check, EyeSlash, Package, Star } from "@phosphor-icons/react";
+import { reportHref } from "@/components/safety/reportHref";
 import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
@@ -129,7 +130,10 @@ export default function RateForm({ tradeId, other, summary, completedNote }: Rat
           <Button type="submit" fullWidth disabled={score === 0}>
             {score === 0 ? "Tap the stars to rate" : "Submit rating"}
           </Button>
-          <Link href={`/trades/${tradeId}`} className="min-h-11 text-label-s font-bold text-status-danger">
+          <Link
+            href={reportHref("trade", other.handle, `/trades/${tradeId}/rate`)}
+            className="flex min-h-11 items-center text-label-s font-bold text-status-danger"
+          >
             Something went wrong? Report this trade
           </Link>
         </div>

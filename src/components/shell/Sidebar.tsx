@@ -47,15 +47,15 @@ export default function Sidebar() {
       </Link>
 
       <div className="mt-auto flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5 rounded-card bg-status-success-soft p-4">
-          <p className="flex items-center gap-2 text-body-s font-bold text-status-success">
+        <Link href="/safety" className="flex flex-col gap-1.5 rounded-card bg-status-success-soft p-4">
+          <span className="flex items-center gap-2 text-body-s font-bold text-status-success">
             <ShieldCheck size={18} weight="bold" aria-hidden />
             Trade safely
-          </p>
-          <p className="text-caption text-ink-600">
+          </span>
+          <span className="text-caption text-ink-600">
             Meet somewhere public, check the gear before you swap, and keep the chat on Trybe.
-          </p>
-        </div>
+          </span>
+        </Link>
 
         {/* Placeholder account until auth is wired up. Storm is the prototype's sample user. */}
         <Link href="/profile" className="flex items-center gap-3 rounded-xl px-1 py-1">

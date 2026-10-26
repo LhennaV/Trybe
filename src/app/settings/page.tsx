@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   BookmarkSimple,
   BookOpen,
@@ -49,9 +50,9 @@ export default function SettingsPage() {
       <SettingsGroup title="Privacy & safety">
         {/* The default is an open decision (TRD section 21), so no value is shown yet. */}
         <SettingsLinkRow icon={<Tray {...icon} />} label="Who can message me" href="/settings" />
-        <SettingsLinkRow icon={<Prohibit {...icon} />} label="Blocked users" value="2" href="/settings" />
+        <SettingsLinkRow icon={<Prohibit {...icon} />} label="Blocked users" value="2" href="/settings/blocked" />
         <SettingsLinkRow icon={<MapPin {...icon} />} label="Location shown" value="City only" href="/settings" />
-        <SettingsLinkRow icon={<ShieldCheck {...icon} />} label="Safe trading tips" href="/settings" />
+        <SettingsLinkRow icon={<ShieldCheck {...icon} />} label="Safe trading tips" href="/safety" />
       </SettingsGroup>
 
       <SettingsGroup title="Notifications">
@@ -59,8 +60,9 @@ export default function SettingsPage() {
       </SettingsGroup>
 
       <SettingsGroup title="About">
-        <SettingsLinkRow icon={<BookOpen {...icon} />} label="Community guidelines" href="/settings" />
-        <SettingsLinkRow icon={<BookOpen {...icon} />} label="Terms & privacy" href="/settings" />
+        <SettingsLinkRow icon={<BookOpen {...icon} />} label="Community guidelines" href="/guidelines" />
+        <SettingsLinkRow icon={<BookOpen {...icon} />} label="Terms" href="/terms" />
+        <SettingsLinkRow icon={<BookOpen {...icon} />} label="Privacy notice" href="/privacy" />
       </SettingsGroup>
 
       <button
@@ -70,10 +72,13 @@ export default function SettingsPage() {
         <SignOut size={18} weight="bold" aria-hidden />
         Log out
       </button>
-      {/* Account deletion must be reachable in the app (DEL-01). The flow comes in Phase 5. */}
-      <button type="button" className="min-h-11 text-body-s font-bold text-ink-400">
+      {/* Account deletion must be reachable in the app (DEL-01). */}
+      <Link
+        href="/settings/delete-account"
+        className="flex min-h-11 items-center justify-center text-body-s font-bold text-ink-400"
+      >
         Delete account
-      </button>
+      </Link>
       <p className="text-center text-caption text-ink-400">Trybe v0.1 · prototype</p>
     </main>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Flag, Info, Warning } from "@phosphor-icons/react";
 import LevelBadge from "@/components/badges/LevelBadge";
+import { reportHref } from "@/components/safety/reportHref";
 import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
 import IconButton from "@/components/ui/IconButton";
@@ -97,7 +98,7 @@ function RequestCard({ request }: { request: MessageRequest }) {
         <Button variant="ghost" className="flex-1 py-2.5">
           Decline
         </Button>
-        <IconButton label={`Report @${request.handle}`}>
+        <IconButton label={`Report @${request.handle}`} href={reportHref("message", request.handle, "/trades")}>
           <Flag size={20} weight="bold" aria-hidden />
         </IconButton>
       </div>

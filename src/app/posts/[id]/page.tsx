@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Camera, CaretLeft, DotsThree, MapPin, Tag } from "@phosphor-icons/react/dist/ssr";
+import { Camera, CaretLeft, MapPin, Tag } from "@phosphor-icons/react/dist/ssr";
+import PostMoreMenu from "@/components/posts/PostMoreMenu";
 import LikeButton from "@/components/feed/LikeButton";
 import SaveButton from "@/components/posts/SaveButton";
 import { SAMPLE_POSTS } from "@/components/feed/samplePosts";
@@ -71,9 +72,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
             <CaretLeft size={20} weight="bold" aria-hidden />
           </IconButton>
           <SaveButton postTitle={post.title} />
-          <IconButton label="More options">
-            <DotsThree size={20} weight="bold" aria-hidden />
-          </IconButton>
+          <PostMoreMenu postId={post.id} authorHandle={post.author.handle} />
         </div>
 
         {post.photoCount > 1 && (

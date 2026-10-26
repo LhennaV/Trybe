@@ -16,6 +16,7 @@ import {
   Warning,
   X,
 } from "@phosphor-icons/react";
+import { reportHref } from "@/components/safety/reportHref";
 import Avatar from "@/components/ui/Avatar";
 import Button, { buttonClassName } from "@/components/ui/Button";
 import IconButton from "@/components/ui/IconButton";
@@ -270,9 +271,9 @@ export default function TradeChat({ trade: initial }: { trade: Trade }) {
           <SheetAction
             danger
             icon={<Flag size={20} weight="bold" />}
-            title={`Report @${handle}`}
+            title="Report this trade"
             description="Scams, no-shows, fake items, harassment."
-            onClick={() => setMenuOpen(false)}
+            onClick={() => router.push(reportHref("trade", handle, `/trades/${trade.id}`))}
           />
           <Button variant="ghost" fullWidth className="mt-1.5" onClick={() => setMenuOpen(false)}>
             Close
