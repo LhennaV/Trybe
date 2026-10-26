@@ -8,7 +8,7 @@ import SaveButton from "@/components/posts/SaveButton";
 import { SAMPLE_POSTS } from "@/components/feed/samplePosts";
 import { getSamplePost } from "@/components/posts/samplePostDetails";
 import Avatar from "@/components/ui/Avatar";
-import Button from "@/components/ui/Button";
+import { buttonClassName } from "@/components/ui/Button";
 import IconButton from "@/components/ui/IconButton";
 import ToolRow from "@/components/ui/ToolRow";
 
@@ -149,7 +149,9 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
           <LikeButton postTitle={post.title} initialCount={post.likeCount} size={22} />
           {/* Inspiration-only posts have nothing to trade, so there's no trade button. */}
           {tradeableCount > 0 && (
-            <Button className="flex-1">Propose a trade</Button>
+            <Link href={`/posts/${post.id}/propose`} className={buttonClassName({ className: "flex-1" })}>
+              Propose a trade
+            </Link>
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import ComingSoon from "@/components/shell/ComingSoon";
+import { SAMPLE_REQUESTS, SAMPLE_TRADES } from "@/components/trades/sampleTrades";
+import TradesInbox from "@/components/trades/TradesInbox";
 
 export const metadata: Metadata = {
   title: "Trades",
@@ -7,8 +8,9 @@ export const metadata: Metadata = {
 
 export default function TradesPage() {
   return (
-    <ComingSoon title="Trades">
-      No trades yet. When you make an offer, the chat and all the back-and-forth will land here.
-    </ComingSoon>
+    <div className="flex flex-col gap-3.5">
+      <h1 className="font-display text-display-l text-brand-plum">Trades</h1>
+      <TradesInbox trades={SAMPLE_TRADES} requests={SAMPLE_REQUESTS} />
+    </div>
   );
 }
