@@ -91,9 +91,9 @@ export default function TradeChat({ trade: initial }: { trade: Trade }) {
   }
 
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-md flex-col">
+    <div className="mx-auto flex h-dvh w-full max-w-md flex-col lg:max-w-none">
       <header className="flex items-center gap-2.5 border-b border-line bg-surface-white px-4 py-2.5 pt-[max(10px,env(safe-area-inset-top))]">
-        <IconButton href="/trades" label="Back to trades">
+        <IconButton href="/trades" label="Back to trades" className="lg:hidden">
           <CaretLeft size={20} weight="bold" aria-hidden />
         </IconButton>
         <Link href={`/users/${handle}`} className="flex min-w-0 flex-1 items-center gap-2.5">

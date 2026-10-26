@@ -53,7 +53,7 @@ async function UserProfile({ params }: { params: Promise<{ handle: string }> }) 
   if (!profile) notFound();
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-3 pb-8">
+    <div className="mx-auto flex w-full max-w-md flex-col gap-3 pb-8 lg:max-w-[1144px] lg:gap-5 lg:px-10 lg:pt-7">
       <ProfileHeader
         profile={profile}
         coverHeight={150}
@@ -76,21 +76,24 @@ async function UserProfile({ params }: { params: Promise<{ handle: string }> }) 
         }
       />
 
-      <div className="flex flex-col gap-3 px-4">
-        <TrustStats profile={profile} />
+      {/* Desktop: trust info on the left, tabs on the right. */}
+      <div className="flex flex-col gap-3 px-4 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-6 lg:px-0">
+        <div className="flex flex-col gap-3">
+          <TrustStats profile={profile} />
 
-        {profile.hobbies.length > 0 && (
-          <ul className="flex flex-wrap gap-2" aria-label="Hobbies">
-            {profile.hobbies.map((hobby) => (
-              <li
-                key={hobby}
-                className="rounded-chip border-[1.5px] border-line bg-surface-white px-3.5 py-2 text-body-s font-bold text-ink-600"
-              >
-                {hobby}
-              </li>
-            ))}
-          </ul>
-        )}
+          {profile.hobbies.length > 0 && (
+            <ul className="flex flex-wrap gap-2" aria-label="Hobbies">
+              {profile.hobbies.map((hobby) => (
+                <li
+                  key={hobby}
+                  className="rounded-chip border-[1.5px] border-line bg-surface-white px-3.5 py-2 text-body-s font-bold text-ink-600"
+                >
+                  {hobby}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <ProfileTabs
           tabs={[

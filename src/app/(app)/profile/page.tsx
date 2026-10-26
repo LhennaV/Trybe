@@ -20,7 +20,7 @@ export default function MyProfilePage() {
 
   return (
     // Cancel the shell's padding so the cover runs edge to edge on mobile.
-    <div className="-mx-4 -mt-1.5 flex flex-col gap-3 lg:mx-0 lg:mt-0">
+    <div className="-mx-4 -mt-1.5 flex flex-col gap-3 lg:mx-0 lg:mt-0 lg:gap-5">
       <ProfileHeader
         profile={profile}
         coverActions={
@@ -41,9 +41,12 @@ export default function MyProfilePage() {
         }
       />
 
-      <div className="flex flex-col gap-3 px-4">
-        <TrustStats profile={profile} />
-        <ActiveTradesCard trades={profile.activeTrades} />
+      {/* Desktop: stats and active trades on the left, tabs on the right. */}
+      <div className="flex flex-col gap-3 px-4 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start lg:gap-6 lg:px-0">
+        <div className="flex flex-col gap-3">
+          <TrustStats profile={profile} />
+          <ActiveTradesCard trades={profile.activeTrades} />
+        </div>
         <ProfileTabs
           tabs={[
             {

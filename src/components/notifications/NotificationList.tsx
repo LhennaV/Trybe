@@ -26,12 +26,16 @@ const LOOKS: Record<NotificationKind, { icon: Icon; className: string }> = {
   safety: { icon: ShieldCheck, className: "bg-status-success-soft text-status-success" },
 };
 
-function NotificationRow({ notification }: { notification: AppNotification }) {
+export function NotificationRow({ notification, compact = false }: { notification: AppNotification; compact?: boolean }) {
   const { icon: Icon, className } = LOOKS[notification.kind];
   return (
     <li
-      className={`flex items-start gap-3 rounded-card p-3 ${
-        notification.unread ? "bg-brand-lavender-soft" : "border-[1.5px] border-line bg-surface-white"
+      className={`flex items-start gap-3 rounded-card ${compact ? "p-2.5" : "p-3"} ${
+        notification.unread
+          ? "bg-brand-lavender-soft"
+          : compact
+            ? "bg-surface-white"
+            : "border-[1.5px] border-line bg-surface-white"
       }`}
     >
       <span className={`flex size-[38px] shrink-0 items-center justify-center rounded-xl ${className}`}>
@@ -55,11 +59,16 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
   );
 }
 
-// In-app notifications (NOTIF-01). Read state is local until the
+export function useNotifications(initial: AppNotification[]) {
+  const [notifications, setNotifications] = useState(initial);
+  const markAllRead = () => setNotifications((list) => list.map((n) => ({ ...n, unread: false })));
+  return { notifications, markAllRead, anyUnread: notifications.some((n) => n.unread) };
+}
+
+// In-app notifications page (NOTIF-01). Read state is local until the
 // notification endpoints exist.
 export default function NotificationList({ notifications: initial }: { notifications: AppNotification[] }) {
-  const [notifications, setNotifications] = useState(initial);
-  const anyUnread = notifications.some((n) => n.unread);
+  const { notifications, markAllRead, anyUnread } = useNotifications(initial);
 
   return (
     <>
@@ -68,11 +77,7 @@ export default function NotificationList({ notifications: initial }: { notificat
         backHref="/"
         action={
           anyUnread && (
-            <button
-              type="button"
-              onClick={() => setNotifications((list) => list.map((n) => ({ ...n, unread: false })))}
-              className="min-h-11 text-body-s font-bold text-brand-plum"
-            >
+            <button type="button" onClick={markAllRead} className="min-h-11 text-body-s font-bold text-brand-plum">
               Mark all read
             </button>
           )

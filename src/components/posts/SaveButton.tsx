@@ -12,7 +12,7 @@ export default function SaveButton({ postTitle }: { postTitle: string }) {
     <IconButton
       label={saved ? `Unsave ${postTitle}` : `Save ${postTitle}`}
       aria-pressed={saved}
-      className={`ml-auto ${saved ? "text-brand-plum" : ""}`}
+      className={`ml-auto lg:ml-0 lg:size-12 ${saved ? "text-brand-plum" : ""}`}
       onClick={() => setSaved((value) => !value)}
     >
       <BookmarkSimple size={20} weight={saved ? "fill" : "bold"} aria-hidden />

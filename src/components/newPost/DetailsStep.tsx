@@ -35,7 +35,7 @@ export default function DetailsStep({ photos, onAddPhotos, tools, onAddTool, hob
 
   return (
     <>
-      <ul className="flex gap-2.5 overflow-x-auto" aria-label="Photos">
+      <ul className="flex gap-2.5 overflow-x-auto lg:hidden" aria-label="Photos">
         {photos.map((photo, index) => (
           <li key={photo.id} className="relative size-[72px] shrink-0 overflow-hidden rounded-xl">
             <Image src={photo.url} alt={`Photo ${index + 1}`} fill sizes="72px" className="object-cover" />

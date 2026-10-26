@@ -37,7 +37,7 @@ function TabButton({ active, label, count, onClick }: { active: boolean; label: 
   );
 }
 
-function TradeRow({ trade }: { trade: Trade }) {
+function TradeRow({ trade, active }: { trade: Trade; active: boolean }) {
   const offer = currentOffer(trade);
   const waitingOnYou = trade.status === "pending" && offer?.madeBy === "them";
 
@@ -45,8 +45,13 @@ function TradeRow({ trade }: { trade: Trade }) {
     <li>
       <Link
         href={`/trades/${trade.id}`}
-        className={`flex items-center gap-3 rounded-card border-[1.5px] bg-surface-white px-3 py-2.5 ${
-          waitingOnYou ? "border-brand-lavender" : "border-line"
+        aria-current={active ? "page" : undefined}
+        className={`flex items-center gap-3 rounded-card border-[1.5px] px-3 py-2.5 ${
+          active
+            ? "border-brand-lavender-soft bg-brand-lavender-soft"
+            : waitingOnYou
+              ? "border-brand-lavender bg-surface-white"
+              : "border-line bg-surface-white"
         }`}
       >
         <Avatar name={trade.other.handle} size={40} />
@@ -108,7 +113,16 @@ function RequestCard({ request }: { request: MessageRequest }) {
 
 // Trades screen: active trade chats, plus message requests from people you
 // haven't traded with (CHAT-02).
-export default function TradesInbox({ trades, requests }: { trades: Trade[]; requests: MessageRequest[] }) {
+export default function TradesInbox({
+  trades,
+  requests,
+  activeTradeId,
+}: {
+  trades: Trade[];
+  requests: MessageRequest[];
+  // Highlights the open chat in the desktop list panel.
+  activeTradeId?: string;
+}) {
   const [tab, setTab] = useState<Tab>("chats");
 
   return (
@@ -127,7 +141,7 @@ export default function TradesInbox({ trades, requests }: { trades: Trade[]; req
         trades.length > 0 ? (
           <ul className="flex flex-col gap-2.5">
             {trades.map((trade) => (
-              <TradeRow key={trade.id} trade={trade} />
+              <TradeRow key={trade.id} trade={trade} active={trade.id === activeTradeId} />
             ))}
           </ul>
         ) : (

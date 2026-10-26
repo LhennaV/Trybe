@@ -18,11 +18,15 @@ type ProfileHeaderProps = {
 export default function ProfileHeader({ profile, coverActions, actions, coverHeight = 130 }: ProfileHeaderProps) {
   return (
     <>
-      <div className="relative w-full bg-brand-lavender" style={{ height: coverHeight }}>
-        <div className="absolute inset-x-4 top-[max(8px,env(safe-area-inset-top))] flex gap-2">{coverActions}</div>
+      {/* Full-bleed on mobile; a rounded banner on desktop. */}
+      <div
+        className="relative h-[var(--cover-h)] w-full bg-brand-lavender lg:h-[160px] lg:rounded-[24px]"
+        style={{ "--cover-h": `${coverHeight}px` } as React.CSSProperties}
+      >
+        <div className="absolute inset-x-4 top-[max(8px,env(safe-area-inset-top))] flex gap-2 lg:top-4">{coverActions}</div>
       </div>
 
-      <div className="flex flex-col gap-3 px-4">
+      <div className="flex flex-col gap-3 px-4 lg:px-6">
         <div className="-mt-[42px] flex items-end gap-3">
           <Avatar name={profile.displayName} size={84} className="ring-4 ring-brand-cream" />
           <div className="ml-auto flex gap-2">{actions}</div>

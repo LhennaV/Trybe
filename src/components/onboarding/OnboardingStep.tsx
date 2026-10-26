@@ -22,7 +22,7 @@ export default function OnboardingStep({
   children,
 }: OnboardingStepProps) {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-[18px] px-4 pt-2 pb-[max(34px,env(safe-area-inset-bottom))]">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-[18px] px-4 pt-2 pb-[max(34px,env(safe-area-inset-bottom))] lg:min-h-0 lg:max-w-[440px] lg:py-12">
       <div className="flex items-center gap-3 py-2">
         <IconButton href={backHref} label="Back">
           <CaretLeft size={20} weight="bold" aria-hidden />

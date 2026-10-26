@@ -25,11 +25,13 @@ export default function ExplorePage() {
   return (
     <div className="flex flex-col gap-[18px]">
       <h1 className="font-display text-display-l text-brand-plum">Explore</h1>
-      <FeedSearch placeholder={'Try "film camera" or "loom"'} />
+      <div className="lg:max-w-[560px]">
+        <FeedSearch placeholder={'Try "film camera" or "loom"'} />
+      </div>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-title-m text-ink-900">Try something new</h2>
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           {HOBBY_TILES.map((tile) => (
             <li key={tile.name}>
               <Link

@@ -62,14 +62,14 @@ export default function ReportForm({
 
   return (
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md flex-col"
+      className="mx-auto flex min-h-dvh w-full max-w-md flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
       onSubmit={(event) => {
         event.preventDefault();
         // Sent to POST /api/reports once it exists.
         setSent(true);
       }}
     >
-      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(90px+max(30px,env(safe-area-inset-bottom)))]">
+      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(90px+max(30px,env(safe-area-inset-bottom)))] lg:pb-2">
         <TopBar title={`Report ${TARGET_LABELS[target]}@${handle}`} backHref={backHref} />
 
         <div className="flex flex-col gap-1">
@@ -104,7 +104,7 @@ export default function ReportForm({
         </p>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
         <div className="mx-auto max-w-md px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
           <Button type="submit" variant="danger" fullWidth disabled={!reason}>
             {reason ? "Submit report" : "Pick a reason"}
