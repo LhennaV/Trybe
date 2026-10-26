@@ -228,8 +228,7 @@ $$;
 ```ts
 // src/server/trades/accept.ts
 import { sql } from "drizzle-orm";
-import { db } from "@/server/db";
-import { withActor } from "@/server/db/with-actor";
+import { withActor } from "@/server/db/withActor";
 
 export async function acceptTrade(tradeId: string, actorId: string) {
   return withActor(actorId, (tx) =>
