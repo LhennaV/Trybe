@@ -130,7 +130,17 @@ Build these once in `src/components/ui/` and reuse them. Names match the Figma c
 - **PostCard**: photo (`rounded-photo`, tall ≈ 3:4 or short ≈ 1:1), an optional "Up for trade" pill at the photo's top left (white pill, swap icon + `text-caption font-extrabold text-brand-plum`), title `text-body-s font-bold`, author row (20px avatar, `@handle` in `text-caption text-ink-600`, heart icon on the right).
 - **ToolRow**: white card with a line border, `rounded-card`, 56px thumbnail (radius 12). Name `text-body-m font-bold`, meta `text-caption text-ink-600` ("Good condition · Wheels & kilns"), "Looking for: …" in `text-caption font-bold text-brand-plum`. Status pill on the right: **Trade** (lavender-soft / plum) or **Inspo** (line / ink-600).
 - **StatusPill**: `text-caption font-extrabold`, padding 4px × 10px, `rounded-chip`. Pending is warning-soft / warning. Accepted is lavender-soft / plum. Completed is success-soft / success. Declined is line / ink-600.
-- **LevelBadge**: blush at 50% opacity, the custom paw icon at 13px in plum, label in `text-caption font-extrabold text-ink-900`, padding 3px × 9px. Level 1 is **Curious Mingming** (0 completed trades). Higher levels are still being decided.
+- **LevelBadge**: pill with the custom paw at 13px plus the level name in `text-caption font-extrabold`, padding 3px × 9px. The level comes from completed trades. Use `src/components/badges/LevelBadge.tsx` and `src/components/badges/levels.ts`, which hold the names, thresholds and colors.
+
+  | Level | Name | Trades | Background | Paw | Label |
+  |---|---|---|---|---|---|
+  | 1 | Curious Mingming | 0 | `brand-blush` at 50% | `brand-plum` | `ink-900` |
+  | 2 | Box Peeker | 1+ | `brand-box-soft` | `brand-box-dark` | `ink-900` |
+  | 3 | Alley Cat | 5+ | `brand-lavender-soft` | `brand-plum` | `ink-900` |
+  | 4 | Top Cat | 15+ | `brand-lavender-soft` + 1.5px inner `brand-plum` ring | `brand-plum` | `brand-plum` |
+  | 5 | Nine Lives | 30+ | `brand-plum` | `surface-white` | `surface-white` |
+
+  Badges only ever go up, and they always show the text (never the paw alone). Keep Curious Mingming at 50% blush. At full strength, its label fails contrast in dark mode.
 - **BottomNav** (mobile): 5 slots: Feed, Explore, a center **+** button (52×52, radius 18, plum, white plus icon, `shadow-button`), Trades, Profile. The active tab is a plum filled icon plus a `font-extrabold` caption. Inactive tabs are an `ink-400` outline icon plus a regular caption.
 - **Sidebar** (desktop): logo, nav items (11px × 12px padding, radius 12). The active item gets a lavender-soft background and plum extrabold text. Then a full-width New post button, a "Trade safely" card at the bottom, and the account row.
 - **Sheet / Modal / Dropdown**: one overlay system that renders as a bottom sheet below `lg` and as a modal or dropdown at `lg` and up. The scrim closes it. Trap focus while open and close on Escape.
