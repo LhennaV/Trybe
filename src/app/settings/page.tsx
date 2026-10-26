@@ -33,7 +33,7 @@ export default function SettingsPage() {
 
       <SettingsGroup title="Account">
         <SettingsLinkRow icon={<User {...icon} />} label="Edit profile" href="/settings/profile" />
-        <SettingsLinkRow icon={<BookmarkSimple {...icon} />} label="Saved posts" value="18" href="/settings" />
+        <SettingsLinkRow icon={<BookmarkSimple {...icon} />} label="Saved" href="/saved" />
         <SettingsLinkRow icon={<EnvelopeSimple {...icon} />} label="Email" value="s•••@email.com" href="/settings" />
         <SettingsLinkRow icon={<Key {...icon} />} label="Password" href="/forgot-password" />
       </SettingsGroup>

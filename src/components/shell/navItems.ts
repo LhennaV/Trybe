@@ -19,5 +19,7 @@ export const NEW_POST_HREF = "/new";
 
 export function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
+  // Search results belong to the Explore tab.
+  if (href === "/explore" && (pathname === "/search" || pathname.startsWith("/search/"))) return true;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
