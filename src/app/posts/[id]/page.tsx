@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import {
@@ -101,7 +102,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
       </div>
 
       <div className="flex flex-col gap-3.5 p-4 pb-[calc(76px+max(30px,env(safe-area-inset-bottom)))]">
-        <div className="flex items-center gap-2.5">
+        <Link href={`/users/${post.author.handle}`} className="flex items-center gap-2.5 rounded-xl">
           <Avatar name={post.author.handle} size={40} />
           <div className="flex min-w-0 flex-1 flex-col gap-px">
             <p className="text-body-m font-bold text-ink-900">@{post.author.handle}</p>
@@ -112,7 +113,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
                 ` · ★ ${post.author.rating} (${post.author.tradeCount} trades)`}
             </p>
           </div>
-        </div>
+        </Link>
 
         <h1 className="font-display text-display-m text-ink-900">{post.title}</h1>
         {post.caption && <p className="text-body-m text-ink-600">{post.caption}</p>}
