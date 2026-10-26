@@ -122,6 +122,23 @@ export default function TradeChat({ trade: initial }: { trade: Trade }) {
         </div>
       )}
 
+      {trade.status === "accepted" && (
+        <div className="flex gap-2 border-b border-line bg-surface-white px-4 py-2.5">
+          <Link
+            href={`/trades/${trade.id}/meetup`}
+            className={buttonClassName({ className: "flex-1 px-3 py-2.5 text-body-s" })}
+          >
+            Set up the meetup
+          </Link>
+          <Link
+            href={`/trades/${trade.id}/check-in`}
+            className={buttonClassName({ variant: "secondary", className: "flex-1 px-3 py-2.5 text-body-s" })}
+          >
+            We met up
+          </Link>
+        </div>
+      )}
+
       <div className="flex flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-3.5" role="log" aria-label={`Chat with @${handle}`}>
         {trade.messages.map((message) => {
           if (message.kind === "text") return <Bubble key={message.id} message={message} />;
