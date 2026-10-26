@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowsLeftRight, Camera, Heart } from "@phosphor-icons/react/dist/ssr";
+import Avatar from "@/components/ui/Avatar";
 import type { FeedPost } from "./samplePosts";
 
 // Photo boxes keep the Figma proportions (174px wide, 236px or 168px tall)
@@ -44,7 +45,7 @@ export default function PostCard({ post }: { post: FeedPost }) {
       </Link>
 
       <div className="flex items-center gap-1.5">
-        <span className="size-5 shrink-0 rounded-chip bg-brand-blush" aria-hidden />
+        <Avatar name={post.authorHandle} size={20} />
         <span className="min-w-0 flex-1 truncate text-caption text-ink-600">
           @{post.authorHandle}
         </span>

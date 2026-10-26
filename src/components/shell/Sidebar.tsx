@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus, ShieldCheck } from "@phosphor-icons/react";
 import LevelBadge from "@/components/badges/LevelBadge";
+import Avatar from "@/components/ui/Avatar";
 import { buttonClassName } from "@/components/ui/Button";
 import { NAV_ITEMS, NEW_POST_HREF, isActive } from "./navItems";
 
@@ -58,9 +59,7 @@ export default function Sidebar() {
 
         {/* Placeholder account until auth is wired up. Storm is the prototype's sample user. */}
         <Link href="/profile" className="flex items-center gap-3 rounded-xl px-1 py-1">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-chip bg-brand-box-soft text-body-m font-extrabold text-brand-box-dark">
-            S
-          </span>
+          <Avatar name="Storm" size={40} />
           <span className="flex min-w-0 flex-col items-start gap-0.5">
             <span className="text-body-s font-bold text-ink-900">Storm</span>
             <LevelBadge completedTrades={0} />

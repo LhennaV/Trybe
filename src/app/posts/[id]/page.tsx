@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import {
   BookmarkSimple,
   Camera,
@@ -12,6 +13,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { SAMPLE_POSTS } from "@/components/feed/samplePosts";
 import { getSamplePost } from "@/components/posts/samplePostDetails";
+import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
 import ToolRow from "@/components/ui/ToolRow";
 
@@ -30,8 +32,35 @@ export async function generateMetadata(props: PageProps<"/posts/[id]">): Promise
   return { title: post?.title ?? "Post not found" };
 }
 
-export default async function PostDetailPage(props: PageProps<"/posts/[id]">) {
-  const { id } = await props.params;
+// Not async: the shell (skeleton) renders right away so navigating from the
+// feed feels instant, and the post streams in inside the Suspense boundary.
+export default function PostDetailPage(props: PageProps<"/posts/[id]">) {
+  return (
+    <Suspense fallback={<PostDetailSkeleton />}>
+      <PostDetail params={props.params} />
+    </Suspense>
+  );
+}
+
+function PostDetailSkeleton() {
+  return (
+    <div className="mx-auto flex w-full max-w-md flex-1 flex-col" aria-busy="true" aria-label="Loading post">
+      <div className="h-[290px] w-full bg-brand-box-soft" />
+      <div className="flex flex-col gap-3.5 p-4">
+        <div className="flex items-center gap-2.5">
+          <span className="size-10 rounded-chip bg-line" />
+          <span className="h-4 w-32 rounded-chip bg-line" />
+        </div>
+        <span className="h-6 w-4/5 rounded-chip bg-line" />
+        <span className="h-4 w-full rounded-chip bg-line" />
+        <span className="h-4 w-2/3 rounded-chip bg-line" />
+      </div>
+    </div>
+  );
+}
+
+async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const post = getSamplePost(id);
   if (!post) notFound();
 
@@ -76,7 +105,7 @@ export default async function PostDetailPage(props: PageProps<"/posts/[id]">) {
 
       <div className="flex flex-col gap-3.5 p-4 pb-[calc(76px+max(30px,env(safe-area-inset-bottom)))]">
         <div className="flex items-center gap-2.5">
-          <span className="size-10 shrink-0 rounded-chip bg-brand-box" aria-hidden />
+          <Avatar name={post.author.handle} size={40} />
           <div className="flex min-w-0 flex-1 flex-col gap-px">
             <p className="text-body-m font-bold text-ink-900">@{post.author.handle}</p>
             <p className="flex items-center gap-1 text-caption text-ink-600">
