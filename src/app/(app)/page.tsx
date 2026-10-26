@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import ComingSoon from "@/components/shell/ComingSoon";
+import FeedGrid from "@/components/feed/FeedGrid";
+import FeedHeader from "@/components/feed/FeedHeader";
+import FeedSearch from "@/components/feed/FeedSearch";
+import HobbyFilter from "@/components/feed/HobbyFilter";
+import MatchBanner from "@/components/feed/MatchBanner";
+import { SAMPLE_POSTS } from "@/components/feed/samplePosts";
 
 export const metadata: Metadata = {
   title: { absolute: "Trybe" },
@@ -7,9 +12,17 @@ export const metadata: Metadata = {
 
 export default function FeedPage() {
   return (
-    <ComingSoon title="Feed">
-      Nothing here yet. Once people start posting their makes and the gear behind them, they&apos;ll
-      show up right here.
-    </ComingSoon>
+    <div className="flex flex-col gap-3.5">
+      <h1 className="sr-only">Feed</h1>
+      <FeedHeader />
+      <FeedSearch />
+      <HobbyFilter />
+      <MatchBanner
+        title="3 pottery setups up for trade near you"
+        subtitle="Matches the hobby you want to try"
+        href="/explore"
+      />
+      <FeedGrid posts={SAMPLE_POSTS} />
+    </div>
   );
 }
