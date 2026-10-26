@@ -599,6 +599,9 @@ TURNSTILE_SECRET_KEY
 NEXT_PUBLIC_TURNSTILE_SITE_KEY
 SENTRY_DSN
 NEXT_PUBLIC_SENTRY_DSN
+SENTRY_ORG                         build only, source map upload
+SENTRY_PROJECT                     build only, source map upload
+SENTRY_AUTH_TOKEN                  build only, source map upload
 ```
 
 ### Pull request checks
@@ -614,8 +617,8 @@ project first, then to production during release.
 
 | Layer       | What                                               | Tool                          |
 | ----------- | -------------------------------------------------- | ----------------------------- |
-| Unit        | Trade state machine, validation, permission checks | Vitest (**Proposed**)         |
-| Integration | API endpoints against a test database              | Vitest (**Proposed**)         |
+| Unit        | Trade state machine, validation, permission checks | Vitest                        |
+| Integration | API endpoints against a test database              | Vitest                        |
 | End to end  | Sign up, post, propose, accept, complete, rate     | Playwright (**Proposed**), P1 |
 | Manual      | Real Android phone and iPhone before each release  | Checklist                     |
 
@@ -655,7 +658,7 @@ Check current pricing before paying. Prices change.
 | Weekly email digest              | v1 or later                         | Both    |
 | Who can message by default       | Anyone via Requests, or traded-only | Both    |
 | Item photo limit and upload size | See section 13                      | Tristan |
-| Test tools                       | Vitest and Playwright, or others    | Tristan |
+| End-to-end test tool             | Playwright or others (Vitest chosen for unit and integration) | Tristan |
 
 ## 22. Revision history
 

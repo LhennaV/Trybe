@@ -66,16 +66,16 @@ shared contracts and mock data without blocking each other.
 ### Tasks
 
 - [x] **[BE]** Next.js app in repo root, `src/` structure, CODEOWNERS
-- [ ] **[BE]** Add `AGENTS.md`, `docs/technical-requirements.md`, this plan
-- [ ] **[BE]** Update `README.md`: stack, setup steps, pnpm only, branch rules
+- [x] **[BE]** Add `AGENTS.md`, `docs/technical-requirements.md`, this plan
+- [x] **[BE]** Update `README.md`: stack, setup steps, pnpm only, branch rules
 - [ ] **[BE]** Create Supabase dev project
-- [ ] **[BE]** Set up Drizzle, database connection (pooled and direct), first empty migration
-- [ ] **[BE]** `.env.example` with every variable from TRD section 17
+- [x] **[BE]** Set up Drizzle, database connection (pooled and direct), first empty migration
+- [x] **[BE]** `.env.example` with every variable from TRD section 17
 - [ ] **[BE]** Deploy to Vercel, preview deploys on pull requests
-- [ ] **[BE]** Pull request checks: lint, type check, test, build
-- [ ] **[BE]** Set up Vitest with one passing test
-- [ ] **[BE]** Set up Sentry (client and server)
-- [ ] **[BE]** `src/shared/contracts/common.ts`: response shape, error codes, pagination
+- [x] **[BE]** Pull request checks: lint, type check, test, build
+- [x] **[BE]** Set up Vitest with one passing test
+- [x] **[BE]** Set up Sentry (client and server)
+- [x] **[BE]** `src/shared/contracts/common.ts`: response shape, error codes, pagination
 - [ ] **[Both]** Draft contracts for users, items, posts, trades in `src/shared/contracts/`
 - [ ] **[BE]** Mock data file built from the contracts
 - [ ] **[FE]** Design tokens in `src/app/globals.css` with `@theme`, hex values from Figma
