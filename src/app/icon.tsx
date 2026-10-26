@@ -24,7 +24,7 @@ export function generateImageMetadata() {
 export default async function Icon({ id }: { id: Promise<string | number> }) {
   const iconId = String(await id);
   const icon = ICONS.find((i) => i.id === iconId) ?? ICONS[1];
-  const png = await readFile(join(process.cwd(), "public/brand/app-icon.png"));
+  const png = await readFile(join(process.cwd(), "public/brand/storm-icon.png"));
   const src = `data:image/png;base64,${png.toString("base64")}`;
   const inner = Math.round(icon.size * (1 - icon.padding * 2));
 
@@ -42,7 +42,7 @@ export default async function Icon({ id }: { id: Promise<string | number> }) {
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} width={inner} height={Math.round(inner * (464 / 477))} alt="" />
+        <img src={src} width={inner} height={Math.round(inner * (348 / 360))} alt="" />
       </div>
     ),
     { width: icon.size, height: icon.size },

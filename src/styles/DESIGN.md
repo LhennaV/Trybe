@@ -187,6 +187,15 @@ The full set (46 icons) is on the Figma Icons page, named `Icon/<phosphor-name>`
 - Empty or loading photos use a `bg-brand-box-soft` block with a faded camera icon, the same as the prototype.
 - The photos in the Figma Photo library are AI placeholders. Don't ship them as real listings.
 
+### Brand art (Storm, the logo)
+
+- Export brand art from Figma with a **transparent background**: hide the frame fill before exporting. A baked-in background shows up as a box as soon as the theme changes (cream in dark mode, lavender on a white card).
+- Keep the SVG export in `public/brand/` as the source, and use a PNG generated from it in the app. The SVGs are too heavy to serve.
+- File names are kebab-case: `storm-icon.svg` → `storm-icon.png`. No spaces or capitals.
+- Keep text out of brand images, since baked-in text can't follow the theme. `storm-logo.png` is Storm plus the wordmark only. The tagline is real text in `src/components/auth/BrandLogo.tsx`.
+- Put any background in CSS behind the image (`bg-brand-lavender`), never in the file. The app icons in `src/app/icon.tsx` and `src/app/apple-icon.tsx` add the lavender tile themselves.
+- When you replace a precached image, bump the cache name in `public/sw.js` so installed apps pick up the new file.
+
 ## Motion
 
 - Keep it small and quick: 200 to 300ms, ease-out.

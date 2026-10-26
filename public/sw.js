@@ -1,7 +1,7 @@
 // Trybe service worker. Keeps an offline page ready, so opening the installed
 // app with no connection shows a friendly screen instead of a browser error.
 // Everything else goes to the network as usual.
-const CACHE = "trybe-offline-v1";
+const CACHE = "trybe-offline-v2";
 const OFFLINE_URL = "/offline";
 const PRECACHE = [OFFLINE_URL, "/brand/storm-icon.png"];
 
