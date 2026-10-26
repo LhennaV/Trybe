@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import {
@@ -15,10 +14,8 @@ import { SAMPLE_POSTS } from "@/components/feed/samplePosts";
 import { getSamplePost } from "@/components/posts/samplePostDetails";
 import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
+import IconButton from "@/components/ui/IconButton";
 import ToolRow from "@/components/ui/ToolRow";
-
-const iconButton =
-  "relative flex size-10 items-center justify-center rounded-xl border-[1.5px] border-line bg-surface-white text-ink-900 before:absolute before:-inset-0.5";
 
 // Prerender the sample posts. Needed because cacheComponents is on: params
 // that aren't known at build time count as runtime data.
@@ -75,15 +72,15 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
         </div>
 
         <div className="absolute inset-x-4 top-[max(8px,env(safe-area-inset-top))] flex gap-2">
-          <Link href="/" aria-label="Back to feed" className={iconButton}>
+          <IconButton href="/" label="Back to feed">
             <CaretLeft size={20} weight="bold" aria-hidden />
-          </Link>
-          <button type="button" aria-label="Save post" className={`${iconButton} ml-auto`}>
+          </IconButton>
+          <IconButton label="Save post" className="ml-auto">
             <BookmarkSimple size={20} weight="bold" aria-hidden />
-          </button>
-          <button type="button" aria-label="More options" className={iconButton}>
+          </IconButton>
+          <IconButton label="More options">
             <DotsThree size={20} weight="bold" aria-hidden />
-          </button>
+          </IconButton>
         </div>
 
         {post.photoCount > 1 && (
