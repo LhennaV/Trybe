@@ -102,8 +102,8 @@ profile.
 
 ### Tasks
 
-- [ ] **[BE]** Tables: users, hobbies, user_hobbies. Seed the hobby list
-- [ ] **[BE]** Enable RLS on all tables from day one
+- [x] **[BE]** Tables: users, hobbies, user_hobbies. Seed the hobby list
+- [x] **[BE]** Enable RLS on all tables from day one
 - [ ] **[BE]** Supabase Auth: sign up, log in, log out, reset password (AUTH-01, AUTH-06)
 - [ ] **[BE]** Email verification and custom SMTP (AUTH-05)
 - [ ] **[BE]** Turnstile verification on sign up and log in (AUTH-02)
