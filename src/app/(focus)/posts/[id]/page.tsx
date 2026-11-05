@@ -1,3 +1,4 @@
+import PostDetailSkeleton from "@/components/posts/PostDetailSkeleton";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -35,23 +36,6 @@ export default function PostDetailPage(props: PageProps<"/posts/[id]">) {
   );
 }
 
-function PostDetailSkeleton() {
-  return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col" aria-busy="true" aria-label="Loading post">
-      <div className="h-[290px] w-full bg-brand-box-soft" />
-      <div className="flex flex-col gap-3.5 p-4">
-        <div className="flex items-center gap-2.5">
-          <span className="size-10 rounded-chip bg-line" />
-          <span className="h-4 w-32 rounded-chip bg-line" />
-        </div>
-        <span className="h-6 w-4/5 rounded-chip bg-line" />
-        <span className="h-4 w-full rounded-chip bg-line" />
-        <span className="h-4 w-2/3 rounded-chip bg-line" />
-      </div>
-    </div>
-  );
-}
-
 async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const post = getSamplePost(id);
@@ -62,7 +46,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col lg:grid lg:max-w-[1144px] lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-8 lg:px-10 lg:pt-7 lg:pb-10">
       <div className="flex flex-col lg:gap-3">
-        <Link href="/" className="hidden min-h-11 items-center gap-3 text-body-s text-ink-600 lg:flex">
+        <Link href="/feed" className="hidden min-h-11 items-center gap-3 text-body-s text-ink-600 lg:flex">
           <span className="flex size-10 items-center justify-center rounded-xl border-[1.5px] border-line bg-surface-white text-ink-900">
             <CaretLeft size={20} weight="bold" aria-hidden />
           </span>
@@ -76,7 +60,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
           </div>
 
           <div className="absolute inset-x-4 top-[max(8px,env(safe-area-inset-top))] flex gap-2 lg:hidden">
-            <IconButton href="/" label="Back to feed">
+            <IconButton href="/feed" label="Back to feed">
               <CaretLeft size={20} weight="bold" aria-hidden />
             </IconButton>
             <SaveButton postTitle={post.title} />

@@ -54,7 +54,7 @@ export default function AreaForm() {
       onSubmit={(event) => {
         event.preventDefault();
         // Saved to the profile once the accounts API exists. City only, never coordinates (PROF-05).
-        router.push("/");
+        router.push("/feed");
       }}
     >
       <Input
@@ -125,7 +125,7 @@ export default function AreaForm() {
       <Button type="submit" fullWidth>
         Finish setup
       </Button>
-      <Link href="/" className="flex min-h-11 items-center justify-center text-body-s font-bold text-ink-600">
+      <Link href="/feed" className="flex min-h-11 items-center justify-center text-body-s font-bold text-ink-600">
         Skip for now
       </Link>
     </form>

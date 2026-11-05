@@ -27,7 +27,7 @@ async function Report({ searchParams }: { searchParams: Promise<Record<string, s
   const handle = first(params.handle) ?? "this user";
   // Only allow going back inside the app.
   const back = first(params.back);
-  const backHref = back?.startsWith("/") && !back.startsWith("//") ? back : "/";
+  const backHref = back?.startsWith("/") && !back.startsWith("//") ? back : "/feed";
 
   return <ReportForm target={target} handle={handle} backHref={backHref} />;
 }

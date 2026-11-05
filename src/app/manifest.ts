@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Trybe",
     short_name: "Trybe",
     description: "Trade the gear you've outgrown for the hobby you're curious about.",
-    start_url: "/",
+    start_url: "/feed",
     display: "standalone",
     theme_color: "#674390",
     background_color: "#FFF9F2",

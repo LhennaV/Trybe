@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">
+<g transform="translate(10 18)">
+<g id="Group">
+<path id="Vector" d="M44 86C67.196 86 86 67.196 86 44C86 20.804 67.196 2 44 2C20.804 2 2 20.804 2 44C2 67.196 20.804 86 44 86Z" fill="#F5B76A" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M44 76C61.6731 76 76 61.6731 76 44C76 26.3269 61.6731 12 44 12C26.3269 12 12 26.3269 12 44C12 61.6731 26.3269 76 44 76Z" fill="#C38442" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M44 64C55.0457 64 64 55.0457 64 44C64 32.9543 55.0457 24 44 24C32.9543 24 24 32.9543 24 44C24 55.0457 32.9543 64 44 64Z" fill="#C49CF2" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" d="M34 36C40 30 48 30 54 36" stroke="#FFF9F2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="Group_2">
+<path id="Vector_5" d="M89.4641 49.6077C90.5687 47.6945 89.9132 45.2482 88 44.1436C86.0868 43.039 83.6405 43.6945 82.5359 45.6077L63.5359 78.5167C62.4313 80.4298 63.0868 82.8762 65 83.9808C66.9132 85.0853 69.3595 84.4298 70.4641 82.5167L89.4641 49.6077Z" fill="#674390" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_6" d="M88 44.1436C81.0718 40.1436 86.3397 27.0192 95 32.0192C103.66 37.0192 94.9282 48.1436 88 44.1436Z" stroke="#2B2433" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</svg>

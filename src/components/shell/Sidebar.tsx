@@ -20,7 +20,7 @@ export default function Sidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col gap-1.5 border-r border-line bg-surface-white px-5 pt-7 pb-6 lg:flex">
-      <Link href="/" className="flex items-center gap-2 pb-[22px] pl-1.5" aria-label="Trybe home">
+      <Link href="/feed" className="flex items-center gap-2 pb-[22px] pl-1.5" aria-label="Trybe home">
         <Image src="/brand/storm-icon.png" alt="" width={42} height={41} />
         <span className="font-display text-display-m text-brand-plum">TRYBE</span>
       </Link>

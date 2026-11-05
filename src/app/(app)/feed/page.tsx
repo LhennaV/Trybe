@@ -7,7 +7,7 @@ import { SAMPLE_POSTS } from "@/components/feed/samplePosts";
 import NotificationBell from "@/components/notifications/NotificationBell";
 
 export const metadata: Metadata = {
-  title: { absolute: "Trybe" },
+  title: "Feed",
 };
 
 export default function FeedPage() {

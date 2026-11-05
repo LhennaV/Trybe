@@ -58,7 +58,7 @@ export default function NotificationBell({ className = "" }: { className?: strin
         <div
           role="dialog"
           aria-label="Notifications"
-          className="absolute top-12 right-0 z-30 flex w-[300px] flex-col gap-2 rounded-[18px] bg-surface-white p-3 shadow-dropdown"
+          className="absolute top-12 right-0 z-30 flex w-[300px] origin-top-right animate-pop-in flex-col gap-2 rounded-[18px] bg-surface-white p-3 shadow-dropdown"
         >
           <div className="flex items-center px-1">
             <h2 className="text-title-m text-ink-900">Notifications</h2>

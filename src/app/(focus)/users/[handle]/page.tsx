@@ -1,3 +1,4 @@
+import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -28,22 +29,9 @@ export async function generateMetadata(props: PageProps<"/users/[handle]">): Pro
 // Not async, so the page shell shows instantly and the profile streams in.
 export default function UserProfilePage(props: PageProps<"/users/[handle]">) {
   return (
-    <Suspense fallback={<ProfileSkeleton />}>
+    <Suspense fallback={<ProfileSkeleton className="mx-auto w-full max-w-md pb-8 lg:max-w-[1144px] lg:px-10 lg:pt-7" />}>
       <UserProfile params={props.params} />
     </Suspense>
-  );
-}
-
-function ProfileSkeleton() {
-  return (
-    <div className="mx-auto flex w-full max-w-md flex-col" aria-busy="true" aria-label="Loading profile">
-      <div className="h-[150px] bg-brand-lavender" />
-      <div className="flex flex-col gap-3 px-4">
-        <span className="-mt-[42px] size-[84px] rounded-chip bg-line ring-4 ring-brand-cream" />
-        <span className="h-6 w-40 rounded-chip bg-line" />
-        <span className="h-4 w-56 rounded-chip bg-line" />
-      </div>
-    </div>
   );
 }
 
@@ -59,7 +47,7 @@ async function UserProfile({ params }: { params: Promise<{ handle: string }> }) 
         coverHeight={150}
         coverActions={
           <>
-            <IconButton href="/" label="Back">
+            <IconButton href="/feed" label="Back">
               <CaretLeft size={20} weight="bold" aria-hidden />
             </IconButton>
             <ProfileSafetyMenu handle={profile.handle} />
