@@ -8,6 +8,27 @@
       "when": 1793024404644,
       "tag": "0000_app_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793891735384,
+      "tag": "0001_users_and_hobbies",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793891740820,
+      "tag": "0002_updated_at_and_audit",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793891745962,
+      "tag": "0003_seed_hobbies",
+      "breakpoints": true
     }
   ]
 }
