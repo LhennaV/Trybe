@@ -1,3 +1,4 @@
+import TradeChatSkeleton from "@/components/trades/TradeChatSkeleton";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -19,7 +20,7 @@ export async function generateMetadata(props: PageProps<"/trades/[id]">): Promis
 // Not async, so the shell shows instantly and the trade streams in.
 export default function TradePage(props: PageProps<"/trades/[id]">) {
   return (
-    <Suspense fallback={<div className="mx-auto h-dvh w-full max-w-md" aria-busy="true" aria-label="Loading trade" />}>
+    <Suspense fallback={<TradeChatSkeleton />}>
       <Trade params={props.params} />
     </Suspense>
   );

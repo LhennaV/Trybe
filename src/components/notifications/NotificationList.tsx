@@ -74,7 +74,7 @@ export default function NotificationList({ notifications: initial }: { notificat
     <>
       <TopBar
         title="Notifications"
-        backHref="/"
+        backHref="/feed"
         action={
           anyUnread && (
             <button type="button" onClick={markAllRead} className="min-h-11 text-body-s font-bold text-brand-plum">

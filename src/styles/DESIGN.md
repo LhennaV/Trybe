@@ -42,6 +42,23 @@ Never use Inter, Geist, or a system font as the main face. Lilita One is for hea
 
 Section labels above groups ("YOU GET", "THEME", "PRIVACY & SAFETY") are `text-label-s`, uppercase, `text-ink-400` or `text-ink-600`.
 
+### Landing page sizes
+
+The landing page (Figma page **Landing page v1**, frames **Landing · B · No new gear**) uses bigger marketing sizes. Use them only on the landing page.
+
+| Token (Tailwind) | Size / line height | Font | Used for |
+|---|---|---|---|
+| `text-display-hero` | 68 / 72 | Lilita One | Desktop hero headline |
+| `text-display-hero-m` | 38 / 42 | Lilita One | Mobile hero headline |
+| `text-display-cta` | 48 / 54 | Lilita One | Desktop final call to action |
+| `text-display-section` | 44 / 50 | Lilita One | Desktop section titles |
+| `text-display-section-m` | 30 / 34 | Lilita One | Mobile section titles |
+| `text-lead-l` | 19 / 28 | Nunito 400 | Desktop hero subhead |
+| `text-lead` | 18 / 27 | Nunito 400 | Desktop section intros |
+| `text-lead-m` | 16 / 24 | Nunito 400 | Mobile hero subhead |
+
+Landing section labels ("HOW IT WORKS") are `text-label-s`, uppercase, `tracking-[0.08em]`, `text-brand-plum`. Use `src/components/landing/SectionLabel.tsx`.
+
 ## Colors and themes
 
 These token names match the Figma variables.
@@ -141,6 +158,13 @@ Build these once in `src/components/ui/` and reuse them. Names match the Figma c
   | 5 | Nine Lives | 30+ | `brand-plum` | `surface-white` | `surface-white` |
 
   Badges only ever go up, and they always show the text (never the paw alone). Keep Curious Mingming at 50% blush. At full strength, its label fails contrast in dark mode.
+- **SpecialBadge**: earned once, never lost, and closed for good after their window. They don't come from trade counts. White pill with a 1.5px `brand-box-dark` ring, a 13px `brand-plum` icon, the name in `text-caption font-extrabold text-ink-900`, and an 11px `brand-box-dark` sparkle. Padding 3px, 9px right, 8px left. On profiles, show them next to the level badge. Use `src/components/badges/SpecialBadge.tsx` and `src/components/badges/specialBadges.ts`.
+
+  | Badge | Who gets it | Icon |
+  |---|---|---|
+  | Founding Paw | The founders (Lhenna and Ethan), given by hand | Custom paw |
+  | OG Box Cat | Alpha testers: tried the Figma prototype and left their email on the form. Given when that email signs up | `Package` |
+  | First Litter | Beta testers: signed up before launch and posted or traded during the beta. Given once on launch day | `Cat` |
 - **BottomNav** (mobile): 5 slots: Feed, Explore, a center **+** button (52×52, radius 18, plum, white plus icon, `shadow-button`), Trades, Profile. The active tab is a plum filled icon plus a `font-extrabold` caption. Inactive tabs are an `ink-400` outline icon plus a regular caption.
 - **Sidebar** (desktop): logo, nav items (11px × 12px padding, radius 12). The active item gets a lavender-soft background and plum extrabold text. Then a full-width New post button, a "Trade safely" card at the bottom, and the account row.
 - **Sheet / Modal / Dropdown**: one overlay system that renders as a bottom sheet below `lg` and as a modal or dropdown at `lg` and up. The scrim closes it. Trap focus while open and close on Escape.
@@ -185,7 +209,8 @@ The full set (46 icons) is on the Figma Icons page, named `Icon/<phosphor-name>`
 - Every post photo needs alt text. Default to the post title, and let users edit it.
 - Up to 6 photos per post, 10 MB each. Compress and resize on the client before upload. Uploads follow the architecture rules in `AGENTS.md`.
 - Empty or loading photos use a `bg-brand-box-soft` block with a faded camera icon, the same as the prototype.
-- The photos in the Figma Photo library are AI placeholders. Don't ship them as real listings.
+- The photos in the Figma Photo library are AI placeholders. Don't ship them as real listings, and don't use them as illustrations either.
+- Illustrations (Figma components named `Illo/...`) are hand-made and safe to ship. Export them as SVG into `public/illustrations/`, named `<thing>-<view>.svg` (for example `camera-angled.svg`), on a square 120 canvas so they keep their Figma padding. Like photos, they don't change with the theme.
 
 ### Brand art (Storm, the logo)
 
@@ -201,6 +226,23 @@ The full set (46 icons) is on the Figma Icons page, named `Icon/<phosphor-name>`
 - Keep it small and quick: 200 to 300ms, ease-out.
 - Sheets slide up, modals and dropdowns fade and scale from 98%, and switching tabs cross-fades.
 - Respect `prefers-reduced-motion`: no slide or scale, opacity changes only.
+- Use the animation tokens in `src/app/globals.css`. Under reduced motion they already fall back to a fade (or stop, for loops), so you don't need `motion-reduce:` on them.
+
+  | Class | Does | Used for |
+  |---|---|---|
+  | `animate-fade-in` | Opacity in, 250ms | Screen changes (`template.tsx` in `(app)` and `(focus)`), FAQ answers |
+  | `animate-fade-up` | Fade and rise 12px, 300ms | Landing hero on load (stagger with `animationDelay`) |
+  | `animate-pop-in` | Fade and scale from 98%, 200ms | Dropdowns (notifications) |
+  | `animate-float` | Bobs 6px, 5s loop | Landing swap cards only. Keep loops rare |
+  | `animate-shimmer` | Slow pulse | Skeletons |
+
+- `src/components/ui/Reveal.tsx` fades content up the first time it scrolls into view. Use it below the fold only. Landing sections get it from `LandingSection`.
+
+## Loading
+
+- Every screen shows a skeleton while it loads, never a spinner. Build skeletons from `src/components/ui/Skeleton.tsx` (`tone`: `line` for text, `photo` for photo boxes, `cover` for profile covers) and match the real screen's layout so nothing jumps.
+- Static screens use `loading.tsx` next to their `page.tsx`. Screens with a dynamic segment (post, user, trade) use their `<Suspense>` fallback instead, so their nested screens don't inherit the wrong skeleton. Anything in `(focus)` without its own falls back to `ScreenSkeleton`.
+- Skeletons have `role="status"` and an `aria-label` ("Loading feed") so screen readers hear what's loading.
 
 ## Accessibility
 

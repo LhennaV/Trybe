@@ -60,7 +60,7 @@ export default function NewPostFlow() {
       <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(76px+max(30px,env(safe-area-inset-bottom)))] lg:pb-2">
         <div className="flex items-center gap-3 py-2">
           {step === 1 ? (
-            <IconButton href="/" label="Close">
+            <IconButton href="/feed" label="Close">
               <X size={20} weight="bold" aria-hidden />
             </IconButton>
           ) : (

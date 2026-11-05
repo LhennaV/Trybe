@@ -83,7 +83,7 @@ export default function ProfileSafetyMenu({ handle }: { handle: string }) {
               onClick={() => {
                 setStatus(`@${handle} is blocked.`);
                 close();
-                router.push("/");
+                router.push("/feed");
               }}
             >
               Block

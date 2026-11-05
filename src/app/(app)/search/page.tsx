@@ -1,3 +1,4 @@
+import SearchSkeleton from "@/components/explore/SearchSkeleton";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -21,7 +22,7 @@ const list = (value: string | string[] | undefined) => (Array.isArray(value) ? v
 // endpoint handles text, hobby, condition, distance, and sort later.
 export default function SearchPage(props: PageProps<"/search">) {
   return (
-    <Suspense fallback={<div aria-busy="true" className="h-40" />}>
+    <Suspense fallback={<SearchSkeleton />}>
       <Results searchParams={props.searchParams} />
     </Suspense>
   );

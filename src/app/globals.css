@@ -151,12 +151,65 @@
   --text-caption: 0.6875rem;
   --text-caption--line-height: 0.875rem;
 
+  /* Landing page only. Bigger marketing sizes from the "Landing · B" frames. */
+  --text-display-hero: 4.25rem;
+  --text-display-hero--line-height: 4.5rem;
+  --text-display-hero-m: 2.375rem;
+  --text-display-hero-m--line-height: 2.625rem;
+  --text-display-cta: 3rem;
+  --text-display-cta--line-height: 3.375rem;
+  --text-display-section: 2.75rem;
+  --text-display-section--line-height: 3.125rem;
+  --text-display-section-m: 1.875rem;
+  --text-display-section-m--line-height: 2.125rem;
+  --text-lead-l: 1.1875rem;
+  --text-lead-l--line-height: 1.75rem;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6875rem;
+  --text-lead-m: 1rem;
+  --text-lead-m--line-height: 1.5rem;
+
   --radius-chip: 999px;
   --radius-input: 14px;
   --radius-button: 14px;
   --radius-card: 16px;
   --radius-photo: 18px;
   --radius-sheet: 28px;
+
+  /* Motion. Small and quick (200 to 300ms, ease-out), per DESIGN.md. */
+  --animate-fade-in: fade-in 250ms ease-out both;
+  --animate-fade-up: fade-up 300ms ease-out both;
+  --animate-pop-in: pop-in 200ms ease-out both;
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      translate: 0 12px;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      scale: 0.98;
+    }
+  }
+  @keyframes float {
+    50% {
+      translate: 0 -6px;
+    }
+  }
+  @keyframes shimmer {
+    50% {
+      opacity: 0.55;
+    }
+  }
 
   --shadow-button-danger: 0 3px 0 0 #8c3333;
   --shadow-modal: 0 20px 60px rgb(43 36 51 / 0.25);
@@ -171,4 +224,27 @@ body {
 :focus-visible {
   outline: 2px solid var(--brand-plum);
   outline-offset: 2px;
+}
+
+/* Scroll reveal (src/components/ui/Reveal.tsx). Hidden only once the script has
+   checked it's below the screen, so slow loads never leave blank sections. */
+.reveal[data-reveal="waiting"] {
+  opacity: 0;
+}
+.reveal[data-reveal="shown"] {
+  animation: fade-up 400ms ease-out both;
+}
+
+/* Reduced motion: no sliding, scaling, or looping. Opacity changes only.
+   [class*=] also catches breakpoint versions like lg:animate-float. */
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-fade-up"],
+  [class*="animate-pop-in"],
+  .reveal[data-reveal="shown"] {
+    animation-name: fade-in;
+  }
+  [class*="animate-float"],
+  [class*="animate-shimmer"] {
+    animation: none;
+  }
 }
