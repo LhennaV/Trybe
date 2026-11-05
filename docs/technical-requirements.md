@@ -656,7 +656,7 @@ Check current pricing before paying. Prices change.
 | "Replies in ~1 hr"               | Keep or cut                         | Both    |
 | Dark mode                        | v1 or later                         | Lhenna  |
 | Weekly email digest              | v1 or later                         | Both    |
-| Who can message by default       | Anyone via Requests, or traded-only | Both    |
+| Who can message by default       | **Decided 2026-11-05:** anyone via Requests (`message_permission` default `anyone`); users can switch to traded-only | Both    |
 | Item photo limit and upload size | See section 13                      | Tristan |
 | End-to-end test tool             | Playwright or others (Vitest chosen for unit and integration) | Tristan |
 

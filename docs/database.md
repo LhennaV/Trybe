@@ -266,6 +266,7 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | ----------------- | ------------------------------------------------------------------------------- | ------------------------------ |
 | users             | `uq_users_handle (handle)`                                                      | Profile by handle              |
 | users             | `idx_users_city (city)`                                                         | "Near you"                     |
+| hobbies           | `uq_hobbies_slug (slug)`                                                        | Hobby by slug, seed upsert     |
 | user_hobbies      | `uq_user_hobbies_user_id_hobby_id`                                              | One row per hobby per user     |
 | user_hobbies      | `idx_user_hobbies_hobby_id (hobby_id)`                                          | Users by hobby, matches        |
 | items             | `idx_items_owner_id_status (owner_id, status)`                                  | "My gear", propose screen      |
