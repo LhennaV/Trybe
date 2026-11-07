@@ -1,3 +1,4 @@
+import RevealText from "@/components/ui/RevealText";
 import LandingSection from "./LandingSection";
 import SectionLabel from "./SectionLabel";
 
@@ -21,9 +22,10 @@ export default function HowItWorks() {
     <LandingSection id="how-it-works" innerClassName="flex flex-col gap-3.5 lg:gap-10">
       <div className="flex flex-col gap-3.5 lg:gap-3">
         <SectionLabel>How it works</SectionLabel>
-        <h2 className="font-display text-display-section-m text-ink-900 lg:max-w-[760px] lg:text-display-section">
-          Three steps from drawer to new hobby.
-        </h2>
+        <RevealText
+          text="Three steps from drawer to new hobby."
+          className="font-display text-display-section-m text-ink-900 lg:max-w-[760px] lg:text-display-section"
+        />
       </div>
 
       <ol className="flex flex-col gap-3.5 lg:grid lg:grid-cols-3 lg:gap-6">

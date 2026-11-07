@@ -1,3 +1,4 @@
+import RevealText from "@/components/ui/RevealText";
 import LandingSection from "./LandingSection";
 import SectionLabel from "./SectionLabel";
 
@@ -23,9 +24,10 @@ export default function HobbiesSection() {
     <LandingSection className="bg-brand-lavender-soft" innerClassName="flex flex-col gap-4 lg:items-center lg:gap-7">
       <div className="flex flex-col gap-4 lg:items-center lg:gap-3 lg:text-center">
         <SectionLabel>Hobbies on Trybe</SectionLabel>
-        <h2 className="font-display text-display-section-m text-ink-900 lg:max-w-[760px] lg:text-display-section">
-          Whatever you&apos;re curious about next.
-        </h2>
+        <RevealText
+          text="Whatever you're curious about next."
+          className="font-display text-display-section-m text-ink-900 lg:max-w-[760px] lg:text-display-section"
+        />
         <p className="hidden text-lead text-ink-600 lg:block">Start with the ones people try and drop the most.</p>
       </div>
 

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import FaqSection from "@/components/landing/FaqSection";
-import FinalCta from "@/components/landing/FinalCta";
 import HobbiesSection from "@/components/landing/HobbiesSection";
 import HowItWorks from "@/components/landing/HowItWorks";
 import LandingFooter from "@/components/landing/LandingFooter";
@@ -26,7 +25,6 @@ export default function LandingPage() {
         <HowItWorks />
         <HobbiesSection />
         <FaqSection />
-        <FinalCta />
       </main>
       <LandingFooter />
     </>

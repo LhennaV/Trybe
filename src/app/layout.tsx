@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Lilita_One, Nunito } from "next/font/google";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
+import ScrollbarAutoHide from "@/components/ui/ScrollbarAutoHide";
 import AppearanceSync from "@/components/theme/AppearanceSync";
 import { appearanceScript } from "@/components/theme/appearance";
 import "./globals.css";
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <AppearanceSync />
         <ServiceWorkerRegister />
+        <ScrollbarAutoHide />
         {children}
       </body>
     </html>
