@@ -21,6 +21,8 @@
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@sentry/nextjs": "^11.9.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.0",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.2",
     "postgres": "^3.4.9",

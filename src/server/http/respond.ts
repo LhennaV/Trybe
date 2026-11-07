@@ -10,6 +10,7 @@ import {
   type ApiSuccess,
   type ErrorCode,
 } from "@/shared/contracts/common";
+import { findPgError } from "@/server/db/pgError";
 import { AppError } from "@/server/errors";
 
 export function ok<T>(data: T, status = 200) {
@@ -19,18 +20,6 @@ export function ok<T>(data: T, status = 200) {
 export function fail(code: ErrorCode, message: string = ERROR_MESSAGES[code], fields?: Record<string, string[]>) {
   const body: ApiError = { error: { code, message, ...(fields && { fields }) } };
   return Response.json(body, { status: ERROR_STATUS[code] });
-}
-
-// Postgres errors can arrive bare (postgres-js) or wrapped by Drizzle in
-// `cause`. Walk the chain to find the one with a SQLSTATE code.
-function findPgError(error: unknown): { code: string; message: string } | null {
-  let current: unknown = error;
-  for (let depth = 0; current instanceof Error && depth < 5; depth++) {
-    const code = (current as { code?: unknown }).code;
-    if (typeof code === "string" && /^[0-9A-Z]{5}$/.test(code)) return { code, message: current.message };
-    current = current.cause;
-  }
-  return null;
 }
 
 function zodFields(error: z.ZodError) {
