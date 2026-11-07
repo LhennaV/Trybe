@@ -26,6 +26,61 @@ Trybe uses a **hybrid** model.
 Route handlers never write SQL. They call functions in `src/server/`, which
 either use Drizzle or call a database function.
 
+### 1.1 SQL injection rules
+
+Both paths, Drizzle and database functions, must keep user input out of the
+SQL text. What protects us is **bind parameters**: the SQL and the values
+travel to Postgres separately, so a value can never be read as SQL.
+
+**In TypeScript (`src/server/`)**
+
+1. Use the Drizzle query builder or the `sql` template tag. Both bind every
+   `${value}` as a parameter automatically:
+   ```ts
+   // Safe: handle is sent as a parameter ($1)
+   db.select().from(users).where(eq(users.handle, handle));
+   tx.execute(sql`select app.trade_accept(${tradeId}, ${actorId})`);
+   ```
+2. Never build SQL with string concatenation or a plain template literal and
+   pass it to `execute`:
+   ```ts
+   // NEVER: the value becomes part of the SQL text
+   tx.execute(sql.raw(`select * from users where handle = '${handle}'`));
+   ```
+3. `sql.raw()` and `sql.identifier()` only take **constants from our code**
+   (for example the limits used in check constraints in `schema.ts`). Never
+   pass them anything that came from a request. Reviewers check every new
+   `sql.raw` in a pull request.
+4. Validate input with Zod before it reaches the database. This rejects bad
+   data early, but it is an extra layer. Bind parameters are the protection.
+
+**Inside database functions (`app.*`)**
+
+1. Prefer plain (static) SQL in PL/pgSQL. Parameters like `p_trade_id` are
+   bound automatically, the same as in TypeScript.
+2. If dynamic SQL is truly needed, use `format()` with `%I` for identifiers
+   and pass values with `using`. Never concatenate with `||`:
+   ```sql
+   -- Safe
+   execute format('select count(*) from public.%I where owner_id = $1', v_table)
+     into v_count
+     using p_actor_id;
+   ```
+3. Keep `set search_path = ''` and write every table as `public.table_name`
+   (section 5.2), so a function can't be tricked into using another object
+   with the same name.
+
+**Prepared statements**
+
+`DATABASE_URL` uses the Supabase **transaction pooler**, which does not
+keep named prepared statements between requests. That is why
+`src/server/db/index.ts` sets `prepare: false`. Do not turn it back on for
+the pooled connection.
+
+This does **not** weaken SQL injection protection. postgres-js still sends
+every query with its values as separate bind parameters (Postgres extended
+query protocol). It just doesn't save the statement under a name for reuse.
+
 ## 2. Schemas
 
 | Schema            | Contains                                           | Exposed to the browser                   |

@@ -400,6 +400,15 @@ Cursor based: `?cursor=<opaque>&limit=20`. Responses include `nextCursor` or
 ### Endpoints (draft)
 
 ```
+Auth
+POST   /api/auth/signup
+POST   /api/auth/login
+POST   /api/auth/logout
+POST   /api/auth/password/forgot
+POST   /api/auth/password
+POST   /api/auth/verify/resend
+GET    /api/auth/confirm?token_hash=&type=    link in Supabase emails
+
 Feed and posts
 GET    /api/feed?hobby=&cursor=
 GET    /api/posts/:id

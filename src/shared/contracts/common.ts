@@ -14,8 +14,10 @@ export const ERROR_STATUS = {
   // 400
   VALIDATION_FAILED: 400,
   CANNOT_TRADE_WITH_SELF: 400,
+  CAPTCHA_FAILED: 400,
   // 401
   UNAUTHENTICATED: 401,
+  INVALID_CREDENTIALS: 401,
   // 403
   FORBIDDEN: 403,
   EMAIL_NOT_VERIFIED: 403,
@@ -24,9 +26,11 @@ export const ERROR_STATUS = {
   ITEM_NOT_OWNED: 403,
   // 404
   NOT_FOUND: 404,
+  PROFILE_NOT_FOUND: 404,
   TRADE_NOT_FOUND: 404,
   // 409
   CONFLICT: 409,
+  HANDLE_TAKEN: 409,
   TRADE_NOT_PENDING: 409,
   TRADE_NOT_ACCEPTED: 409,
   ITEM_NOT_AVAILABLE: 409,
@@ -49,15 +53,20 @@ export function isErrorCode(value: unknown): value is ErrorCode {
 export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   VALIDATION_FAILED: "Some of that didn't look right. Check the highlighted fields.",
   CANNOT_TRADE_WITH_SELF: "You can't trade with yourself, sadly.",
+  CAPTCHA_FAILED: "We couldn't check you're human. Try the check again.",
   UNAUTHENTICATED: "Log in to keep going.",
+  INVALID_CREDENTIALS: "That email and password don't match.",
   FORBIDDEN: "You don't have access to that.",
   EMAIL_NOT_VERIFIED: "Verify your email first. Check your inbox for the link.",
   NOT_TRADE_MEMBER: "That trade isn't yours.",
   CANNOT_ACCEPT_OWN_OFFER: "This is your offer. Wait for the other person to respond.",
   ITEM_NOT_OWNED: "You can only offer your own gear.",
   NOT_FOUND: "We couldn't find that.",
+  // Signed in, but sign up never created the profile. Send them to finish it.
+  PROFILE_NOT_FOUND: "Finish setting up your profile first.",
   TRADE_NOT_FOUND: "We couldn't find that trade.",
   CONFLICT: "Something changed while you were looking. Refresh and try again.",
+  HANDLE_TAKEN: "Someone already has that handle. Try another one.",
   TRADE_NOT_PENDING: "This trade already moved on. Refresh to see the latest.",
   TRADE_NOT_ACCEPTED: "This trade hasn't been accepted yet.",
   ITEM_NOT_AVAILABLE: "One of those items is no longer available.",

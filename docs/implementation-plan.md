@@ -104,14 +104,28 @@ profile.
 
 - [x] **[BE]** Tables: users, hobbies, user_hobbies. Seed the hobby list
 - [x] **[BE]** Enable RLS on all tables from day one
-- [ ] **[BE]** Supabase Auth: sign up, log in, log out, reset password (AUTH-01, AUTH-06)
-- [ ] **[BE]** Email verification and custom SMTP (AUTH-05)
+- [x] **[BE]** Supabase Auth: sign up, log in, log out, reset password (AUTH-01, AUTH-06)
+  - Endpoints in `src/app/api/auth/`. Tested live on the dev project 2026-11-07.
+    Email templates in Supabase point to `/api/auth/confirm` (`type=email` and `type=recovery`).
+- [x] **[BE]** Email verification and custom SMTP (AUTH-05)
+  - SMTP: Brevo free plan (300 emails a day), sending from a verified Gmail
+    sender for now. Before launch: buy a domain and authenticate it in Brevo,
+    so emails come from a Trybe address and don't land in spam.
+    The Brevo SMTP key ("trybeapp") expires 2027-11-07, or after 90 days
+    without use. When it expires, sign up and reset emails stop sending.
+    When the app moves to Vercel, update the Site URL in Supabase Auth settings.
 - [ ] **[BE]** Turnstile verification on sign up and log in (AUTH-02)
-- [ ] **[BE]** Store terms acceptance and age confirmation (AUTH-03, AUTH-04)
-- [ ] **[BE]** Endpoints: `GET /api/me`, `PATCH /api/me`, `GET /api/users/:handle`, `GET /api/hobbies`
-- [ ] **[BE]** Handle uniqueness and validation
+  - In progress: endpoints pass the Turnstile token to Supabase Auth's built-in CAPTCHA.
+    Left: create the Turnstile widget, turn on CAPTCHA in Supabase Auth settings.
+- [x] **[BE]** Store terms acceptance and age confirmation (AUTH-03, AUTH-04)
+  - The sign up trigger (migration 0004) refuses accounts without both and stores the times.
+- [x] **[BE]** Endpoints: `GET /api/me`, `PATCH /api/me`, `GET /api/users/:handle`, `GET /api/hobbies`
+- [x] **[BE]** Handle uniqueness and validation
 - [ ] **[BE]** Profile photo upload (shared upload helper, also used in Phase 2)
+  - Needs a decision: image resizing library (`sharp` is turned off in `pnpm-workspace.yaml`).
 - [ ] **[BE]** Derived "new trader" flag (PROF-04)
+  - In progress: built in `src/server/users/newTrader.ts` with Proposed numbers
+    (30 days and 3 completed trades). Left: agree on the numbers.
 - [ ] **[FE]** Landing screen
 - [ ] **[FE]** Sign up with terms checkbox, age confirmation, Turnstile
 - [ ] **[FE]** Log in, forgot password, verify email screens
