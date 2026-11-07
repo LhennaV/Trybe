@@ -29,6 +29,13 @@
       "when": 1793891745962,
       "tag": "0003_seed_hobbies",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794061460467,
+      "tag": "0004_auth_user_triggers",
+      "breakpoints": true
     }
   ]
 }

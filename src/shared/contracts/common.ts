@@ -14,8 +14,10 @@ export const ERROR_STATUS = {
   // 400
   VALIDATION_FAILED: 400,
   CANNOT_TRADE_WITH_SELF: 400,
+  CAPTCHA_FAILED: 400,
   // 401
   UNAUTHENTICATED: 401,
+  INVALID_CREDENTIALS: 401,
   // 403
   FORBIDDEN: 403,
   EMAIL_NOT_VERIFIED: 403,
@@ -51,7 +53,9 @@ export function isErrorCode(value: unknown): value is ErrorCode {
 export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   VALIDATION_FAILED: "Some of that didn't look right. Check the highlighted fields.",
   CANNOT_TRADE_WITH_SELF: "You can't trade with yourself, sadly.",
+  CAPTCHA_FAILED: "We couldn't check you're human. Try the check again.",
   UNAUTHENTICATED: "Log in to keep going.",
+  INVALID_CREDENTIALS: "That email and password don't match.",
   FORBIDDEN: "You don't have access to that.",
   EMAIL_NOT_VERIFIED: "Verify your email first. Check your inbox for the link.",
   NOT_TRADE_MEMBER: "That trade isn't yours.",
