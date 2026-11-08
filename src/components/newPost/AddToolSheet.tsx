@@ -11,18 +11,20 @@ import Input from "@/components/ui/Input";
 import SegmentedControl from "@/components/ui/SegmentedControl";
 import Sheet from "@/components/ui/Sheet";
 import Toggle from "@/components/ui/Toggle";
+import { ITEM_CONDITION_LABELS, ITEM_CONDITIONS, type ItemCondition } from "@/shared/contracts/items";
 import { ACCEPTED_PHOTO_TYPES } from "./photos";
 
 // Sample categories. They'll come from the hobby picked for the post (GET /api/hobbies).
 const CATEGORIES = ["Wheels & kilns", "Hand tools", "Clay & glaze", "Other"];
 
-type Condition = "like_new" | "good" | "fair" | "worn";
-const CONDITIONS: { value: Condition; label: string; meta: string }[] = [
-  { value: "like_new", label: "Like new", meta: "Like new" },
-  { value: "good", label: "Good", meta: "Good condition" },
-  { value: "fair", label: "Fair", meta: "Fair condition" },
-  { value: "worn", label: "Worn", meta: "Worn" },
-];
+// Labels come from the shared contract, so every screen says "Well loved" for "worn".
+const CONDITIONS = ITEM_CONDITIONS.map((value) => ({ value, label: ITEM_CONDITION_LABELS[value] }));
+
+// The line under a tool's name: "Good condition", but "Like new" and "Well loved" read fine alone.
+function conditionMeta(condition: ItemCondition) {
+  const label = ITEM_CONDITION_LABELS[condition];
+  return condition === "good" || condition === "fair" ? `${label} condition` : label;
+}
 
 type AddToolSheetProps = {
   open: boolean;
@@ -44,7 +46,7 @@ export default function AddToolSheet({ open, onClose, onAdd }: AddToolSheetProps
 function AddToolForm({ onClose, onAdd }: Omit<AddToolSheetProps, "open">) {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [category, setCategory] = useState(CATEGORIES[0]);
-  const [condition, setCondition] = useState<Condition>("good");
+  const [condition, setCondition] = useState<ItemCondition>("good");
   const [upForTrade, setUpForTrade] = useState(true);
   const [name, setName] = useState("");
   const [lookingFor, setLookingFor] = useState("");
@@ -60,7 +62,7 @@ function AddToolForm({ onClose, onAdd }: Omit<AddToolSheetProps, "open">) {
       id: `tool-${Date.now()}`,
       name: name.trim(),
       category,
-      condition: CONDITIONS.find((c) => c.value === condition)?.meta ?? "",
+      condition: conditionMeta(condition),
       upForTrade,
       lookingFor: upForTrade && lookingFor.trim() ? lookingFor.trim() : undefined,
     });
