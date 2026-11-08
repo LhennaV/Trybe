@@ -27,7 +27,7 @@ Tags: **[BE]** Tristan, **[FE]** Lhenna, **[Both]** together.
 | Phase | Name                              | Target | Status      |
 | ----- | --------------------------------- | ------ | ----------- |
 | 0     | Foundation                        | TBD    | In progress |
-| 1     | Accounts and profiles             | TBD    | Not started |
+| 1     | Accounts and profiles             | TBD    | In progress |
 | 2     | Items, posts, and feed            | TBD    | Not started |
 | 3     | Trades core                       | TBD    | Not started |
 | 4     | Chat, meetup, completion, ratings | TBD    | Not started |
@@ -71,13 +71,24 @@ shared contracts and mock data without blocking each other.
 - [x] **[BE]** Create Supabase dev project
 - [x] **[BE]** Set up Drizzle, database connection (pooled and direct), first empty migration
 - [x] **[BE]** `.env.example` with every variable from TRD section 17
-- [ ] **[BE]** Deploy to Vercel, preview deploys on pull requests
+- [x] **[BE]** Deploy to Vercel, preview deploys on pull requests
+  - Live 2026-11-08 at https://trybe-puce.vercel.app (Vercel team "trybeappteam", Hobby plan,
+    GitHub connected through LhennaV). Uses the dev Supabase project until a production one exists.
+    Preview deploys come with the next pull request; check that one gets a link.
 - [x] **[BE]** Pull request checks: lint, type check, test, build
 - [x] **[BE]** Set up Vitest with one passing test
 - [x] **[BE]** Set up Sentry (client and server)
 - [x] **[BE]** `src/shared/contracts/common.ts`: response shape, error codes, pagination
 - [ ] **[Both]** Draft contracts for users, items, posts, trades in `src/shared/contracts/`
-- [ ] **[BE]** Mock data file built from the contracts
+  - Drafted 2026-11-08: `items.ts`, `posts.ts`, `trades.ts`, `photos.ts` (users and hobbies
+    were done in Phase 1). Decided by Tristan 2026-11-08 (TRD section 21): one hobby per post,
+    no cash-only offers, fixed rating tags (Lhenna's list), "worn" shows as "Well loved".
+    Also in the draft: trade responses use "me"/"them", cash is whole pesos up to PHP 1,000,000,
+    up to 4 photos per item (Proposed).
+    Left: Lhenna reviews and agrees, then updates ProposeForm (no cash-only) and the
+    condition labels (use `ITEM_CONDITION_LABELS`).
+- [x] **[BE]** Mock data file built from the contracts
+  - `src/shared/mocks/index.ts`, checked against the schemas by `tests/unit/shared/mocks.test.ts`.
 - [x] **[FE]** Design tokens in `src/app/globals.css` with `@theme`, hex values from Figma
 - [x] **[FE]** Fonts with `next/font`: Lilita One and Nunito
 - [x] **[FE]** Layout shell: bottom nav on mobile, sidebar on desktop

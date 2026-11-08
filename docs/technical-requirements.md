@@ -218,7 +218,7 @@ IDs are used in issues and pull requests. **P0** is required for launch,
 
 | ID      | Requirement                                                                | Priority |
 | ------- | -------------------------------------------------------------------------- | -------- |
-| POST-01 | Create a post with up to 6 photos, title, caption, hobbies, tagged items   | P0       |
+| POST-01 | Create a post with up to 6 photos, title, caption, one hobby, tagged items | P0       |
 | POST-02 | A post is "for trade" if any tagged item is up for trade. No manual toggle | P0       |
 | POST-03 | Feed cards show an "Up for trade" badge on for-trade posts                 | P0       |
 | POST-04 | "Propose a trade" appears only on for-trade posts                          | P0       |
@@ -241,7 +241,7 @@ IDs are used in issues and pull requests. **P0** is required for launch,
 
 | ID     | Requirement                                                                              | Priority |
 | ------ | ---------------------------------------------------------------------------------------- | -------- |
-| TRD-01 | Propose a trade: pick one or more of their for-trade items and one or more of your items | P0       |
+| TRD-01 | Propose a trade: pick one or more of their for-trade items and one or more of your items. Cash is only a top-up, never the whole offer | P0       |
 | TRD-02 | Optional balance: cash amount with direction (from you or from them), or extra items     | P0       |
 | TRD-03 | Counter offer creates a new offer row on the same trade                                  | P0       |
 | TRD-04 | Only the person who did not make the current offer can accept, decline, or counter       | P0       |
@@ -250,7 +250,7 @@ IDs are used in issues and pull requests. **P0** is required for launch,
 | TRD-07 | Offer history visible in the trade chat                                                  | P0       |
 | TRD-08 | Either side can cancel before completion                                                 | P0       |
 | TRD-09 | Proposing requires a verified email                                                      | P0       |
-| TRD-10 | Empty state when the proposer has no items, with a link to add one                       | P0       |
+| TRD-10 | Empty state when the proposer has no items, with a link to add one (they can't propose until they add one) | P0       |
 
 ### 8.7 Chat and message requests
 
@@ -324,7 +324,7 @@ noted.
 | posts             | user_id, title, caption, hidden_at                                                                                                                                                                                               | For-trade flag derived from tagged items |
 | post_photos       | post_id, url, position                                                                                                                                                                                                           | Max 6 per post                           |
 | post_items        | post_id, item_id                                                                                                                                                                                                                 | Many to many                             |
-| post_hobbies      | post_id, hobby_id                                                                                                                                                                                                                | Many to many                             |
+| post_hobbies      | post_id, hobby_id                                                                                                                                                                                                                | One hobby per post for now (2026-11-08); a `posts.hobby_id` column may replace this table |
 | likes             | user_id, post_id                                                                                                                                                                                                                 | Unique pair                              |
 | saves             | user_id, post_id                                                                                                                                                                                                                 | Unique pair                              |
 | trades            | initiator_id, recipient_id, status, current_offer_id, meetup_spot_id, meetup_at, meetup_confirmed_by_initiator, meetup_confirmed_by_recipient, completed_by_initiator_at, completed_by_recipient_at, cancelled_by, cancel_reason | Row is locked on every change            |
@@ -665,6 +665,7 @@ Check current pricing before paying. Prices change.
 | "Replies in ~1 hr"               | Keep or cut                         | Both    |
 | Dark mode                        | v1 or later                         | Lhenna  |
 | Weekly email digest              | v1 or later                         | Both    |
+| Post and trade details           | **Decided 2026-11-08:** one hobby per post; offers need an item on both sides (no cash-only); fixed rating tags (`RATING_TAGS` in `src/shared/contracts/trades.ts`); item condition "worn" shows as "Well loved" | Both    |
 | Who can message by default       | **Decided 2026-11-05:** anyone via Requests (`message_permission` default `anyone`); users can switch to traded-only | Both    |
 | Item photo limit and upload size | See section 13                      | Tristan |
 | End-to-end test tool             | Playwright or others (Vitest chosen for unit and integration) | Tristan |

@@ -69,6 +69,19 @@ export const publicProfileSchema = z.object({
 });
 export type PublicProfile = z.infer<typeof publicProfileSchema>;
 
+// The short version of a person, shown on post cards, items, and trades.
+export const userSummarySchema = publicProfileSchema.pick({
+  id: true,
+  handle: true,
+  displayName: true,
+  photoUrl: true,
+  city: true,
+  isNewTrader: true,
+  rating: true,
+  tradeCount: true,
+});
+export type UserSummary = z.infer<typeof userSummarySchema>;
+
 // GET /api/me. The public profile plus fields only the owner sees.
 export const meSchema = publicProfileSchema.extend({
   email: z.email(),
