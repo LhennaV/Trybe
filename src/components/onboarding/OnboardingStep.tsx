@@ -1,13 +1,15 @@
 import type { ReactNode } from "react";
 import { CaretLeft } from "@phosphor-icons/react/dist/ssr";
+import { AuthBrand } from "@/components/auth/AuthScreen";
 import IconButton from "@/components/ui/IconButton";
 
 type OnboardingStepProps = {
   step: number;
   totalSteps: number;
-  backHref: string;
+  // Leave out when going back makes no sense (right after the email link).
+  backHref?: string;
   title: string;
-  subtitle: string;
+  subtitle: ReactNode;
   children: ReactNode;
 };
 
@@ -22,12 +24,16 @@ export default function OnboardingStep({
   children,
 }: OnboardingStepProps) {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-[18px] px-4 pt-2 pb-[max(34px,env(safe-area-inset-bottom))] lg:min-h-0 lg:max-w-[440px] lg:py-12">
-      <div className="flex items-center gap-3 py-2">
-        <IconButton href={backHref} label="Back">
-          <CaretLeft size={20} weight="bold" aria-hidden />
-        </IconButton>
-        <p className="text-body-s font-bold text-ink-400">
+    // Sits inside the frosted card from src/app/(auth)/layout.tsx.
+    <main className="flex flex-col gap-[18px] px-5 pt-4 pb-7 sm:px-8 sm:pt-6 sm:pb-8">
+      <AuthBrand />
+      <div className="flex min-h-11 items-center gap-3">
+        {backHref && (
+          <IconButton href={backHref} label="Back">
+            <CaretLeft size={20} weight="bold" aria-hidden />
+          </IconButton>
+        )}
+        <p className="text-body-s font-bold text-ink-600">
           Step {step} of {totalSteps}
         </p>
       </div>

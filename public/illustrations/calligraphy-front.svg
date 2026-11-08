@@ -1,0 +1,38 @@
+<svg width="123" height="123" viewBox="0 0 123 123" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Landing &#194;&#183; A &#194;&#183; Curiosity (desktop)">
+<g id="Problem">
+<g id="Cards">
+<g id="Card &#194;&#183; The hobby you keep putting off">
+<g id="Photos">
+<g id="Tile &#194;&#183; calligraphy">
+<g id="Illo/calligraphy" filter="url(#filter0_d_369_3)">
+<g id="Group">
+<g id="Group_2">
+<path id="Vector" d="M71.6492 15.16L14.8078 23.1485C12.5655 23.4636 11.0032 25.5369 11.3184 27.7792L22.4452 106.951C22.7604 109.193 24.8336 110.756 27.076 110.441L83.9173 102.452C86.1597 102.137 87.722 100.064 87.4068 97.8214L76.2799 18.6495C75.9648 16.4071 73.8916 14.8448 71.6492 15.16Z" fill="#FFF9F2" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M24.0363 44.6231C28.6999 33.617 35.3278 51.3168 39.9914 40.3106C44.655 29.3045 51.2829 47.0043 55.9465 35.9982C60.6101 24.992 64.9226 40.9471 68.1268 34.2863M26.8894 64.9236C31.553 53.9175 38.1808 71.6173 42.8445 60.6111C47.5081 49.605 54.1359 67.3048 58.7995 56.2987C63.4632 45.2925 67.7757 61.2476 70.9798 54.5868M29.7424 85.2241C34.406 74.218 41.0339 91.9178 45.6975 80.9116" stroke="#674390" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<path id="Vector_3" d="M104.55 16.4H90.2C86.8034 16.4 84.05 19.1535 84.05 22.55V36.9C84.05 40.2966 86.8034 43.05 90.2 43.05H104.55C107.947 43.05 110.7 40.2966 110.7 36.9V22.55C110.7 19.1535 107.947 16.4 104.55 16.4Z" fill="#674390" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" d="M97.375 36.8999C101.338 36.8999 104.55 33.6876 104.55 29.7249C104.55 25.7623 101.338 22.5499 97.375 22.5499C93.4124 22.5499 90.2 25.7623 90.2 29.7249C90.2 33.6876 93.4124 36.8999 97.375 36.8999Z" fill="#2B2433" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_5" d="M110.7 53.2999L71.75 110.7" stroke="#2B2433" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_6" d="M110.7 53.2999L71.75 110.7" stroke="#C49CF2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_7" d="M75.85 102.5L67.65 114.8L69.7 100.45L75.85 102.5Z" fill="#F5B76A" stroke="#2B2433" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_369_3" x="0" y="0" width="127.305" height="129.15" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="4.305" dy="6.15"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.168627 0 0 0 0 0.141176 0 0 0 0 0.2 0 0 0 0.18 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_369_3"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_369_3" result="shape"/>
+</filter>
+</defs>
+</svg>

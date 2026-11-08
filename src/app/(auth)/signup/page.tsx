@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
-import AuthScreen, { AuthHeading } from "@/components/auth/AuthScreen";
 import SignupForm from "@/components/auth/SignupForm";
 
 export const metadata: Metadata = {
   title: "Create an account",
 };
 
+// Step 1 and 2 of sign up. SignupForm draws its own step frame because it
+// switches to "Check your email" after the account is created.
 export default function SignupPage() {
-  return (
-    <AuthScreen backHref="/welcome">
-      <AuthHeading
-        title="Join the Trybe"
-        subtitle="Bring the gear you're done with. Leave with something new to try."
-      />
-      <SignupForm />
-    </AuthScreen>
-  );
+  return <SignupForm />;
 }

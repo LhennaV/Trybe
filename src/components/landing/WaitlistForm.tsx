@@ -24,13 +24,14 @@ export default function WaitlistForm({ id, className, onPlum = false }: Waitlist
         setNotice("The beta list isn't open yet. It goes live once the waitlist API is ready.");
       }}
     >
-      <div className="flex gap-2.5">
+      {/* Phones: email on top, full-width button under it. Side by side from sm up. */}
+      <div className="flex flex-col gap-2.5 sm:flex-row">
         <label htmlFor={inputId} className="sr-only">
           Your email
         </label>
         {/* The ring sits on the wrapper so it surrounds the icon too. */}
         <div
-          className={`flex h-13 min-w-0 flex-1 items-center gap-2.5 rounded-input border-[1.5px] border-line bg-surface-white px-4 focus-within:outline-2 focus-within:outline-offset-2 ${
+          className={`flex h-13 min-w-0 items-center sm:flex-1 gap-2.5 rounded-input border-[1.5px] border-line bg-surface-white px-4 focus-within:outline-2 focus-within:outline-offset-2 ${
             onPlum ? "focus-within:outline-surface-white" : "focus-within:outline-brand-plum"
           }`}
         >
@@ -48,7 +49,10 @@ export default function WaitlistForm({ id, className, onPlum = false }: Waitlist
         <Button
           type="submit"
           variant={onPlum ? "secondary" : "primary"}
-          className={onPlum ? "shrink-0 focus-visible:outline-surface-white!" : "shrink-0"}
+          className={[
+            "w-full shrink-0 sm:w-auto",
+            onPlum ? "focus-visible:outline-surface-white!" : "",
+          ].join(" ")}
         >
           Join the beta
         </Button>

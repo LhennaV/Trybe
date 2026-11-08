@@ -6,14 +6,15 @@ export const metadata: Metadata = {
   title: "Pick your hobbies",
 };
 
+// AUTH_REDIRECTS.verified: the email link lands here, so there's no back
+// button (the sign up form is already done).
 export default function OnboardingHobbiesPage() {
   return (
     <OnboardingStep
       step={2}
       totalSteps={3}
-      backHref="/signup"
       title="What are you into?"
-      subtitle="Tell us what you already do and what you've been wanting to try. We'll match you with gear from both sides."
+      subtitle="Email verified! Now tell us what you already do and what you've been wanting to try."
     >
       <HobbyPicker />
     </OnboardingStep>
