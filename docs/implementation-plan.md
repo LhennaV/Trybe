@@ -71,7 +71,10 @@ shared contracts and mock data without blocking each other.
 - [x] **[BE]** Create Supabase dev project
 - [x] **[BE]** Set up Drizzle, database connection (pooled and direct), first empty migration
 - [x] **[BE]** `.env.example` with every variable from TRD section 17
-- [ ] **[BE]** Deploy to Vercel, preview deploys on pull requests
+- [x] **[BE]** Deploy to Vercel, preview deploys on pull requests
+  - Live 2026-11-08 at https://trybe-puce.vercel.app (Vercel team "trybeappteam", Hobby plan,
+    GitHub connected through LhennaV). Uses the dev Supabase project until a production one exists.
+    Preview deploys come with the next pull request; check that one gets a link.
 - [x] **[BE]** Pull request checks: lint, type check, test, build
 - [x] **[BE]** Set up Vitest with one passing test
 - [x] **[BE]** Set up Sentry (client and server)
