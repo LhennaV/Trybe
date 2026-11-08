@@ -1,0 +1,39 @@
+<svg width="123" height="123" viewBox="0 0 123 123" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Landing &#194;&#183; A &#194;&#183; Curiosity (desktop)">
+<g id="Problem">
+<g id="Cards">
+<g id="Card &#194;&#183; The hobby you keep putting off">
+<g id="Photos">
+<g id="Tile &#194;&#183; carving">
+<g id="Illo/carving" filter="url(#filter0_d_369_3)">
+<g id="Group">
+<g id="Group_2">
+<path id="Vector" d="M48.1751 56.1739C56.0191 51.6452 57.3299 39.2305 51.1029 28.445C44.8759 17.6595 33.4691 12.5874 25.6251 17.1162C17.7811 21.6449 16.4702 34.0595 22.6972 44.845C28.9243 55.6305 40.3311 60.7026 48.1751 56.1739Z" fill="#F5B76A" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M44.5876 49.9602C49.4901 47.1298 50.0225 38.8738 45.7768 31.5201C41.5311 24.1663 34.1151 20.4995 29.2126 23.33C24.3101 26.1604 23.7776 34.4163 28.0233 41.7701C32.269 49.1238 39.6851 52.7907 44.5876 49.9602Z" fill="#C38442"/>
+<path id="Vector_3" d="M54.1509 56.2744C52.7357 53.8232 49.6013 52.9833 47.1501 54.3986C44.6988 55.8138 43.8589 58.9482 45.2742 61.3994L68.8492 102.233C70.2644 104.684 73.3988 105.524 75.85 104.108C78.3013 102.693 79.1412 99.5588 77.7259 97.1075L54.1509 56.2744Z" fill="#F5B76A" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="Group_3">
+<path id="Vector_4" d="M102.258 26.2408L109.982 36.6544L84.7862 69.0638L76.3899 63.1846L102.258 26.2408Z" fill="white" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_5" d="M82.6034 65.0329L80.9241 63.8571C78.1418 61.9089 74.307 62.5851 72.3589 65.3674L53.5455 92.2356C51.5974 95.0179 52.2735 98.8527 55.0558 100.801L56.7351 101.977C59.5174 103.925 63.3522 103.249 65.3004 100.466L84.1137 73.5982C86.0619 70.8159 85.3857 66.9811 82.6034 65.0329Z" fill="#674390" stroke="#2B2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<path id="Vector_6" d="M18.4501 94.2999C22.5501 86.0999 32.8001 90.1999 28.7001 98.3999M30.7501 106.6C36.9001 100.45 43.0501 106.6 38.9501 112.75M73.8001 104.55C79.9501 100.45 84.0501 106.6 79.9501 110.7" stroke="#C38442" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_369_3" x="0" y="0" width="127.305" height="129.15" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="4.305" dy="6.15"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.168627 0 0 0 0 0.141176 0 0 0 0 0.2 0 0 0 0.18 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_369_3"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_369_3" result="shape"/>
+</filter>
+</defs>
+</svg>

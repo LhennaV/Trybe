@@ -9,9 +9,9 @@ export type Appearance = {
 export const APPEARANCE_STORAGE_KEY = "trybe-appearance";
 export const APPEARANCE_CHANGE_EVENT = "trybe-appearance-change";
 
-// Dark mode is still an open decision (see AGENTS.md), so default to light
-// instead of following the OS until it's confirmed.
-export const DEFAULT_APPEARANCE: Appearance = { theme: "light", highContrast: null };
+// Follow the device's light/dark setting until the person picks one in
+// Settings › Appearance (decided by Lhenna, 2026-11-08).
+export const DEFAULT_APPEARANCE: Appearance = { theme: "auto", highContrast: null };
 
 export function parseAppearance(raw: string | null): Appearance {
   if (!raw) return DEFAULT_APPEARANCE;
@@ -63,7 +63,7 @@ export function saveAppearance(appearance: Appearance) {
 // It can't import anything, so it repeats parseAppearance + applyAppearance in plain JS.
 export const appearanceScript = `(function(){try{
 var a={};try{a=JSON.parse(localStorage.getItem("${APPEARANCE_STORAGE_KEY}"))||{}}catch(e){}
-var t=a.theme==="dark"||a.theme==="auto"?a.theme:"${DEFAULT_APPEARANCE.theme}";
+var t=a.theme==="light"||a.theme==="dark"||a.theme==="auto"?a.theme:"${DEFAULT_APPEARANCE.theme}";
 var d=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
 var c=typeof a.highContrast==="boolean"?a.highContrast:matchMedia("(prefers-contrast: more)").matches;
 var r=document.documentElement;r.setAttribute("data-theme",d?"dark":"light");

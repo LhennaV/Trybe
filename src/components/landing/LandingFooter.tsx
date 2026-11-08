@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr";
+import { CONTACT_EMAIL, CONTACT_HREF } from "@/components/legal/LegalDoc";
 import RevealText from "@/components/ui/RevealText";
 import WaitlistForm from "./WaitlistForm";
 
-// Instagram and Contact are in Figma but have no address yet. Add the href
-// and they show up.
+// Instagram is in Figma but has no address yet. Add the href and it shows up.
 const LINKS: { label: string; href: string | null }[] = [
+  { label: "About", href: "/about" },
   { label: "Instagram", href: null },
-  { label: "Contact", href: null },
+  { label: "Terms", href: "/terms" },
   { label: "Privacy", href: "/privacy" },
+  { label: "Guidelines", href: "/guidelines" },
 ];
 
 // Rounded plum footer: the beta call to action, then the brand row and links,
@@ -42,7 +45,16 @@ export default function LandingFooter() {
             </span>
           </div>
 
-          <ul className="flex gap-6 lg:gap-7">
+          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-0 lg:gap-x-7">
+            <li>
+              <a
+                href={CONTACT_HREF} target="_blank" rel="noreferrer"
+                className="flex min-h-11 items-center gap-1.5 text-body-s font-bold focus-visible:outline-surface-white"
+              >
+                <EnvelopeSimple size={16} weight="bold" aria-hidden />
+                {CONTACT_EMAIL}
+              </a>
+            </li>
             {LINKS.filter((link) => link.href).map((link) => (
               <li key={link.label}>
                 <Link

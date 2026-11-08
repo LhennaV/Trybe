@@ -1,0 +1,80 @@
+<!doctype html>
+<!--
+  Supabase > Authentication > Emails > "Confirm sign up"
+  Subject: Verify your email for Trybe
+  Paste this whole file as the message body.
+
+  Email clients don't support CSS variables, so colors are the light theme
+  hex values from src/styles/DESIGN.md (brand-plum #674390, brand-cream
+  #FFF9F2, ink-900 #2B2433, ink-600 #5E5669, line #ECE4F2,
+  brand-lavender-soft #F1E7FD, brand-plum-dark #4A2E6B). Fonts fall back to
+  Arial in clients that block web fonts (Gmail does).
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light only" />
+    <title>Verify your email</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body style="margin:0;padding:0;background-color:#FFF9F2;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+      One tap and you're in. Your new hobby is waiting.
+    </div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF9F2;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
+            <!-- Logo -->
+            <tr>
+              <td align="center" style="padding-bottom:20px;">
+                <img src="{{ .SiteURL }}/brand/storm-icon.png" width="82" height="80" alt="Trybe" style="display:block;border:0;" />
+              </td>
+            </tr>
+
+            <!-- Card -->
+            <tr>
+              <td style="background-color:#FFFFFF;border:1.5px solid #ECE4F2;border-radius:16px;padding:32px 28px;font-family:'Nunito',Arial,sans-serif;">
+                <h1 style="margin:0 0 10px;font-family:'Lilita One','Arial Black',Arial,sans-serif;font-weight:400;font-size:28px;line-height:32px;color:#674390;">
+                  Welcome to the Trybe!
+                </h1>
+                <p style="margin:0 0 24px;font-size:15px;line-height:21px;color:#5E5669;">
+                  Curiosity killed the cat. We brought it back. Tap the button to verify
+                  <strong style="color:#2B2433;">{{ .Email }}</strong> and pick the hobbies you're into.
+                </p>
+
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    <td align="center" style="border-radius:14px;background-color:#674390;box-shadow:0 3px 0 0 #4A2E6B;">
+                      <a href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=email"
+                        style="display:block;padding:14px 22px;font-family:'Nunito',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:14px;">
+                        Verify my email
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:24px;">
+                  <tr>
+                    <td style="background-color:#F1E7FD;border-radius:12px;padding:12px 14px;font-size:13px;line-height:18px;color:#4A2E6B;">
+                      The link works once and expires soon. If it stops working, log in and we'll offer to send a fresh one.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td align="center" style="padding:20px 12px 0;font-family:'Nunito',Arial,sans-serif;font-size:12px;line-height:16px;color:#5E5669;">
+                Didn't sign up for Trybe? Ignore this email and nothing happens.<br />
+                Trybe · Trade the gear you're done with for something new to try.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

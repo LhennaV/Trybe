@@ -1,31 +1,44 @@
 import type { ReactNode } from "react";
-import { CaretLeft } from "@phosphor-icons/react/dist/ssr";
-import IconButton from "@/components/ui/IconButton";
+import Image from "next/image";
+import Link from "next/link";
 
-type AuthScreenProps = {
-  backHref: string;
-  children: ReactNode;
-};
-
-// Shared frame for sign up, log in, and the other account screens:
-// back button on top, then the content in a phone-width column.
-export default function AuthScreen({ backHref, children }: AuthScreenProps) {
+// Inside the frosted card: the Trybe logo on top, which is also the way back
+// home (no separate back button, as on the HomeSure sign-in page), then the
+// screen's own content.
+export default function AuthScreen({ children }: { children: ReactNode }) {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-4 pt-2 pb-[max(34px,env(safe-area-inset-bottom))] lg:min-h-0 lg:max-w-[400px] lg:py-12">
-      <div className="py-2">
-        <IconButton href={backHref} label="Back">
-          <CaretLeft size={20} weight="bold" aria-hidden />
-        </IconButton>
-      </div>
+    <main className="flex flex-col gap-4 px-5 pt-6 pb-7 sm:px-8 sm:pt-8 sm:pb-8">
+      <AuthBrand />
       {children}
     </main>
   );
 }
 
-export function AuthHeading({ title, subtitle }: { title: string; subtitle: string }) {
+// Logo and wordmark, centred. A small press animation shows it's clickable.
+export function AuthBrand() {
   return (
-    <div className="flex flex-col gap-1.5 pb-1.5">
-      <h1 className="font-display text-display-l text-brand-plum">{title}</h1>
+    <Link
+      href="/"
+      aria-label="Trybe home"
+      className="group mx-auto flex min-h-11 items-center gap-2 rounded-chip px-2 transition-transform duration-150 active:scale-95"
+    >
+      <Image
+        src="/brand/storm-icon.png"
+        alt=""
+        width={41}
+        height={40}
+        priority
+        className="h-9 w-auto transition-transform duration-150 group-hover:scale-105 group-active:-rotate-6"
+      />
+      <span className="font-display text-display-m text-brand-plum">TRYBE</span>
+    </Link>
+  );
+}
+
+export function AuthHeading({ title, subtitle }: { title: string; subtitle: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1.5 pb-1 text-center">
+      <h1 className="font-display text-display-l text-ink-900">{title}</h1>
       <p className="text-body-m text-ink-600">{subtitle}</p>
     </div>
   );

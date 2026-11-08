@@ -72,7 +72,7 @@ There are **two independent switches** on `<html>`:
 
 So there are 4 combinations, and every screen must work in all of them. Don't use Tailwind's `dark:` variant for colors, since the variables already handle it. Set the attributes in an inline script in `<head>` before first paint, so there's no flash of the wrong theme. Save the choice in `localStorage` (key `trybe-appearance`), and later in the user's profile settings.
 
-Dark mode is still listed as an open decision in `AGENTS.md`. The dark values below are ready, but confirm before shipping the theme switcher.
+The default is **Auto**: the app follows the device's light or dark setting until the user picks one in Settings › Appearance (decided 2026-11-08).
 
 | Token | Use | Light | Dark | Light + HC | Dark + HC |
 |---|---|---|---|---|---|
@@ -217,7 +217,7 @@ The full set (46 icons) is on the Figma Icons page, named `Icon/<phosphor-name>`
 - Export brand art from Figma with a **transparent background**: hide the frame fill before exporting. A baked-in background shows up as a box as soon as the theme changes (cream in dark mode, lavender on a white card).
 - Keep the SVG export in `public/brand/` as the source, and use a PNG generated from it in the app. The SVGs are too heavy to serve.
 - File names are kebab-case: `storm-icon.svg` → `storm-icon.png`. No spaces or capitals.
-- Keep text out of brand images, since baked-in text can't follow the theme. `storm-logo.png` is Storm plus the wordmark only. The tagline is real text in `src/components/auth/BrandLogo.tsx`.
+- Keep text out of brand images, since baked-in text can't follow the theme. `storm-logo.png` is Storm plus the wordmark only. Taglines next to it are real text (for example `src/components/auth/AuthTagline.tsx`).
 - Put any background in CSS behind the image (`bg-brand-lavender`), never in the file. The app icons in `src/app/icon.tsx` and `src/app/apple-icon.tsx` add the lavender tile themselves.
 - When you replace a precached image, bump the cache name in `public/sw.js` so installed apps pick up the new file.
 
