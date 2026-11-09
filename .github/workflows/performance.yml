@@ -1,0 +1,33 @@
+# k6 performance test (docs/testing.md section 9). Only runs when started by
+# hand: Actions > Performance > Run workflow. It builds the app and loads it
+# against the local Supabase stack on the runner, never a real project.
+name: Performance
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "smoke (1 user, 15s) or load (10 users, about 1 min)"
+        type: choice
+        options: [smoke, load]
+        default: load
+
+permissions:
+  contents: read
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:test:start
+      # Without k6 installed, the script uses the grafana/k6 Docker image.
+      - run: pnpm test:performance ${{ inputs.profile == 'smoke' && '-- --smoke' || '' }}

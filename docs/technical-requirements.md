@@ -628,7 +628,8 @@ project first, then to production during release.
 | ----------- | -------------------------------------------------- | ----------------------------- |
 | Unit        | Trade state machine, validation, permission checks | Vitest                        |
 | Integration | API endpoints against a test database              | Vitest                        |
-| End to end  | Sign up, post, propose, accept, complete, rate     | Playwright (**Proposed**), P1 |
+| End to end  | Sign up, post, propose, accept, complete, rate     | Playwright, P1                |
+| Performance | Busiest endpoints under load                       | k6                            |
 | Manual      | Real Android phone and iPhone before each release  | Checklist                     |
 
 Trade logic must have tests before its endpoints are merged.
@@ -668,7 +669,7 @@ Check current pricing before paying. Prices change.
 | Post and trade details           | **Decided 2026-11-08:** one hobby per post; offers need an item on both sides (no cash-only); fixed rating tags (`RATING_TAGS` in `src/shared/contracts/trades.ts`); item condition "worn" shows as "Well loved" | Both    |
 | Who can message by default       | **Decided 2026-11-05:** anyone via Requests (`message_permission` default `anyone`); users can switch to traded-only | Both    |
 | Item photo limit and upload size | See section 13                      | Tristan |
-| End-to-end test tool             | Playwright or others (Vitest chosen for unit and integration) | Tristan |
+| End-to-end test tool             | **Decided 2026-11-09:** Playwright for E2E, k6 for performance, Supabase local stack for the test database (see docs/testing.md) | Tristan |
 
 ## 22. Revision history
 
