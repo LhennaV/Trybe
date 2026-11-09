@@ -2,7 +2,9 @@ import { existsSync } from "node:fs";
 import { defineConfig } from "drizzle-kit";
 
 // drizzle-kit runs outside Next.js, so it doesn't read .env.local on its own.
-if (existsSync(".env.local")) process.loadEnvFile(".env.local");
+// Skipped when a URL is already set, so the test database script
+// (scripts/test-db.mjs) can never be pointed at the dev project by .env.local.
+if (!process.env.DIRECT_DATABASE_URL && existsSync(".env.local")) process.loadEnvFile(".env.local");
 
 // Migrations use the direct connection, not the pooler (TRD section 17).
 export default defineConfig({

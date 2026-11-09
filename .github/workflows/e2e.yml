@@ -1,0 +1,49 @@
+# End-to-end tests in a real browser (docs/testing.md section 8). Slower than
+# CI, so they don't run on every pull request. They run when:
+#   - a pull request has the "e2e" label (add it for big changes: auth,
+#     trades, new flows, shared components), and on every push after that
+#   - someone starts it by hand (Actions > E2E > Run workflow)
+#   - every Monday, to catch anything that slipped through
+name: E2E
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 19 * * 1" # Monday 19:00 UTC (Tuesday 3:00 AM in the Philippines)
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'e2e')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm db:test:start
+      - run: pnpm test:e2e
+
+      # Screenshots and traces of failures, kept for a week.
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

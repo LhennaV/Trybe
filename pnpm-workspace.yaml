@@ -2,3 +2,5 @@ allowBuilds:
   esbuild: true
   sharp: false
   unrs-resolver: false
+  # Downloads the Supabase CLI binary used by the local test database.
+  supabase: true

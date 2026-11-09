@@ -1,5 +1,6 @@
-# Pull request checks (TRD section 17): lint, type check, tests, build.
-# All four must pass before merging into main.
+# Pull request checks (TRD section 17, docs/testing.md section 12).
+# Both jobs must pass before merging into main. Together they are the
+# regression suite: every earlier test runs again on every change.
 name: CI
 
 on:
@@ -15,6 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Fast checks, no database: lint, type check, unit tests, build.
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -34,3 +36,21 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+
+  # Server code against real Postgres and Supabase Auth: the local Supabase
+  # stack in Docker, with our migrations applied. No secrets needed; it never
+  # touches the dev or production project.
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:test:start
+      - run: pnpm test:integration
