@@ -9,12 +9,14 @@ import Chip from "@/components/ui/Chip";
 import IconButton from "@/components/ui/IconButton";
 import SegmentedControl from "@/components/ui/SegmentedControl";
 import Sheet from "@/components/ui/Sheet";
+import { ITEM_CONDITION_LABELS, ITEM_CONDITIONS } from "@/shared/contracts/items";
 
 type Show = "all" | "trade" | "inspo";
 type Sort = "for_you" | "newest" | "nearest";
 
 const HOBBIES = ["Pottery", "Bookbinding", "Film photo", "Crochet", "Calligraphy", "Baking", "Watercolor"];
-const CONDITIONS = ["Like new", "Good", "Fair", "Worn"];
+// The URL gets the contract value (condition=worn), the chip shows the label ("Well loved").
+const CONDITIONS = ITEM_CONDITIONS;
 const DISTANCES = [1, 5, 10, 25];
 
 function toggle(list: string[], value: string) {
@@ -109,7 +111,7 @@ function FiltersForm({ onClose }: { onClose: () => void }) {
               selected={conditions.includes(condition)}
               onClick={() => setConditions((l) => toggle(l, condition))}
             >
-              {condition}
+              {ITEM_CONDITION_LABELS[condition]}
             </Chip>
           ))}
         </div>

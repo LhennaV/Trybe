@@ -101,7 +101,15 @@ export default function ProposeForm({
 
   const cash = Number(cashAmount.replace(/[^\d]/g, ""));
   const hasCash = balance === "cash" && cash > 0;
-  const ready = theirIds.length > 0 && (myIds.length > 0 || hasCash);
+  // TRD-01: an item on both sides. Cash only tops up a swap, never replaces your side.
+  const ready = theirIds.length > 0 && myIds.length > 0;
+  const hasGear = myItems.length > 0;
+  const missing =
+    theirIds.length === 0
+      ? "Pick at least one of their items."
+      : myIds.length === 0
+        ? "Pick at least one of your items. Cash can top up a swap, but it can't be the whole offer."
+        : "";
 
   return (
     <form
@@ -150,11 +158,11 @@ export default function ProposeForm({
             />
           ))
         ) : (
-          // TRD-10: no gear yet. Cash-only offers still work.
+          // TRD-10: no gear yet, so there's nothing to swap. Cash-only offers aren't allowed.
           <div className="flex flex-col gap-2.5 rounded-card border-[1.5px] border-dashed border-line px-4 py-4 text-center">
             <p className="text-body-s text-ink-600">
-              You don&apos;t have any gear up for trade yet. Post something you made and tag your tools, or offer cash
-              below.
+              Trades are swaps, so you&apos;ll need some gear of your own first. Post something you made and tag the
+              tools you&apos;re willing to trade.
             </p>
             <Link href="/new" className={buttonClassName({ variant: "secondary", fullWidth: true })}>
               Add your gear
@@ -162,53 +170,57 @@ export default function ProposeForm({
           </div>
         )}
 
-        <h2 className="text-label-s uppercase text-ink-600">Balance the trade (optional)</h2>
-        <SegmentedControl
-          label="Balance the trade"
-          value={balance}
-          onChange={setBalance}
-          options={[
-            { value: "even", label: "Even swap" },
-            { value: "cash", label: "Add cash" },
-            { value: "item", label: "Add item" },
-          ]}
-        />
-
-        {balance === "cash" && (
+        {hasGear && (
           <>
-            <div className="flex h-[52px] items-center gap-2.5 rounded-input border-[1.5px] border-line bg-surface-white px-4">
-              <Money size={20} weight="bold" className="shrink-0 text-status-success" aria-hidden />
-              <label htmlFor={cashId} className="text-body-m font-bold text-ink-400">
-                PHP
-              </label>
-              <input
-                id={cashId}
-                inputMode="numeric"
-                value={cashAmount}
-                onChange={(event) => setCashAmount(event.target.value.replace(/[^\d]/g, ""))}
-                placeholder="0"
-                className="min-w-0 flex-1 bg-transparent text-title-m text-ink-900 outline-none placeholder:text-ink-400"
-              />
-            </div>
+            <h2 className="text-label-s uppercase text-ink-600">Balance the trade (optional)</h2>
             <SegmentedControl
-              label="Who adds the cash"
-              value={cashFrom}
-              onChange={setCashFrom}
+              label="Balance the trade"
+              value={balance}
+              onChange={setBalance}
               options={[
-                { value: "me", label: "From you" },
-                { value: "them", label: `From @${theirHandle}` },
+                { value: "even", label: "Even swap" },
+                { value: "cash", label: "Add cash" },
+                { value: "item", label: "Add item" },
               ]}
             />
-            <p className="flex items-start gap-2 rounded-xl bg-status-warning-soft px-3 py-2.5 text-caption text-ink-900">
-              <Info size={16} weight="bold" className="shrink-0 text-status-warning" aria-hidden />
-              Cash is handed over in person at the meetup. Trybe never holds or sends payments.
-            </p>
+    
+            {balance === "cash" && (
+              <>
+                <div className="flex h-[52px] items-center gap-2.5 rounded-input border-[1.5px] border-line bg-surface-white px-4">
+                  <Money size={20} weight="bold" className="shrink-0 text-status-success" aria-hidden />
+                  <label htmlFor={cashId} className="text-body-m font-bold text-ink-400">
+                    PHP
+                  </label>
+                  <input
+                    id={cashId}
+                    inputMode="numeric"
+                    value={cashAmount}
+                    onChange={(event) => setCashAmount(event.target.value.replace(/[^\d]/g, ""))}
+                    placeholder="0"
+                    className="min-w-0 flex-1 bg-transparent text-title-m text-ink-900 outline-none placeholder:text-ink-400"
+                  />
+                </div>
+                <SegmentedControl
+                  label="Who adds the cash"
+                  value={cashFrom}
+                  onChange={setCashFrom}
+                  options={[
+                    { value: "me", label: "From you" },
+                    { value: "them", label: `From @${theirHandle}` },
+                  ]}
+                />
+                <p className="flex items-start gap-2 rounded-xl bg-status-warning-soft px-3 py-2.5 text-caption text-ink-900">
+                  <Info size={16} weight="bold" className="shrink-0 text-status-warning" aria-hidden />
+                  Cash is handed over in person at the meetup. Trybe never holds or sends payments.
+                </p>
+              </>
+            )}
+            {balance === "item" && (
+              <p className="rounded-xl bg-brand-lavender-soft px-3 py-2.5 text-caption text-ink-900">
+                Pick more than one item above, from either side, to even things out.
+              </p>
+            )}
           </>
-        )}
-        {balance === "item" && (
-          <p className="rounded-xl bg-brand-lavender-soft px-3 py-2.5 text-caption text-ink-900">
-            Pick more than one item above, from either side, to even things out.
-          </p>
         )}
 
         {notice && (
@@ -224,7 +236,9 @@ export default function ProposeForm({
             {mode === "counter" ? "Send counter" : "Send proposal"}
             {hasCash && ` · ${formatPHP(cash)}`}
           </Button>
-          <p className="text-caption text-ink-400">They can accept, decline, or send a counter offer.</p>
+          <p className={`text-center text-caption ${missing && hasGear ? "text-ink-600" : "text-ink-400"}`}>
+            {hasGear && missing ? missing : "They can accept, decline, or send a counter offer."}
+          </p>
         </div>
       </div>
     </form>

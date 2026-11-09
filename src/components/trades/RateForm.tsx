@@ -8,8 +8,9 @@ import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import TopBar from "@/components/ui/TopBar";
+import { RATING_TAGS, type RatingTag } from "@/shared/contracts/trades";
 
-const TAGS = ["Item as described", "On time", "Friendly", "Easy to negotiate", "Good meetup spot"];
+const TAGS = RATING_TAGS;
 const SCORE_LABELS = ["", "Not great", "Could be better", "It was okay", "Great trade!", "Amazing trade!"];
 
 type RateFormProps = {
@@ -23,7 +24,7 @@ type RateFormProps = {
 // hidden until both people rate or 7 days pass (RATE-02).
 export default function RateForm({ tradeId, other, summary, completedNote }: RateFormProps) {
   const [score, setScore] = useState(0);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<RatingTag[]>([]);
   const [notice, setNotice] = useState("");
   const noteId = useId();
 
