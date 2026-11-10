@@ -321,10 +321,10 @@ trades list (Phase 3) are next.
 No workflow needs secrets: tests use the local stack, never the hosted
 projects. Vercel deploys separately through its GitHub app.
 
-**Blocking bad merges.** Turn on branch protection for `main` with
-`checks` and `integration` as required status checks. Then a pull request
-with a failing test can't be merged, so it never reaches the production
-deploy.
+**Blocking bad merges.** Branch protection on `main` is off (decided
+2026-11-10), so GitHub does not stop a merge when a check fails. The rule is
+on us: only merge a pull request when `checks` and `integration` are green.
+A merge into `main` deploys to production.
 
 ## 11. Known limitations
 
@@ -347,7 +347,7 @@ worked. We don't keep a separate regression suite; the whole suite is the
 regression suite:
 
 1. **Every pull request** reruns all unit and integration tests (`ci.yml`).
-   Branch protection makes them required.
+   Wait for them to pass before merging (section 10).
 2. **Big changes** get the `e2e` label, so the critical flows run in a real
    browser too. The Monday run catches what labels miss.
 3. **Every bug fix adds a test** that fails without the fix. Put it next to

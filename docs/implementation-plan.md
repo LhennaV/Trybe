@@ -26,7 +26,7 @@ Tags: **[BE]** Tristan, **[FE]** Lhenna, **[Both]** together.
 
 | Phase | Name                              | Target | Status      |
 | ----- | --------------------------------- | ------ | ----------- |
-| 0     | Foundation                        | TBD    | In progress |
+| 0     | Foundation                        | TBD    | Done        |
 | 1     | Accounts and profiles             | TBD    | In progress |
 | 2     | Items, posts, and feed            | TBD    | Not started |
 | 3     | Trades core                       | TBD    | Not started |
@@ -79,21 +79,20 @@ shared contracts and mock data without blocking each other.
 - [x] **[BE]** Set up Vitest with one passing test
 - [x] **[BE]** Set up Sentry (client and server)
 - [x] **[BE]** `src/shared/contracts/common.ts`: response shape, error codes, pagination
-- [ ] **[Both]** Draft contracts for users, items, posts, trades in `src/shared/contracts/`
+- [x] **[Both]** Draft contracts for users, items, posts, trades in `src/shared/contracts/`
   - Drafted 2026-11-08: `items.ts`, `posts.ts`, `trades.ts`, `photos.ts` (users and hobbies
     were done in Phase 1). Decided by Tristan 2026-11-08 (TRD section 21): one hobby per post,
     no cash-only offers, fixed rating tags (Lhenna's list), "worn" shows as "Well loved".
     Also in the draft: trade responses use "me"/"them", cash is whole pesos up to PHP 1,000,000,
     up to 4 photos per item (Proposed).
-    Left: Lhenna reviews and agrees, then updates ProposeForm (no cash-only) and the
-    condition labels (use `ITEM_CONDITION_LABELS`).
+    Lhenna followed them in PR #21 (2026-11-09): ProposeForm has no cash-only offers, and
+    condition labels and rating tags come from the contracts.
 - [x] **[BE]** Mock data file built from the contracts
   - `src/shared/mocks/index.ts`, checked against the schemas by `tests/unit/shared/mocks.test.ts`.
 - [x] **[FE]** Design tokens in `src/app/globals.css` with `@theme`, hex values from Figma
 - [x] **[FE]** Fonts with `next/font`: Lilita One and Nunito
 - [x] **[FE]** Layout shell: bottom nav on mobile, sidebar on desktop
 - [x] **[FE]** Base components: Button, Input, Chip, Badge, Avatar, Card, Sheet, Toggle
-- [ ] **[Both]** Turn on branch protection for `main` (pull request and review required)
 
 ### Done when
 
@@ -134,9 +133,13 @@ profile.
 - [x] **[BE]** Handle uniqueness and validation
 - [ ] **[BE]** Profile photo upload (shared upload helper, also used in Phase 2)
   - Needs a decision: image resizing library (`sharp` is turned off in `pnpm-workspace.yaml`).
-- [ ] **[BE]** Derived "new trader" flag (PROF-04)
-  - In progress: built in `src/server/users/newTrader.ts` with Proposed numbers
-    (30 days and 3 completed trades). Left: agree on the numbers.
+- [x] **[BE]** Derived "new trader" flag (PROF-04)
+  - `src/server/users/newTrader.ts`. Decided by Tristan 2026-11-10: the badge stays until the
+    account is 30 days old AND has 3 completed trades. Lhenna to confirm.
+- [ ] **[BE]** "Other" hobby from onboarding (PROF-01)
+  - Decided by Tristan 2026-11-10: typed hobbies are saved as hobby requests in their own
+    table, not shown on the profile. Popular ones get added to the list by migration.
+    Lhenna to confirm. Left: `hobby_requests` table, accept them in `PATCH /api/me`, tests.
 - [ ] **[FE]** Landing screen
 - [ ] **[FE]** Sign up with terms checkbox, age confirmation, Turnstile
 - [ ] **[FE]** Log in, forgot password, verify email screens

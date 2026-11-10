@@ -8,7 +8,7 @@ Trust comes from ratings, trade history, account age, email verification, and a 
 
 ## Status
 
-Phase 0 (foundation). The screens are built on sample data. The backend (database, auth, API) is being set up. See [the implementation plan](docs/implementation-plan.md).
+Phase 1 (accounts and profiles). Sign up, log in, email verification, and profiles work against the real backend. The other screens still use sample data. Live at <https://trybe-puce.vercel.app>, running on the dev database. See [the implementation plan](docs/implementation-plan.md).
 
 ## Team
 
@@ -23,7 +23,7 @@ Phase 0 (foundation). The screens are built on sample data. The backend (databas
 - **Auth, storage, realtime chat:** Supabase
 - **Errors:** Sentry
 - **Bot protection:** Cloudflare Turnstile
-- **Tests:** Vitest
+- **Tests:** Vitest (unit and integration), Playwright (end to end), k6 (performance)
 - **Hosting:** Vercel. Installable PWA, packaged for Google Play.
 
 Full details are in [the technical requirements](docs/technical-requirements.md).
@@ -54,13 +54,15 @@ Check the database connection at <http://localhost:3000/api/health>.
 | `pnpm build`       | Production build                                             |
 | `pnpm lint`        | Lint                                                         |
 | `pnpm typecheck`   | Generate route types and type check                          |
-| `pnpm test`        | Run all tests once                                           |
-| `pnpm test:watch`  | Run tests on save                                            |
+| `pnpm test`        | Run the unit tests once                                      |
+| `pnpm test:watch`  | Run the unit tests on save                                   |
 | `pnpm db:generate` | Create a migration from changes to `src/server/db/schema.ts` |
 | `pnpm db:migrate`  | Apply migrations to the database in `DIRECT_DATABASE_URL`    |
 | `pnpm db:studio`   | Browse the database in Drizzle Studio                        |
 
 For SQL that Drizzle can't generate (functions, triggers, RLS policies), create an empty migration with `pnpm db:generate --custom --name=<what_it_does>` and write the SQL in it. Never edit a migration that has already been applied.
+
+Integration, end-to-end, and performance tests have their own commands and need Docker Desktop running. They use a local test database, never the dev one. See the [testing guide](docs/testing.md#5-commands).
 
 ## Project structure
 
@@ -81,7 +83,7 @@ Read [AGENTS.md](AGENTS.md) before writing code. It has the architecture rules, 
 
 - `main` is stable, reviewed work. Never push to it directly.
 - Each person has one working branch: Lhenna on `frontend`, Tristan on `backend`.
-- Open a pull request from your branch into `main`. Lint, type check, tests, and build must pass, and the other person reviews it.
+- Open a pull request from your branch into `main`. Lint, type check, tests, and build must pass, and the other person reviews it. GitHub does not block the merge, so check that CI is green first. A merge into `main` deploys to production on Vercel.
 - After it merges, update your branch from `main` and keep working on it.
 
 ## Docs

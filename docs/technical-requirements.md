@@ -636,9 +636,9 @@ Trade logic must have tests before its endpoints are merged.
 
 ## 19. Git workflow
 
-- Short branches: `feat/...`, `fix/...`, `chore/...`
+- One working branch per person: Lhenna on `frontend`, Tristan on `backend` (AGENTS.md).
 - Pull request into `main`. CODEOWNERS assigns the reviewer.
-- No direct pushes to `main`.
+- No direct pushes to `main`. Merge only when CI is green; a merge deploys to production.
 - Link the requirement ID in the pull request when there is one
   (for example "TRD-06").
 
@@ -666,6 +666,9 @@ Check current pricing before paying. Prices change.
 | "Replies in ~1 hr"               | Keep or cut                         | Both    |
 | Dark mode                        | v1 or later                         | Lhenna  |
 | Weekly email digest              | v1 or later                         | Both    |
+| "New trader" badge               | **Decided 2026-11-10:** stays until the account is 30 days old and has 3 completed trades | Both    |
+| "Other" hobby in onboarding      | **Decided 2026-11-10:** saved as a hobby request, not shown on the profile; popular ones are added to the list | Both    |
+| Branch protection on `main`      | **Decided 2026-11-10:** off. Merge only when CI is green (docs/testing.md section 10) | Both    |
 | Post and trade details           | **Decided 2026-11-08:** one hobby per post; offers need an item on both sides (no cash-only); fixed rating tags (`RATING_TAGS` in `src/shared/contracts/trades.ts`); item condition "worn" shows as "Well loved" | Both    |
 | Who can message by default       | **Decided 2026-11-05:** anyone via Requests (`message_permission` default `anyone`); users can switch to traded-only | Both    |
 | Item photo limit and upload size | See section 13                      | Tristan |
