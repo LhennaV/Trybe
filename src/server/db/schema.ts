@@ -18,6 +18,8 @@ import {
   HANDLE_MIN,
   HANDLE_PATTERN,
   MESSAGE_PERMISSIONS,
+  OTHER_HOBBY_NAME_MAX,
+  OTHER_HOBBY_NAME_MIN,
 } from "@/shared/contracts/users";
 
 // `id`, `created_at`, `updated_at` on every table. `updated_at` is kept
@@ -118,5 +120,36 @@ export const userHobbies = pgTable(
     uniqueIndex("uq_user_hobbies_user_id_hobby_id").on(t.userId, t.hobbyId),
     index("idx_user_hobbies_hobby_id").on(t.hobbyId),
     check("ck_user_hobbies_level", sql`${t.level} in (${inList(HOBBY_LEVELS)})`),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// hobby_requests
+// ---------------------------------------------------------------------------
+
+// Hobbies people typed in because they aren't on the list ("Other" in
+// onboarding). Only the owner sees theirs. When a name gets popular, a
+// migration adds it to hobbies and moves these rows to user_hobbies.
+export const hobbyRequests = pgTable(
+  "hobby_requests",
+  {
+    id: id(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    level: text("level", { enum: HOBBY_LEVELS }).notNull(),
+    ...timestamps(),
+  },
+  (t) => [
+    // One request per name per person, whatever the capitals.
+    uniqueIndex("uq_hobby_requests_user_id_name").on(t.userId, sql`lower(${t.name})`),
+    // Counting how many people asked for the same hobby.
+    index("idx_hobby_requests_name").on(sql`lower(${t.name})`),
+    check(
+      "ck_hobby_requests_name_length",
+      sql`char_length(${t.name}) between ${sql.raw(String(OTHER_HOBBY_NAME_MIN))} and ${sql.raw(String(OTHER_HOBBY_NAME_MAX))}`,
+    ),
+    check("ck_hobby_requests_level", sql`${t.level} in (${inList(HOBBY_LEVELS)})`),
   ],
 ).enableRLS();

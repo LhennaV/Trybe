@@ -324,6 +324,8 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | hobbies           | `uq_hobbies_slug (slug)`                                                        | Hobby by slug, seed upsert     |
 | user_hobbies      | `uq_user_hobbies_user_id_hobby_id`                                              | One row per hobby per user     |
 | user_hobbies      | `idx_user_hobbies_hobby_id (hobby_id)`                                          | Users by hobby, matches        |
+| hobby_requests    | `uq_hobby_requests_user_id_name (user_id, lower(name))`                         | One request per name per user  |
+| hobby_requests    | `idx_hobby_requests_name (lower(name))`                                         | Counting requests per hobby    |
 | items             | `idx_items_owner_id_status (owner_id, status)`                                  | "My gear", propose screen      |
 | items             | `idx_items_tradeable (category_id) where status = 'available' and up_for_trade` | Explore, matches               |
 | posts             | `idx_posts_feed (created_at desc, id desc) where hidden_at is null`             | Feed with cursor pagination    |
@@ -466,6 +468,7 @@ with SQL does not delete the actual files.
 | -------------------------- | ----------------------------------------------------------- | --------------------------- |
 | Unverified accounts        | 7 days                                                      | `users_purge_unverified`    |
 | Active accounts            | Until the user deletes                                      | `app.account_delete`        |
+| Hobby requests             | Until added to the hobby list, or the user deletes          | Migration, `app.account_delete` |
 | Posts hidden by moderation | 90 days, then deleted (**Proposed**)                        | Purge job, added in Phase 5 |
 | Read notifications         | 90 days                                                     | `notifications_purge`       |
 | Messages                   | Until either user deletes their account (**Proposed**)      | `app.account_delete`        |

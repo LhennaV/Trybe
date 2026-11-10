@@ -84,6 +84,7 @@ export const MOCK_ME: Me = {
   email: "storm@example.com",
   emailVerified: true,
   messagePermission: "anyone",
+  otherHobbies: [{ name: "Leathercraft", level: "trying" }],
 };
 
 // ---------------------------------------------------------------------------

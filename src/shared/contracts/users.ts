@@ -82,11 +82,28 @@ export const userSummarySchema = publicProfileSchema.pick({
 });
 export type UserSummary = z.infer<typeof userSummarySchema>;
 
+// A hobby the person typed in because it isn't on the list yet ("Other" in
+// onboarding). Saved as a request: only they see it, never the public
+// profile. Popular ones get added to the real list (decided 2026-11-10).
+export const OTHER_HOBBY_NAME_MIN = 2;
+export const OTHER_HOBBY_NAME_MAX = 40;
+export const OTHER_HOBBIES_MAX = 5;
+export const otherHobbySchema = z.strictObject({
+  name: z
+    .string()
+    .trim()
+    .min(OTHER_HOBBY_NAME_MIN, "Type the hobby's name.")
+    .max(OTHER_HOBBY_NAME_MAX, `Keep it under ${OTHER_HOBBY_NAME_MAX} characters.`),
+  level: hobbyLevelSchema,
+});
+export type OtherHobby = z.infer<typeof otherHobbySchema>;
+
 // GET /api/me. The public profile plus fields only the owner sees.
 export const meSchema = publicProfileSchema.extend({
   email: z.email(),
   emailVerified: z.boolean(),
   messagePermission: messagePermissionSchema,
+  otherHobbies: z.array(otherHobbySchema),
 });
 export type Me = z.infer<typeof meSchema>;
 
@@ -97,7 +114,7 @@ export type Me = z.infer<typeof meSchema>;
 export const HOBBIES_PER_USER_MAX = 30;
 
 // PATCH /api/me. Every field is optional; unknown fields are rejected.
-// `hobbies` replaces the whole list when sent.
+// `hobbies` and `otherHobbies` each replace their whole list when sent.
 export const updateMeSchema = z
   .strictObject({
     displayName: displayNameSchema,
@@ -109,6 +126,13 @@ export const updateMeSchema = z
       .array(z.strictObject({ hobbyId: z.uuid(), level: hobbyLevelSchema }))
       .max(HOBBIES_PER_USER_MAX)
       .refine((list) => new Set(list.map((h) => h.hobbyId)).size === list.length, "Each hobby can only be picked once."),
+    otherHobbies: z
+      .array(otherHobbySchema)
+      .max(OTHER_HOBBIES_MAX, `Up to ${OTHER_HOBBIES_MAX} other hobbies.`)
+      .refine(
+        (list) => new Set(list.map((h) => h.name.toLowerCase())).size === list.length,
+        "Each hobby can only be added once.",
+      ),
   })
   .partial();
 export type UpdateMe = z.infer<typeof updateMeSchema>;

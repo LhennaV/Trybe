@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import type { Me, UpdateMe } from "@/shared/contracts/users";
 import type { SessionUser } from "@/server/auth/session";
 import { findPgError, PG_FOREIGN_KEY_VIOLATION, PG_UNIQUE_VIOLATION } from "@/server/db/pgError";
-import { userHobbies, users } from "@/server/db/schema";
+import { hobbyRequests, userHobbies, users } from "@/server/db/schema";
 import { withActor } from "@/server/db/withActor";
 import { AppError } from "@/server/errors";
 import { getMe } from "@/server/users/profile";
@@ -19,7 +19,7 @@ export function toUserColumns(input: UpdateMe): UserColumns {
   return Object.fromEntries(Object.entries(columns).filter(([, value]) => value !== undefined));
 }
 
-// PATCH /api/me. `hobbies`, when sent, replaces the whole list.
+// PATCH /api/me. `hobbies` and `otherHobbies`, when sent, each replace their whole list.
 export async function updateMe(user: SessionUser, input: UpdateMe): Promise<Me> {
   const columns = toUserColumns(input);
 
@@ -39,6 +39,15 @@ export async function updateMe(user: SessionUser, input: UpdateMe): Promise<Me> 
           await tx
             .insert(userHobbies)
             .values(input.hobbies.map((h) => ({ userId: user.id, hobbyId: h.hobbyId, level: h.level })));
+        }
+      }
+
+      if (input.otherHobbies) {
+        await tx.delete(hobbyRequests).where(eq(hobbyRequests.userId, user.id));
+        if (input.otherHobbies.length > 0) {
+          await tx
+            .insert(hobbyRequests)
+            .values(input.otherHobbies.map((h) => ({ userId: user.id, name: h.name, level: h.level })));
         }
       }
     });

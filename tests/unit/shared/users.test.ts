@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   HOBBIES_PER_USER_MAX,
+  OTHER_HOBBIES_MAX,
+  OTHER_HOBBY_NAME_MAX,
   bioSchema,
   citySchema,
   displayNameSchema,
@@ -92,6 +94,33 @@ describe("updateMeSchema", () => {
   });
 });
 
+describe("otherHobbies (typed-in hobby requests)", () => {
+  it("trims names and keeps the level", () => {
+    const parsed = updateMeSchema.parse({ otherHobbies: [{ name: "  Leathercraft ", level: "trying" }] });
+    expect(parsed.otherHobbies).toEqual([{ name: "Leathercraft", level: "trying" }]);
+  });
+
+  it("rejects names that are too short or too long, and the same name twice", () => {
+    const bad = [
+      [{ name: "a", level: "has" }],
+      [{ name: "x".repeat(OTHER_HOBBY_NAME_MAX + 1), level: "has" }],
+      [
+        { name: "Kumihimo", level: "has" },
+        { name: "kumihimo", level: "trying" },
+      ],
+    ];
+    for (const otherHobbies of bad) {
+      expect(updateMeSchema.safeParse({ otherHobbies }).success, JSON.stringify(otherHobbies)).toBe(false);
+    }
+  });
+
+  it(`allows up to ${OTHER_HOBBIES_MAX}`, () => {
+    const list = (count: number) => Array.from({ length: count }, (_, i) => ({ name: `Hobby ${i}`, level: "has" }));
+    expect(updateMeSchema.safeParse({ otherHobbies: list(OTHER_HOBBIES_MAX) }).success).toBe(true);
+    expect(updateMeSchema.safeParse({ otherHobbies: list(OTHER_HOBBIES_MAX + 1) }).success).toBe(false);
+  });
+});
+
 describe("profile responses", () => {
   const profile = {
     id: HOBBY_A,
@@ -120,7 +149,13 @@ describe("profile responses", () => {
   });
 
   it("adds owner-only fields to /api/me", () => {
-    const me = { ...profile, email: "tester1@example.com", emailVerified: false, messagePermission: "anyone" };
+    const me = {
+      ...profile,
+      email: "tester1@example.com",
+      emailVerified: false,
+      messagePermission: "anyone",
+      otherHobbies: [],
+    };
     expect(meSchema.parse(me)).toEqual(me);
   });
 });

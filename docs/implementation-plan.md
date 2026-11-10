@@ -136,10 +136,13 @@ profile.
 - [x] **[BE]** Derived "new trader" flag (PROF-04)
   - `src/server/users/newTrader.ts`. Decided by Tristan 2026-11-10: the badge stays until the
     account is 30 days old AND has 3 completed trades. Lhenna to confirm.
-- [ ] **[BE]** "Other" hobby from onboarding (PROF-01)
+- [x] **[BE]** "Other" hobby from onboarding (PROF-01)
   - Decided by Tristan 2026-11-10: typed hobbies are saved as hobby requests in their own
     table, not shown on the profile. Popular ones get added to the list by migration.
-    Lhenna to confirm. Left: `hobby_requests` table, accept them in `PATCH /api/me`, tests.
+    Lhenna to confirm. Built 2026-11-10: `hobby_requests` table (migration 0005),
+    `otherHobbies` in `PATCH /api/me` and `GET /api/me` (up to 5, owner only).
+    Left: apply migration 0005 to the dev database before merging (`pnpm db:migrate`);
+    Lhenna wires the onboarding "Other" field to `otherHobbies`.
 - [ ] **[FE]** Landing screen
 - [ ] **[FE]** Sign up with terms checkbox, age confirmation, Turnstile
 - [ ] **[FE]** Log in, forgot password, verify email screens
