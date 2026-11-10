@@ -1,6 +1,6 @@
 // "New trader" badge (PROF-04). Derived on read, never stored.
 // A user keeps the badge until their account is old enough AND they have
-// finished enough trades. Both numbers are Proposed; agree on them before launch.
+// finished enough trades. Numbers decided 2026-11-10 (TRD section 21).
 export const NEW_TRADER_MIN_DAYS = 30;
 export const NEW_TRADER_MIN_TRADES = 3;
 

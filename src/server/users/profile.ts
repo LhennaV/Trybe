@@ -3,7 +3,7 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 import { handleSchema, type Me, type PublicProfile, type UserHobby } from "@/shared/contracts/users";
 import type { SessionUser } from "@/server/auth/session";
 import { getDb } from "@/server/db";
-import { hobbies, userHobbies, users } from "@/server/db/schema";
+import { hobbies, hobbyRequests, userHobbies, users } from "@/server/db/schema";
 import { AppError } from "@/server/errors";
 import { isNewTrader } from "@/server/users/newTrader";
 
@@ -74,8 +74,15 @@ export async function getMe(user: SessionUser): Promise<Me> {
   const [row] = await getDb().select().from(users).where(eq(users.id, user.id)).limit(1);
   if (!row) throw new AppError("PROFILE_NOT_FOUND");
 
+  const otherHobbies = await getDb()
+    .select({ name: hobbyRequests.name, level: hobbyRequests.level })
+    .from(hobbyRequests)
+    .where(eq(hobbyRequests.userId, user.id))
+    .orderBy(asc(hobbyRequests.name));
+
   return {
     ...(await buildProfile(row)),
+    otherHobbies,
     email: user.email,
     emailVerified: user.emailVerified,
     messagePermission: row.messagePermission,

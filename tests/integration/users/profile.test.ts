@@ -89,6 +89,37 @@ describe("PATCH /api/me", () => {
     expect(entry?.actor_id).toBe(me.id);
   });
 
+  it("saves typed-in hobbies as requests only the owner sees (PROF-01)", async () => {
+    const patch = (otherHobbies: unknown) =>
+      patchMe(apiRequest("/api/me", { method: "PATCH", token, body: { otherHobbies } }), undefined);
+
+    const saved = await readJson(
+      await patch([
+        { name: "  Leathercraft ", level: "trying" },
+        { name: "Bobbin lace", level: "has" },
+      ]),
+    );
+    expect(saved.status).toBe(200);
+    expect(saved.body.data.otherHobbies).toEqual([
+      { name: "Bobbin lace", level: "has" },
+      { name: "Leathercraft", level: "trying" },
+    ]);
+    // The picked hobbies from the earlier test are untouched.
+    expect(saved.body.data.hobbies).toHaveLength(2);
+
+    // Not on the public profile.
+    const pub = await readJson(await getUser(apiRequest(`/api/users/${me.handle}`), userParams(me.handle)));
+    expect(pub.body.data).not.toHaveProperty("otherHobbies");
+
+    // Sending the list again replaces it; the same name twice is refused.
+    const replaced = await readJson(await patch([{ name: "Leathercraft", level: "has" }]));
+    expect(replaced.body.data.otherHobbies).toEqual([{ name: "Leathercraft", level: "has" }]);
+    expect((await patch([{ name: "Kumihimo", level: "has" }, { name: "kumihimo", level: "trying" }])).status).toBe(400);
+
+    const rows = await sql`select name from public.hobby_requests where user_id = ${me.id}`;
+    expect(rows.map((r) => r.name)).toEqual(["Leathercraft"]);
+  });
+
   it("refuses a handle someone else has", async () => {
     const other = await createUser({ label: "other" });
     created.push(other.id);
