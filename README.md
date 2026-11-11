@@ -86,6 +86,41 @@ Read [AGENTS.md](AGENTS.md) before writing code. It has the architecture rules, 
 - Open a pull request from your branch into `main`. Lint, type check, tests, and build must pass, and the other person reviews it. GitHub does not block the merge, so check that CI is green first. A merge into `main` deploys to production on Vercel.
 - After it merges, update your branch from `main` and keep working on it.
 
+## Versions and releases
+
+The version lives in `package.json` and follows [semantic versioning](https://semver.org):
+
+| Version  | When                                                   |
+| -------- | ------------------------------------------------------ |
+| `0.x.0`  | A phase or a big feature is done (MINOR goes up)       |
+| `0.x.y`  | Fixes only (PATCH goes up)                             |
+| `1.0.0`  | Play Store launch                                      |
+
+**Every pull request** that changes what people see or how the app behaves
+adds a line under **Unreleased** in [CHANGELOG.md](CHANGELOG.md), in plain
+words ("Profile photos can be changed", not "add POST route").
+
+**To release** (for example `0.2.0`), never pushing to `main` directly:
+
+1. On your branch, after updating it from `main`:
+   - In CHANGELOG.md, rename "Unreleased" to `[0.2.0] - <date>`, add an
+     empty "Unreleased" above it, and update the links at the bottom.
+   - Set `"version": "0.2.0"` in `package.json`.
+   - Commit (`chore: release v0.2.0`), push, and open a pull request.
+2. When CI is green, merge it.
+3. Tag the merge commit on `main` and push only the tag:
+
+   ```
+   git switch main
+   git pull
+   git tag v0.2.0
+   git push origin v0.2.0
+   git switch backend
+   ```
+
+For the Play Store build (Phase 7), the version people see is this version,
+and the build number goes up by one with every upload.
+
 ## Docs
 
 - [AGENTS.md](AGENTS.md): short guide for people and AI tools
@@ -93,4 +128,5 @@ Read [AGENTS.md](AGENTS.md) before writing code. It has the architecture rules, 
 - [Implementation plan](docs/implementation-plan.md)
 - [Database design](docs/database.md)
 - [Testing guide](docs/testing.md)
+- [Changelog](CHANGELOG.md)
 - [Design guide](src/styles/DESIGN.md)
