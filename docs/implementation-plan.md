@@ -326,6 +326,9 @@ Runs during the closed test.
 - [ ] **[BE]** Hobby counts and "near you" by city (EXP-01, EXP-03)
 - [ ] **[BE]** Web push notifications (NOTIF-02)
 - [ ] **[BE]** Sitemap, robots.txt, metadata for public pages
+  - robots.txt done 2026-11-11 (`src/app/robots.ts`): production allows public pages and blocks
+    logged-in ones; previews and local builds block everything. Left: `src/app/sitemap.ts`
+    (then add it to robots.ts), and per-page titles and descriptions for posts and profiles.
 - [ ] **[FE]** Explore screen
 - [ ] **[FE]** Search screen and results
 - [ ] **[FE]** Notification settings toggles (NOTIF-03)
