@@ -331,8 +331,10 @@ A merge into `main` deploys to production.
 - Integration tests call route handlers directly, not through a running
   server. `connection()` and `cookies()` are replaced with simple stand-ins in
   `tests/integration/setup.ts`. The real request pipeline is covered by E2E.
-- Turnstile (CAPTCHA) is off in the local stack, so it isn't tested yet.
-  Add a test when AUTH-02 is finished.
+- Turnstile (CAPTCHA) is off in the local stack, so the real check isn't
+  tested. E2E builds use Cloudflare's always-pass test site key
+  (`playwright.config.ts`), so the widget loads on `127.0.0.1` without
+  touching the real key. The hosted project enforces the real check.
 - Supabase's hosted settings (email templates, SMTP, Site URL) are set in the
   dashboard and can't be tested locally. `supabase/config.toml` copies the
   parts tests rely on; keep them in step.
