@@ -10,7 +10,8 @@ import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
 // Services the tests don't use yet. Leaving them out makes start faster.
-const EXCLUDE = "realtime,storage-api,imgproxy,edge-runtime,logflare,vector,supavisor,studio,postgres-meta";
+// storage-api stays on: photo uploads and the photos bucket (migration 0006).
+const EXCLUDE = "realtime,imgproxy,edge-runtime,logflare,vector,supavisor,studio,postgres-meta";
 const ENV_FILE = ".env.test.local";
 // E2E runs the app here; supabase/config.toml site_url points at it.
 const APP_URL = "http://127.0.0.1:3100";

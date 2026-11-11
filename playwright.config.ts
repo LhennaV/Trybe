@@ -21,6 +21,11 @@ const appEnv = Object.fromEntries(
 );
 // Its own build folder, so a running `pnpm dev` (which uses .next) is never touched.
 appEnv.NEXT_DIST_DIR = ".next-test";
+// Cloudflare's test site key: the widget always passes, on any hostname. The
+// real key (from .env.local) only works on the hostnames listed in Cloudflare,
+// and the local stack has CAPTCHA off anyway.
+// https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+appEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY = "1x00000000000000000000AA";
 
 export default defineConfig({
   testDir: "tests/e2e",

@@ -131,8 +131,14 @@ profile.
   - The sign up trigger (migration 0004) refuses accounts without both and stores the times.
 - [x] **[BE]** Endpoints: `GET /api/me`, `PATCH /api/me`, `GET /api/users/:handle`, `GET /api/hobbies`
 - [x] **[BE]** Handle uniqueness and validation
-- [ ] **[BE]** Profile photo upload (shared upload helper, also used in Phase 2)
-  - Needs a decision: image resizing library (`sharp` is turned off in `pnpm-workspace.yaml`).
+- [x] **[BE]** Profile photo upload (shared upload helper, also used in Phase 2)
+  - Built 2026-11-11: `POST` and `DELETE /api/me/photo`. The browser shrinks photos first
+    (`src/shared/images/resizeForUpload.ts`, decided 2026-11-11), the server re-encodes with
+    sharp (`src/server/uploads/`), files go to the public `photos` bucket (migration 0006).
+    Left: apply migration 0006 to the dev database before merging (`pnpm db:migrate`);
+    Lhenna wires Edit profile to `resizeForUpload()` and `POST /api/me/photo`.
+- [ ] **[Both]** Logo in one place: `src/shared/brand.ts` (added 2026-11-11). Left: Lhenna
+    replaces the 16 hard-coded `/brand/storm-icon.png` paths and sizes with `BRAND` and `brandSize()`.
 - [x] **[BE]** Derived "new trader" flag (PROF-04)
   - `src/server/users/newTrader.ts`. Decided by Tristan 2026-11-10: the badge stays until the
     account is 30 days old AND has 3 completed trades. Lhenna to confirm.
@@ -283,6 +289,11 @@ use the app safely.
 - [ ] **[BE]** Account deletion: cancel active trades, delete data (DEL-01, DEL-03)
 - [ ] **[BE]** Rate limits on sign up, log in, posts, proposals, messages, reports
 - [ ] **[BE]** Security review against TRD section 14
+- [ ] **[BE]** Purge jobs needed before launch (`docs/database.md` sections 8 and 9): enable
+      pg_cron, `users_purge_unverified`, `audit_log_purge`, and orphan photo cleanup.
+      The other jobs come with the features they clean up after.
+- [ ] **[BE]** Index check before launch (`docs/database.md` section 6.3): no unused
+      indexes, no foreign keys without an index
 - [ ] **[FE]** Report flow from profiles, posts, trades, reviews, messages
 - [ ] **[FE]** Block and mute from profile menu; blocked users list in settings
 - [ ] **[FE]** Simple admin page for the report queue (SAFE-04)
@@ -315,6 +326,9 @@ Runs during the closed test.
 - [ ] **[BE]** Hobby counts and "near you" by city (EXP-01, EXP-03)
 - [ ] **[BE]** Web push notifications (NOTIF-02)
 - [ ] **[BE]** Sitemap, robots.txt, metadata for public pages
+  - robots.txt done 2026-11-11 (`src/app/robots.ts`): production allows public pages and blocks
+    logged-in ones; previews and local builds block everything. Left: `src/app/sitemap.ts`
+    (then add it to robots.ts), and per-page titles and descriptions for posts and profiles.
 - [ ] **[FE]** Explore screen
 - [ ] **[FE]** Search screen and results
 - [ ] **[FE]** Notification settings toggles (NOTIF-03)

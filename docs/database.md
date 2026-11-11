@@ -314,6 +314,12 @@ export async function acceptTrade(tradeId: string, actorId: string) {
    `explain analyze`. Review slow queries in the Supabase dashboard
    (query performance and index advisor) once a month.
 8. Every index is listed in section 6.2 with the query it serves.
+9. A foreign key used for cascading deletes needs an index whose **first**
+   column is that key, or every account deletion scans the whole table. A
+   unique index that starts with the key counts (for example
+   `uq_user_hobbies_user_id_hobby_id` covers `user_hobbies.user_id`).
+10. Case-insensitive lookups use an expression index on `lower(column)` and
+    query with `lower(...)` too, or the index is skipped.
 
 ### 6.2 Starting indexes
 
@@ -353,8 +359,43 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | audit_log         | `idx_audit_log_actor_id (actor_id)`                                             | Actions by a user              |
 | audit_log         | `idx_audit_log_changed_at (changed_at)`                                         | Purge job                      |
 
+**Built so far (2026-11-11):** every index for `users`, `hobbies`,
+`user_hobbies`, `hobby_requests`, and `audit_log`. The others are created
+in the migration that creates their table.
+
 Text search for posts, items, and people is added in Phase 6 after the
 search design is decided.
+
+### 6.3 Checking indexes
+
+Once a month, and before launch, run these in the Supabase SQL Editor.
+
+Indexes never used since the last stats reset (candidates to drop, after
+checking they aren't unique constraints doing their job):
+
+```sql
+select relname as table_name, indexrelname as index_name, idx_scan
+from pg_stat_user_indexes
+where schemaname = 'public' and idx_scan = 0
+order by relname;
+```
+
+Foreign keys without an index that starts with them (rule 9):
+
+```sql
+select c.conrelid::regclass as table_name, a.attname as column_name
+from pg_constraint c
+join pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
+where c.contype = 'f'
+  and c.connamespace = 'public'::regnamespace
+  and not exists (
+    select 1 from pg_index i
+    where i.indrelid = c.conrelid and i.indkey[0] = c.conkey[1]
+  );
+```
+
+An empty result for the second query is the goal. `users.id` (which points
+at `auth.users`) is the primary key, so it is always indexed.
 
 ## 7. Audit trail
 
@@ -437,13 +478,22 @@ admin scripts) leave `actor_id` empty, which means "system".
 Times are in UTC. 19:00 UTC is 3:00 AM in the Philippines, when traffic is
 lowest.
 
-| Job                      | Schedule              | Does                                                                                              |
-| ------------------------ | --------------------- | ------------------------------------------------------------------------------------------------- |
-| `ratings_reveal`         | `0 * * * *` (hourly)  | Sets `visible_at` on ratings where both sides rated or 7 days passed (RATE-02)                    |
-| `trades_expire_meetups`  | `0 19 * * *` (daily)  | Cancels accepted trades 72 hours after `meetup_at` with no completion, frees items, notifies both |
-| `users_purge_unverified` | `15 19 * * *` (daily) | Deletes accounts never verified after 7 days                                                      |
-| `notifications_purge`    | `30 19 * * *` (daily) | Deletes read notifications older than 90 days                                                     |
-| `audit_log_purge`        | `0 20 * * 0` (weekly) | Deletes audit rows older than 1 year                                                              |
+| Job                      | Schedule              | Does                                                                                              | Built            |
+| ------------------------ | --------------------- | ------------------------------------------------------------------------------------------------- | ---------------- |
+| `ratings_reveal`         | `0 * * * *` (hourly)  | Sets `visible_at` on ratings where both sides rated or 7 days passed (RATE-02)                    | ⏳ Phase 4       |
+| `trades_expire_meetups`  | `0 19 * * *` (daily)  | Cancels accepted trades 72 hours after `meetup_at` with no completion, frees items, notifies both | ⏳ Phase 4       |
+| `users_purge_unverified` | `15 19 * * *` (daily) | Deletes accounts never verified after 7 days, and their photos                                    | ⏳ before launch |
+| `notifications_purge`    | `30 19 * * *` (daily) | Deletes read notifications older than 90 days                                                     | ⏳ Phase 4       |
+| `audit_log_purge`        | `0 20 * * 0` (weekly) | Deletes audit rows older than 1 year                                                              | ⏳ before launch |
+
+**No job runs yet (2026-11-11).** Each one is built with the feature it
+cleans up after. The two marked "before launch" have nothing to wait for and
+must exist before real users arrive.
+
+**Turning on pg_cron.** Supabase ships it, but it starts off. The first job's
+migration enables it with `create extension if not exists pg_cron;`, never
+by clicking in the dashboard (AGENTS.md, architecture rule 5). The local test
+stack runs the same migration, so jobs can be tested there.
 
 ### Job rules
 
@@ -458,9 +508,23 @@ lowest.
 
 ### Not a database job
 
+**Photo storage.** Every photo lives in the public `photos` bucket
+(migration 0006): anyone can view a file by its URL, only the server writes
+(no storage policies for browsers), and only WebP up to 5 MB is accepted.
+Paths: `users/<user id>/avatar-<uuid>.webp` for profile photos.
+
 **Orphan photo cleanup** runs as a server job (Vercel Cron calling an API
 route) using the Supabase Storage API. Deleting rows from `storage.objects`
-with SQL does not delete the actual files.
+with SQL does not delete the actual files. ⏳ Built with post photos (Phase 2).
+
+- **Schedule:** daily at 19:45 UTC, after the database jobs.
+- **Orphan:** a file in the `photos` bucket older than 24 hours that no row
+  points at (`users.photo_url`, and later `item_photos` and `post_photos`).
+  The 24 hours give an upload time to be saved before it counts as unused.
+- **Why it's needed:** replacing or removing a profile photo deletes the old
+  file right away, but a failed request or a deleted account can still leave
+  files behind. `on delete cascade` removes rows, never files.
+- Batches of 100 files, safe to run twice, like the database jobs.
 
 ## 9. Data retention and purging
 
@@ -469,6 +533,10 @@ with SQL does not delete the actual files.
 | Unverified accounts        | 7 days                                                      | `users_purge_unverified`    |
 | Active accounts            | Until the user deletes                                      | `app.account_delete`        |
 | Hobby requests             | Until added to the hobby list, or the user deletes          | Migration, `app.account_delete` |
+| Profile photo files        | Until replaced or removed; the old file is deleted at once  | `src/server/users/photo.ts`, orphan cleanup |
+| Post and item photo files  | Until the post or item is deleted                           | Delete endpoint, orphan cleanup |
+| Photo files of deleted accounts | Deleted with the account                               | The server deletes the files after `app.account_delete`; orphan cleanup catches the rest |
+| Login sessions             | Managed by Supabase Auth                                    | Supabase                    |
 | Posts hidden by moderation | 90 days, then deleted (**Proposed**)                        | Purge job, added in Phase 5 |
 | Read notifications         | 90 days                                                     | `notifications_purge`       |
 | Messages                   | Until either user deletes their account (**Proposed**)      | `app.account_delete`        |

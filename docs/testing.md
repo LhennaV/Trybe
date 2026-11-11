@@ -60,7 +60,9 @@ uses the `grafana/k6` Docker image.
 
 1. Starts Supabase in Docker with the settings in `supabase/config.toml`:
    email confirmation on (like the hosted project), our real email templates
-   from `emails/`, high rate limits for tests, and only the services tests use.
+   from `emails/`, high rate limits for tests, and only the services tests use
+   (Postgres, Auth, REST, Storage, Mailpit). If you started the stack before
+   storage was added, run `pnpm db:test:stop` and `pnpm db:test:start` once.
 2. Applies our Drizzle migrations to it, including the hobby seed.
 3. Writes `.env.test.local` (git-ignored) with the local URLs and keys.
 
@@ -255,7 +257,9 @@ and logged in, exactly like a browser:
 | Items            | Reserved and traded items cannot be edited into new trades           | ⏳     |
 | Posts            | "For trade" is derived from tagged items (POST-02); max 6 photos     | ⏳     |
 | Feed             | Cursor pagination returns no duplicates when new posts arrive        | ⏳     |
-| Images           | Uploaded photos have no EXIF or GPS data; wrong file types rejected  | ⏳     |
+| Images           | Uploaded photos have no EXIF or GPS data; wrong file types rejected  | ✅     |
+| Images           | Profile photo upload, replace, and delete against real storage       | ✅     |
+| Brand            | Logo files in `src/shared/brand.ts` exist and have the sizes written there | ✅ |
 | Chat             | Contact info warning triggers on phone numbers (CHAT-04)             | ⏳     |
 | Ratings          | One per rater per trade; hidden until both rate or 7 days pass       | ⏳     |
 | Account deletion | Active trades cancelled, reserved items freed, data removed          | ⏳     |
@@ -331,8 +335,10 @@ A merge into `main` deploys to production.
 - Integration tests call route handlers directly, not through a running
   server. `connection()` and `cookies()` are replaced with simple stand-ins in
   `tests/integration/setup.ts`. The real request pipeline is covered by E2E.
-- Turnstile (CAPTCHA) is off in the local stack, so it isn't tested yet.
-  Add a test when AUTH-02 is finished.
+- Turnstile (CAPTCHA) is off in the local stack, so the real check isn't
+  tested. E2E builds use Cloudflare's always-pass test site key
+  (`playwright.config.ts`), so the widget loads on `127.0.0.1` without
+  touching the real key. The hosted project enforces the real check.
 - Supabase's hosted settings (email templates, SMTP, Site URL) are set in the
   dashboard and can't be tested locally. `supabase/config.toml` copies the
   parts tests rely on; keep them in step.
