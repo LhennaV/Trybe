@@ -16,7 +16,11 @@ to that document.
   can run at the same time unless a dependency says otherwise.
 - Tick a task only when it is merged into `main`.
 - Put the task's requirement IDs in the pull request title or description.
-- Update the progress table when a phase is done.
+- Update the progress table when a phase is done, and release a new version
+  (README, "Versions and releases"): Phase 1 is `0.2.0`, Phase 2 `0.3.0`, and
+  so on. The Play Store launch is `1.0.0`.
+- Add a line to CHANGELOG.md under "Unreleased" in each pull request that
+  changes what people see.
 - Phase targets are rough. Move them when school gets busy, and write down
   the new target instead of skipping work.
 
