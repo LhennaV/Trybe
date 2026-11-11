@@ -289,6 +289,11 @@ use the app safely.
 - [ ] **[BE]** Account deletion: cancel active trades, delete data (DEL-01, DEL-03)
 - [ ] **[BE]** Rate limits on sign up, log in, posts, proposals, messages, reports
 - [ ] **[BE]** Security review against TRD section 14
+- [ ] **[BE]** Purge jobs needed before launch (`docs/database.md` sections 8 and 9): enable
+      pg_cron, `users_purge_unverified`, `audit_log_purge`, and orphan photo cleanup.
+      The other jobs come with the features they clean up after.
+- [ ] **[BE]** Index check before launch (`docs/database.md` section 6.3): no unused
+      indexes, no foreign keys without an index
 - [ ] **[FE]** Report flow from profiles, posts, trades, reviews, messages
 - [ ] **[FE]** Block and mute from profile menu; blocked users list in settings
 - [ ] **[FE]** Simple admin page for the report queue (SAFE-04)
