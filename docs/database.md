@@ -458,6 +458,11 @@ lowest.
 
 ### Not a database job
 
+**Photo storage.** Every photo lives in the public `photos` bucket
+(migration 0006): anyone can view a file by its URL, only the server writes
+(no storage policies for browsers), and only WebP up to 5 MB is accepted.
+Paths: `users/<user id>/avatar-<uuid>.webp` for profile photos.
+
 **Orphan photo cleanup** runs as a server job (Vercel Cron calling an API
 route) using the Supabase Storage API. Deleting rows from `storage.objects`
 with SQL does not delete the actual files.

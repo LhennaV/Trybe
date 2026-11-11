@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   // E2E and performance tests build into their own folder (.next-test), so
   // they never touch the .next folder a running `pnpm dev` is using.
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  images: {
+    // Photos from our Supabase Storage bucket only. The host comes from
+    // NEXT_PUBLIC_SUPABASE_URL, never hard-coded, so a new project or
+    // domain only means changing that value.
+    remotePatterns: process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? [new URL("/storage/v1/object/public/photos/**", process.env.NEXT_PUBLIC_SUPABASE_URL)]
+      : [],
+  },
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

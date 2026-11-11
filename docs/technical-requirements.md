@@ -519,13 +519,15 @@ If a check fails because something changed, return `409`.
 
 | Rule            | Value                                                                 |
 | --------------- | --------------------------------------------------------------------- |
-| Allowed types   | JPEG, PNG, WebP, HEIC (converted)                                     |
-| Max upload size | 10 MB per image (**Proposed**)                                        |
+| Allowed types   | JPEG, PNG, WebP, HEIC. The browser converts HEIC to JPEG (decided 2026-11-11) |
+| Max upload size | 10 MB per picked photo (**Proposed**). The browser shrinks it to 1600px first, so the API takes at most 4 MB (Vercel refuses requests over 4.5 MB) |
 | Photos per post | Up to 6                                                               |
 | Photos per item | Up to 4 (**Proposed**)                                                |
 | Stored sizes    | Resized on upload (for example 400px thumbnail and 1600px full), WebP |
 | Metadata        | Strip all EXIF data, including GPS location, before storing           |
 | Access          | Public read for post and item photos, write only through the API      |
+| Where           | Supabase Storage bucket `photos` (migration 0006). URLs are built from `NEXT_PUBLIC_SUPABASE_URL`, never hard-coded |
+| How             | `resizeForUpload()` in the browser, then `processImage()` on the server: checks the real file type from the bytes, turns it upright, drops EXIF and GPS, writes WebP |
 
 ## 14. Security requirements
 
