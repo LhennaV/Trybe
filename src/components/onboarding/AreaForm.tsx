@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowsLeftRight, Bell, Crosshair, LockSimple, Sparkle } from "@phosphor-icons/react";
+import { citySchema } from "@/shared/contracts/users";
+import { setMe, useMe } from "@/components/profile/useMe";
+import { updateMe } from "@/components/settings/profileApi";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Toggle from "@/components/ui/Toggle";
@@ -42,19 +45,51 @@ function NotifyRow({
   );
 }
 
+// Onboarding step 3: your city, saved with PATCH /api/me. City only, never
+// coordinates (PROF-05). The notification toggles aren't in the API yet.
 export default function AreaForm() {
   const router = useRouter();
+  const meState = useMe();
+  const [city, setCity] = useState<string | null>(null);
+  const [cityError, setCityError] = useState("");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
   const [locationNotice, setLocationNotice] = useState(false);
+
+  // Start from the saved city, if there is one.
+  if (city === null && meState.status !== "loading") {
+    setCity(meState.status === "ready" ? (meState.me.city ?? "") : "");
+  }
+
+  async function save() {
+    if (saving) return;
+    const parsed = citySchema.safeParse(city ?? "");
+    if (!parsed.success) {
+      setCityError(parsed.error.issues[0]?.message ?? "Add your city.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    const result = await updateMe({ city: parsed.data });
+    if (!result.ok) {
+      setSaving(false);
+      setCityError(result.fields.city?.[0] ?? "");
+      setError(result.fields.city ? "" : result.message);
+      return;
+    }
+    setMe(result.data);
+    router.push("/feed");
+  }
   const [tradeUpdates, setTradeUpdates] = useState(true);
   const [gearMatches, setGearMatches] = useState(true);
 
   return (
     <form
       className="flex flex-1 flex-col gap-[18px]"
+      noValidate
       onSubmit={(event) => {
         event.preventDefault();
-        // Saved to the profile once the accounts API exists. City only, never coordinates (PROF-05).
-        router.push("/feed");
+        void save();
       }}
     >
       <Input
@@ -63,7 +98,13 @@ export default function AreaForm() {
         placeholder="e.g. Quezon City"
         autoComplete="address-level2"
         list="city-suggestions"
-        required
+        value={city ?? ""}
+        disabled={city === null}
+        error={cityError}
+        onChange={(event) => {
+          setCity(event.target.value);
+          setCityError("");
+        }}
       />
       <datalist id="city-suggestions">
         {CITY_SUGGESTIONS.map((city) => (
@@ -122,8 +163,13 @@ export default function AreaForm() {
 
       <div className="flex-1" />
 
-      <Button type="submit" fullWidth>
-        Finish setup
+      {error && (
+        <p role="alert" className="rounded-xl bg-status-danger/12 px-3.5 py-3 text-body-s font-bold text-status-danger">
+          {error}
+        </p>
+      )}
+      <Button type="submit" fullWidth disabled={saving || city === null}>
+        {saving ? "Saving…" : "Finish setup"}
       </Button>
       <Link href="/feed" className="flex min-h-11 items-center justify-center text-body-s font-bold text-ink-600">
         Skip for now

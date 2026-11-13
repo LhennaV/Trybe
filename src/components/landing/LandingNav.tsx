@@ -15,14 +15,66 @@ const LINKS = [
   { href: "/#faq", label: "FAQ" },
 ];
 
+// Index of the landing section on screen, or -1 (top of the page, or not on
+// the landing page). A section counts once its top passes 40% of the screen;
+// at the very bottom the last one wins, since FAQ may be too short to get there.
+function useActiveSection(enabled: boolean) {
+  const [active, setActive] = useState(-1);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const sections = LINKS.map((link) => document.getElementById(link.href.split("#")[1]));
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const line = window.innerHeight * 0.4;
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      let index = -1;
+      sections.forEach((section, i) => {
+        if (section && section.getBoundingClientRect().top <= line) index = i;
+      });
+      if (atBottom && sections[sections.length - 1]) index = sections.length - 1;
+      setActive(index);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [enabled]);
+
+  return enabled ? active : -1;
+}
+
 // Floating frosted-glass pill, after the HomeSure navbar: it sits on the page
 // with the content scrolling underneath, blurred. One highlight slides behind
-// the links, resting on the current page and following hover and focus.
+// the links, resting on the section you're reading and following hover and focus.
 export default function LandingNav() {
   const pathname = usePathname();
   const linksRef = useRef<HTMLUListElement>(null);
-  const restingIndex = LINKS.findIndex((link) => link.href === pathname);
+  const restingIndex = useActiveSection(pathname === "/");
   const [target, setTarget] = useState(restingIndex);
+  // While the pointer or focus is on a link, the highlight follows that link.
+  const pointing = useRef(false);
+
+  useEffect(() => {
+    if (!pointing.current) setTarget(restingIndex);
+  }, [restingIndex]);
+
+  const point = (index: number) => {
+    pointing.current = true;
+    setTarget(index);
+  };
+  const rest = () => {
+    pointing.current = false;
+    setTarget(restingIndex);
+  };
   const [pill, setPill] = useState<{ x: number; width: number } | null>(null);
   // No slide on first paint, or it would sweep in from the left.
   const [animate, setAnimate] = useState(false);
@@ -66,7 +118,7 @@ export default function LandingNav() {
         </Link>
 
         <nav aria-label="Main" className="hidden lg:block">
-          <ul ref={linksRef} className="relative flex items-center gap-1" onMouseLeave={() => setTarget(restingIndex)}>
+          <ul ref={linksRef} className="relative flex items-center gap-1" onMouseLeave={rest}>
             <span
               aria-hidden
               className={[
@@ -84,10 +136,10 @@ export default function LandingNav() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  aria-current={index === restingIndex ? "page" : undefined}
-                  onMouseEnter={() => setTarget(index)}
-                  onFocus={() => setTarget(index)}
-                  onBlur={() => setTarget(restingIndex)}
+                  aria-current={index === restingIndex ? "location" : undefined}
+                  onMouseEnter={() => point(index)}
+                  onFocus={() => point(index)}
+                  onBlur={rest}
                   className={[
                     "relative flex min-h-11 items-center rounded-chip px-3.5 text-body-s font-bold transition-colors duration-300",
                     index === target ? "text-brand-plum" : "text-ink-600",
@@ -103,7 +155,8 @@ export default function LandingNav() {
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Link
             href="/login"
-            className="flex h-11 items-center rounded-chip border border-line bg-surface-white px-3.5 text-body-s font-bold text-ink-900 sm:px-5"
+            // Same 3px bottom edge as Sign up (in the line color) so both sit level.
+            className="flex h-11 items-center rounded-chip border-[1.5px] border-line bg-surface-white px-3.5 text-body-s font-bold text-ink-900 shadow-[0_3px_0_0_var(--line)] sm:px-5"
           >
             Log in
           </Link>

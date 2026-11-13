@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { PASSWORD_MIN, signUpSchema, type SignUp } from "@/shared/contracts/auth";
-import { firstFieldErrors, zodFieldErrors } from "@/components/api/request";
+import { useRef, useState, type ReactNode } from "react";
+import { CheckCircle } from "@phosphor-icons/react";
+import { signUpSchema, type SignUp } from "@/shared/contracts/auth";
+import { displayNameSchema } from "@/shared/contracts/users";
+import { firstFieldErrors } from "@/components/api/request";
 import Button, { buttonClassName } from "@/components/ui/Button";
-
+import Chip from "@/components/ui/Chip";
 import Input from "@/components/ui/Input";
 import PasswordInput from "@/components/ui/PasswordInput";
 import AgreementSheet from "./AgreementSheet";
@@ -13,11 +15,15 @@ import AuthNotice from "./AuthNotice";
 import AuthScreen, { AuthHeading } from "./AuthScreen";
 import { signUp } from "./authApi";
 import { handleCandidates, inboxLink } from "./handleSuggestion";
+import PasswordChecklist from "./PasswordChecklist";
 import ResendVerification from "./ResendVerification";
+import { emailProblem, passwordProblems } from "./signupChecks";
 import Turnstile from "./Turnstile";
+import { useHandleCheck, type HandleCheck } from "./useHandleCheck";
 import { useTurnstile } from "./useTurnstile";
 
 type Values = { displayName: string; email: string; password: string };
+type Field = keyof Values;
 
 // After sign up: the account exists and the verification email is on its way.
 function CheckEmail({ email, onChangeEmail }: { email: string; onChangeEmail: () => void }) {
@@ -56,19 +62,85 @@ function CheckEmail({ email, onChangeEmail }: { email: string; onChangeEmail: ()
   );
 }
 
+// Under the display name: the handle it makes, and whether it's free. If it's
+// taken, free alternatives to tap. Read aloud as it changes.
+function HandleStatus({
+  check,
+  picked,
+  onPick,
+}: {
+  check: HandleCheck;
+  picked: string | null;
+  onPick: (handle: string) => void;
+}) {
+  let content: ReactNode = "How people see you on Trybe. You can change it later.";
+  if (check.status === "checking") content = `Checking @${check.handle}…`;
+  if (check.status === "unknown") content = `You'll be @${check.handle}, or the closest free handle.`;
+  if (check.status === "free") {
+    content = (
+      <span className="flex items-center gap-1 font-bold text-status-success">
+        <CheckCircle size={14} weight="fill" aria-hidden />@{check.handle} is yours
+      </span>
+    );
+  }
+  if (check.status === "taken") {
+    content = (
+      <span className="flex flex-col gap-2">
+        <span>
+          <strong className="font-bold text-ink-900">@{check.handle}</strong> is taken.{" "}
+          {check.suggestions.length > 0 ? "Pick one of these instead:" : "Try adding numbers or a word to your name."}
+        </span>
+        {check.suggestions.length > 0 && (
+          <span className="flex flex-wrap gap-2" role="group" aria-label="Free handles">
+            {check.suggestions.map((handle) => (
+              <Chip key={handle} selected={picked === handle} onClick={() => onPick(handle)}>
+                @{handle}
+              </Chip>
+            ))}
+          </span>
+        )}
+      </span>
+    );
+  }
+  return (
+    <div aria-live="polite" className="-mt-2 text-caption text-ink-600">
+      {content}
+    </div>
+  );
+}
+
 export default function SignupForm() {
   const [values, setValues] = useState<Values>({ displayName: "", email: "", password: "" });
+  // A field shows its problems once you've left it, or after a submit try.
+  const [touched, setTouched] = useState<Record<Field, boolean>>({ displayName: false, email: false, password: false });
+  const [submitted, setSubmitted] = useState(false);
+  const [pickedHandle, setPickedHandle] = useState<string | null>(null);
   const [agreementOpen, setAgreementOpen] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const captcha = useTurnstile();
+  const fieldRefs = useRef<Partial<Record<Field, HTMLInputElement | null>>>({});
+  const handleCheck = useHandleCheck(values.displayName, values.email);
 
-  function update<K extends keyof Values>(key: K, value: Values[K]) {
+  // Problems right now, checked on every keystroke.
+  const problems: Record<Field, string> = {
+    displayName: displayNameSchema.safeParse(values.displayName).error?.issues[0]?.message ?? "",
+    email: emailProblem(values.email),
+    password: passwordProblems(values.password).length > 0 ? "Your password still needs what's below." : "",
+  };
+  const show = (field: Field) => serverErrors[field] || (touched[field] || submitted ? problems[field] : "");
+
+  // The suggestion people tapped, or the first free one if the name is taken.
+  const suggested = handleCheck.status === "taken" ? handleCheck.suggestions[0] : undefined;
+  const chosenHandle = pickedHandle ?? suggested ?? null;
+
+  function update(key: Field, value: string) {
     setValues((v) => ({ ...v, [key]: value }));
-    if (fieldErrors[key]) {
-      setFieldErrors((errors) => {
+    if (key === "displayName") setPickedHandle(null);
+    if (serverErrors[key]) {
+      setServerErrors((errors) => {
         const next = { ...errors };
         delete next[key];
         return next;
@@ -76,37 +148,43 @@ export default function SignupForm() {
     }
   }
 
-  // People don't pick a username here; one is made from their name and can be
-  // changed later in Edit profile. If it's taken, the next one is tried.
-  // acceptTerms and confirmAge are only true once the agreement sheet is done.
-  function buildInput(agreed: boolean) {
-    const candidates = handleCandidates(values.displayName, values.email);
+  const touch = (key: Field) => setTouched((t) => (t[key] ? t : { ...t, [key]: true }));
+
+  // Handles to try, best first: the picked or free one, then fallbacks in case
+  // someone takes it in the meantime. acceptTerms and confirmAge are only sent
+  // after the agreement sheet is done.
+  function buildInput() {
+    const fallbacks = handleCandidates(values.displayName, values.email);
+    const candidates = [...new Set([chosenHandle, ...fallbacks].filter((h): h is string => Boolean(h)))];
     const input = {
       displayName: values.displayName,
-      email: values.email,
+      email: values.email.trim(),
       password: values.password,
       handle: candidates[0],
-      acceptTerms: agreed,
-      confirmAge: agreed,
+      acceptTerms: true,
+      confirmAge: true,
     };
     return { candidates, parsed: signUpSchema.safeParse(input) };
   }
 
-  // Create account: check the fields first, then show the agreement sheet.
+  // Create account: everything must pass first, then the agreement sheet.
   function handleSubmit() {
-    const { parsed } = buildInput(true);
-    if (!parsed.success) {
-      setError("");
-      setFieldErrors(zodFieldErrors(parsed.error));
+    setSubmitted(true);
+    setError("");
+    const firstBad = (["displayName", "email", "password"] as const).find((field) => problems[field]);
+    if (firstBad) {
+      fieldRefs.current[firstBad]?.focus();
       return;
     }
-    setFieldErrors({});
-    setError("");
+    if (!buildInput().parsed.success) {
+      setError("Something in the form doesn't look right. Check each field.");
+      return;
+    }
     setAgreementOpen(true);
   }
 
   async function createAccount() {
-    const { candidates, parsed } = buildInput(true);
+    const { candidates, parsed } = buildInput();
     if (!parsed.success) return;
 
     setPending(true);
@@ -131,11 +209,13 @@ export default function SignupForm() {
     }
     const fields = firstFieldErrors(result.fields);
     delete fields.handle;
-    setFieldErrors(fields);
+    setServerErrors(fields);
     if (Object.keys(fields).length === 0) setError(result.message);
   }
 
   if (sentTo) return <CheckEmail email={sentTo} onChangeEmail={() => setSentTo(null)} />;
+
+  const emailOk = values.email.trim() !== "" && !problems.email;
 
   return (
     <AuthScreen>
@@ -152,15 +232,24 @@ export default function SignupForm() {
         }}
       >
         <Input
+          ref={(el) => {
+            fieldRefs.current.displayName = el;
+          }}
           label="Display name"
           name="displayName"
           placeholder="e.g. stormi"
           autoComplete="nickname"
           value={values.displayName}
           onChange={(event) => update("displayName", event.target.value)}
-          error={fieldErrors.displayName}
+          onBlur={() => touch("displayName")}
+          error={show("displayName")}
         />
+        {!show("displayName") && <HandleStatus check={handleCheck} picked={chosenHandle} onPick={setPickedHandle} />}
+
         <Input
+          ref={(el) => {
+            fieldRefs.current.email = el;
+          }}
           label="Email"
           name="email"
           type="email"
@@ -168,19 +257,38 @@ export default function SignupForm() {
           placeholder="you@email.com"
           autoComplete="email"
           autoCapitalize="none"
+          spellCheck={false}
           value={values.email}
           onChange={(event) => update("email", event.target.value)}
-          error={fieldErrors.email}
+          onBlur={() => touch("email")}
+          error={show("email")}
+          trailing={
+            emailOk ? (
+              <span className="mr-4 flex shrink-0 text-status-success">
+                <CheckCircle size={20} weight="fill" aria-hidden />
+                <span className="sr-only">Email looks good</span>
+              </span>
+            ) : undefined
+          }
         />
-        <PasswordInput
-          label="Password"
-          name="password"
-          placeholder={`At least ${PASSWORD_MIN} characters`}
-          autoComplete="new-password"
-          value={values.password}
-          onChange={(event) => update("password", event.target.value)}
-          error={fieldErrors.password}
-        />
+
+        <div className="flex flex-col gap-2">
+          <PasswordInput
+            ref={(el) => {
+              fieldRefs.current.password = el;
+            }}
+            label="Password"
+            name="password"
+            placeholder="Make it a strong one"
+            autoComplete="new-password"
+            value={values.password}
+            onChange={(event) => update("password", event.target.value)}
+            onBlur={() => touch("password")}
+            error={show("password")}
+          />
+          <PasswordChecklist password={values.password} showMissing={submitted || touched.password} />
+        </div>
+
         <p className="text-caption text-ink-600">Your exact location stays private. Others only see your city.</p>
 
         <Turnstile controller={captcha} action="signup" />

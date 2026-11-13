@@ -19,7 +19,7 @@ export default function SettingsNav() {
 
   return (
     <nav aria-label="Settings" className="sticky top-7 hidden flex-col gap-1 self-start lg:flex">
-      <p className="px-3 pb-3 font-display text-display-l text-brand-plum">Settings</p>
+      <p className="flex min-h-12 items-end px-3 pb-2 text-label-s text-ink-600 uppercase">Settings</p>
       {ITEMS.map(({ href, label, icon: Icon }) => {
         const active = pathname === href;
         return (

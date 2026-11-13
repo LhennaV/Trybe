@@ -24,6 +24,15 @@ How versions work (details in the README, "Versions and releases"):
 - Your profile page and the sidebar show your real name, photo, handle,
   and city, and update right after you save.
 - Log out in Settings works (it did nothing before).
+- Settings looks right on desktop: no back button, bigger titles, lined up
+  with the rest of the app.
+- The landing page menu highlights the section you're reading.
+- Deleting your account asks twice: type DELETE, then a last check.
+- Onboarding saves your hobbies (including "Other") and your city.
+- Other people's profiles show their real name, photo, city, and hobbies.
+- Sign up checks as you type: a free handle (with suggestions if yours is
+  taken), email typos like gmial.com, and a password checklist (8+
+  characters, uppercase, number, symbol). Reset password uses it too.
 - Brand assets in one place (`src/shared/brand.ts`), so changing the logo
   means changing one file. Every screen and the app icons now use it.
 - `robots.txt`: search engines can find public pages on the live site;

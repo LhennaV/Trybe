@@ -9,7 +9,8 @@ import ProfileSkeleton from "./ProfileSkeleton";
 import ProfileTabs, { EmptyTab } from "./ProfileTabs";
 import ShareProfileButton from "./ShareProfileButton";
 import TrustStats from "./TrustStats";
-import { loadMe, timeOnTrybe, useMe } from "./useMe";
+import { timeOnTrybe } from "./timeOnTrybe";
+import { loadMe, useMe } from "./useMe";
 
 // Your own profile (PROF-02), from GET /api/me. Posts, gear, and reviews
 // have no API yet (Phase 2 and 4), so their tabs show the empty states.
