@@ -158,7 +158,12 @@ and start it again.
 
 Status: ✅ done, ⏳ when the feature is built.
 
-### 7.1 Trade state machine (required before Phase 3 endpoints merge) ⏳
+### 7.1 Trade state machine (required before Phase 3 endpoints merge)
+
+✅ Rules: `tests/unit/server/trades/stateMachine.test.ts` runs this whole matrix,
+written as data in `tests/unit/server/trades/matrix.ts`, against
+`transitionTrade()`. ⏳ Database: run the same matrix against the `app.trade_*`
+functions when they exist, so the rules in TypeScript and in Postgres can't drift.
 
 Test every row of this matrix. "Maker" is the person who made the current
 offer. "Responder" is the other person.
