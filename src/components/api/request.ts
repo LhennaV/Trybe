@@ -8,14 +8,16 @@ export type ApiResult<T> =
 
 // Calls one of our JSON endpoints and turns the { data } / { error } shape
 // (TRD section 10) into a result. Never throws: a network failure comes back
-// as INTERNAL_ERROR with a friendly message.
+// as INTERNAL_ERROR with a friendly message. A FormData body is sent as a
+// multipart upload (the browser sets its own Content-Type); anything else as JSON.
 export async function apiRequest<T>(path: string, init: { method?: string; body?: unknown } = {}): Promise<ApiResult<T>> {
+  const isForm = init.body instanceof FormData;
   let response: Response;
   try {
     response = await fetch(path, {
       method: init.method ?? (init.body === undefined ? "GET" : "POST"),
-      headers: init.body === undefined ? undefined : { "Content-Type": "application/json" },
-      body: init.body === undefined ? undefined : JSON.stringify(init.body),
+      headers: init.body === undefined || isForm ? undefined : { "Content-Type": "application/json" },
+      body: init.body === undefined ? undefined : isForm ? (init.body as FormData) : JSON.stringify(init.body),
       credentials: "same-origin",
     });
   } catch {

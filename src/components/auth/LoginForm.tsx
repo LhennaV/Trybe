@@ -8,10 +8,12 @@ import { firstFieldErrors, zodFieldErrors } from "@/components/api/request";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import PasswordInput from "@/components/ui/PasswordInput";
+import { resetMe } from "@/components/profile/useMe";
 import AuthNotice from "./AuthNotice";
 import { logIn } from "./authApi";
 import ResendVerification from "./ResendVerification";
-import TurnstilePlaceholder from "./TurnstilePlaceholder";
+import Turnstile from "./Turnstile";
+import { useTurnstile } from "./useTurnstile";
 
 type Notice = { tone: "info" | "error"; body: ReactNode } | null;
 
@@ -37,6 +39,7 @@ export default function LoginForm({ linkInvalid = false }: { linkInvalid?: boole
       : null,
   );
   const [pending, setPending] = useState(false);
+  const captcha = useTurnstile();
 
   async function handleSubmit(form: HTMLFormElement) {
     const data = new FormData(form);
@@ -49,9 +52,12 @@ export default function LoginForm({ linkInvalid = false }: { linkInvalid?: boole
     setFieldErrors({});
     setNotice(null);
     setPending(true);
-    const result = await logIn(parsed.data);
+    const result = await logIn({ ...parsed.data, captchaToken: await captcha.getToken() });
+    // Each token works once, so the next try needs a fresh check.
+    captcha.reset();
 
     if (result.ok) {
+      resetMe();
       router.replace("/feed");
       router.refresh();
       return;
@@ -110,7 +116,7 @@ export default function LoginForm({ linkInvalid = false }: { linkInvalid?: boole
         Forgot password?
       </Link>
 
-      <TurnstilePlaceholder />
+      <Turnstile controller={captcha} action="login" />
 
       <div className="flex-1 lg:hidden" />
 

@@ -4,8 +4,15 @@ import LevelBadge from "@/components/badges/LevelBadge";
 import Avatar from "@/components/ui/Avatar";
 import type { Profile } from "./sampleProfiles";
 
+// What the header needs. Fits a sample profile and the real one from /api/me.
+export type HeaderProfile = Pick<Profile, "displayName" | "handle" | "emailVerified" | "completedTrades"> & {
+  bio: string | null;
+  city: string | null;
+  photoUrl?: string | null;
+};
+
 type ProfileHeaderProps = {
-  profile: Profile;
+  profile: HeaderProfile;
   // Icon buttons on the cover (back, share, settings, report...).
   coverActions: ReactNode;
   // Buttons next to the avatar (Edit profile, Message...).
@@ -28,7 +35,7 @@ export default function ProfileHeader({ profile, coverActions, actions, coverHei
 
       <div className="flex flex-col gap-3 px-4 lg:px-6">
         <div className="-mt-[42px] flex items-end gap-3">
-          <Avatar name={profile.displayName} size={84} className="ring-4 ring-brand-cream" />
+          <Avatar name={profile.displayName} src={profile.photoUrl} size={84} className="ring-4 ring-brand-cream" />
           <div className="ml-auto flex gap-2">{actions}</div>
         </div>
 
@@ -40,11 +47,15 @@ export default function ProfileHeader({ profile, coverActions, actions, coverHei
           </div>
           <p className="flex flex-wrap items-center gap-1.5 text-body-s text-ink-600">
             <span className="font-bold">@{profile.handle}</span>
-            <span className="text-ink-400" aria-hidden>
-              ·
-            </span>
-            <MapPin size={13} weight="bold" aria-hidden />
-            {profile.city}
+            {profile.city && (
+              <>
+                <span className="text-ink-400" aria-hidden>
+                  ·
+                </span>
+                <MapPin size={13} weight="bold" aria-hidden />
+                {profile.city}
+              </>
+            )}
           </p>
         </div>
 

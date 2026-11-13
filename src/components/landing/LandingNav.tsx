@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BRAND, brandSize } from "@/shared/brand";
 
 // Sections of the landing page. "/#..." so they also work from /about and
 // the legal pages. About lives in the footer.
@@ -60,7 +61,7 @@ export default function LandingNav() {
         ].join(" ")}
       >
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Trybe home">
-          <Image src="/brand/storm-icon.png" alt="" width={41} height={40} priority className="h-8 w-auto" />
+          <Image {...BRAND.icon} {...brandSize(BRAND.icon, 40)} alt="" priority className="h-8 w-auto" />
           <span className="font-display text-display-m text-brand-plum">TRYBE</span>
         </Link>
 

@@ -9,10 +9,10 @@ import {
   Palette,
   Prohibit,
   ShieldCheck,
-  SignOut,
   Tray,
   User,
 } from "@phosphor-icons/react/dist/ssr";
+import LogOutButton from "@/components/settings/LogOutButton";
 import NotificationToggles from "@/components/settings/NotificationToggles";
 import { SettingsGroup, SettingsLinkRow } from "@/components/settings/SettingsList";
 import ThemeValue from "@/components/settings/ThemeValue";
@@ -65,13 +65,7 @@ export default function SettingsPage() {
         <SettingsLinkRow icon={<BookOpen {...icon} />} label="Privacy notice" href="/privacy" />
       </SettingsGroup>
 
-      <button
-        type="button"
-        className="mt-1 flex min-h-11 items-center justify-center gap-2 rounded-card border-[1.5px] border-line bg-surface-white px-3.5 py-[13px] text-body-m font-bold text-status-danger"
-      >
-        <SignOut size={18} weight="bold" aria-hidden />
-        Log out
-      </button>
+      <LogOutButton className="mt-1 flex min-h-11 items-center justify-center gap-2 rounded-card border-[1.5px] border-line bg-surface-white px-3.5 py-[13px] text-body-m font-bold text-status-danger disabled:opacity-60" />
       {/* Account deletion must be reachable in the app (DEL-01). */}
       <Link
         href="/settings/delete-account"

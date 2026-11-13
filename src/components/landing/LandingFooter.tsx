@@ -4,6 +4,7 @@ import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr";
 import { CONTACT_EMAIL, CONTACT_HREF } from "@/components/legal/LegalDoc";
 import RevealText from "@/components/ui/RevealText";
 import WaitlistForm from "./WaitlistForm";
+import { BRAND, brandSize } from "@/shared/brand";
 
 // Instagram is in Figma but has no address yet. Add the href and it shows up.
 const LINKS: { label: string; href: string | null }[] = [
@@ -36,7 +37,7 @@ export default function LandingFooter() {
         <div className="flex flex-col items-center gap-3.5 pt-8 lg:flex-row lg:justify-between">
           <div className="flex flex-col items-center gap-3.5 lg:flex-row lg:gap-2.5">
             <span className="flex items-center gap-2 lg:gap-2.5">
-              <Image src="/brand/storm-icon.png" alt="" width={33} height={32} className="h-7 w-auto lg:h-8" />
+              <Image {...BRAND.icon} {...brandSize(BRAND.icon, 32)} alt="" className="h-7 w-auto lg:h-8" />
               <span className="font-display text-display-m">TRYBE</span>
             </span>
             {/* On phones the copyright line moves below the links. */}

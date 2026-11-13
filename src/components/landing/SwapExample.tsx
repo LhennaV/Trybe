@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ArrowsLeftRight, Money } from "@phosphor-icons/react/dist/ssr";
+import { BRAND, brandSize } from "@/shared/brand";
 
 const SIDES = [
   {
@@ -62,7 +63,7 @@ export default function SwapExample() {
         <div className="flex w-full gap-3 lg:contents">
           <SideCard side={you} />
           <div className="hidden flex-col items-center gap-1.5 lg:flex">
-            <Image src="/brand/storm-icon.png" alt="" width={150} height={145} />
+            <Image {...BRAND.icon} {...brandSize(BRAND.icon, 145)} alt="" />
             <span className="flex size-[72px] items-center justify-center rounded-chip bg-brand-plum text-surface-white">
               <ArrowsLeftRight size={32} weight="bold" aria-hidden />
             </span>
@@ -73,7 +74,7 @@ export default function SwapExample() {
 
         {/* Wraps the cash chip onto its own line on narrow phones instead of cutting it off. */}
         <div className="flex flex-wrap items-center justify-center gap-2.5 pt-3.5 lg:hidden">
-          <Image src="/brand/storm-icon.png" alt="" width={84} height={81} />
+          <Image {...BRAND.icon} {...brandSize(BRAND.icon, 81)} alt="" />
           <span className="flex size-[52px] shrink-0 items-center justify-center rounded-chip bg-brand-plum text-surface-white">
             <ArrowsLeftRight size={24} weight="bold" aria-hidden />
           </span>

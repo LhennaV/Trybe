@@ -4,9 +4,11 @@ import type { Profile } from "./sampleProfiles";
 
 // Rating, trade count, and time on Trybe in one card. Ratings reduce risk,
 // they don't guarantee it, so this stays factual and doesn't say "trusted".
-export default function TrustStats({ profile }: { profile: Profile }) {
+export type TrustProfile = Pick<Profile, "reviewCount" | "tradeCount" | "timeOnTrybe"> & { rating: number | null };
+
+export default function TrustStats({ profile }: { profile: TrustProfile }) {
   const stats = [
-    { label: "avg rating", value: profile.reviewCount > 0 ? profile.rating.toFixed(1) : "New", star: profile.reviewCount > 0 },
+    { label: "avg rating", value: profile.rating !== null && profile.reviewCount > 0 ? profile.rating.toFixed(1) : "New", star: profile.rating !== null && profile.reviewCount > 0 },
     { label: "trades", value: String(profile.tradeCount), star: false },
     { label: "on Trybe", value: profile.timeOnTrybe, star: false },
   ];

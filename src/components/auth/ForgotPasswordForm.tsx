@@ -8,7 +8,8 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import AuthNotice from "./AuthNotice";
 import { requestPasswordReset } from "./authApi";
-import TurnstilePlaceholder from "./TurnstilePlaceholder";
+import Turnstile from "./Turnstile";
+import { useTurnstile } from "./useTurnstile";
 
 // Emails a reset link (AUTH-06). The API answers the same way whether or not
 // the email has an account, so the copy here never says "we found you".
@@ -17,6 +18,7 @@ export default function ForgotPasswordForm() {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
+  const captcha = useTurnstile();
 
   async function handleSubmit(form: HTMLFormElement) {
     const parsed = emailRequestSchema.safeParse({ email: new FormData(form).get("email") });
@@ -28,7 +30,8 @@ export default function ForgotPasswordForm() {
     setFieldErrors({});
     setError("");
     setPending(true);
-    const result = await requestPasswordReset(parsed.data);
+    const result = await requestPasswordReset({ ...parsed.data, captchaToken: await captcha.getToken() });
+    captcha.reset();
     setPending(false);
 
     if (result.ok) {
@@ -58,7 +61,7 @@ export default function ForgotPasswordForm() {
         error={fieldErrors.email}
       />
 
-      <TurnstilePlaceholder />
+      <Turnstile controller={captcha} action="forgot_password" />
 
       {sentTo && (
         <AuthNotice tone="success">

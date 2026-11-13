@@ -1,3 +1,4 @@
+import { BRAND } from "@/shared/brand";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
@@ -25,7 +26,7 @@ export function generateImageMetadata() {
 export default async function Icon({ id }: { id: Promise<string | number> }) {
   const iconId = String(await id);
   const icon = ICONS.find((i) => i.id === iconId) ?? ICONS[1];
-  const png = await readFile(join(process.cwd(), "public/brand/storm-icon.png"));
+  const png = await readFile(join(process.cwd(), "public", BRAND.icon.src));
   const src = `data:image/png;base64,${png.toString("base64")}`;
   const inner = Math.round(icon.size * (1 - icon.padding * 2));
 

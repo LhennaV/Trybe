@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GearSix, Palette, Prohibit, SignOut, Trash, User, type Icon } from "@phosphor-icons/react";
+import { GearSix, Palette, Prohibit, Trash, User, type Icon } from "@phosphor-icons/react";
+import LogOutButton from "./LogOutButton";
 
 const ITEMS: { href: string; label: string; icon: Icon }[] = [
   { href: "/settings", label: "All settings", icon: GearSix },
@@ -35,10 +36,10 @@ export default function SettingsNav() {
           </Link>
         );
       })}
-      <button type="button" className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-body-s text-status-danger">
-        <SignOut size={16} weight="bold" aria-hidden />
-        Log out
-      </button>
+      <LogOutButton
+        iconSize={16}
+        className="flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-body-s text-status-danger disabled:opacity-60"
+      />
     </nav>
   );
 }

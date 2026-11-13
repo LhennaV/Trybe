@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Tilt from "@/components/ui/Tilt";
 import LandingSection from "./LandingSection";
+import { BRAND, brandSize } from "@/shared/brand";
 
 // Figma "Landing · A · Curiosity" > Storm. Links to /about for the full story.
 export default function StormSection() {
@@ -13,10 +14,9 @@ export default function StormSection() {
           className="flex flex-col items-center gap-6 rounded-[28px] bg-brand-lavender p-7 text-center lg:flex-row lg:gap-14 lg:p-14 lg:text-left"
         >
           <Image
-            src="/brand/storm-icon.png"
+            {...BRAND.icon}
+            {...brandSize(BRAND.icon, 215)}
             alt="Storm, the Trybe cat, peeking out of a cardboard box"
-            width={220}
-            height={215}
             className="h-auto w-40 shrink-0 animate-float lg:w-[220px]"
           />
           <div className="flex flex-col gap-3">
