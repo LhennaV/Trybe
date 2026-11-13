@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { BRAND, brandSize } from "@/shared/brand";
 
 // Inside the frosted card: the Trybe logo on top, which is also the way back
 // home (no separate back button, as on the HomeSure sign-in page), then the
@@ -23,10 +24,9 @@ export function AuthBrand() {
       className="group mx-auto flex min-h-11 items-center gap-2 rounded-chip px-2 transition-transform duration-150 active:scale-95"
     >
       <Image
-        src="/brand/storm-icon.png"
+        {...BRAND.icon}
+        {...brandSize(BRAND.icon, 40)}
         alt=""
-        width={41}
-        height={40}
         priority
         className="h-9 w-auto transition-transform duration-150 group-hover:scale-105 group-active:-rotate-6"
       />

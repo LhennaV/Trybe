@@ -14,7 +14,8 @@ import AuthScreen, { AuthHeading } from "./AuthScreen";
 import { signUp } from "./authApi";
 import { handleCandidates, inboxLink } from "./handleSuggestion";
 import ResendVerification from "./ResendVerification";
-import TurnstilePlaceholder from "./TurnstilePlaceholder";
+import Turnstile from "./Turnstile";
+import { useTurnstile } from "./useTurnstile";
 
 type Values = { displayName: string; email: string; password: string };
 
@@ -62,6 +63,7 @@ export default function SignupForm() {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
+  const captcha = useTurnstile();
 
   function update<K extends keyof Values>(key: K, value: Values[K]) {
     setValues((v) => ({ ...v, [key]: value }));
@@ -109,11 +111,16 @@ export default function SignupForm() {
 
     setPending(true);
 
-    let result = await signUp(parsed.data);
+    // The API checks the handle before the bot check uses up the token, so
+    // one token is enough for every handle we try.
+    const input = { ...parsed.data, captchaToken: await captcha.getToken() } satisfies SignUp;
+    let result = await signUp(input);
     for (const handle of candidates.slice(1)) {
       if (result.ok || result.code !== "HANDLE_TAKEN") break;
-      result = await signUp({ ...parsed.data, handle } satisfies SignUp);
+      result = await signUp({ ...input, handle });
     }
+    // Each token works once, so the next try needs a fresh check.
+    captcha.reset();
     setPending(false);
     setAgreementOpen(false);
 
@@ -176,7 +183,7 @@ export default function SignupForm() {
         />
         <p className="text-caption text-ink-600">Your exact location stays private. Others only see your city.</p>
 
-        <TurnstilePlaceholder />
+        <Turnstile controller={captcha} action="signup" />
 
         <div className="flex-1 lg:hidden" />
 

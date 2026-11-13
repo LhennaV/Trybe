@@ -7,6 +7,7 @@ import { HandCoins, MapPin, ShieldCheck } from "@phosphor-icons/react";
 import Button from "@/components/ui/Button";
 import Checkbox from "@/components/ui/Checkbox";
 import Sheet from "@/components/ui/Sheet";
+import { BRAND, brandSize } from "@/shared/brand";
 
 // Minimum age is still an open decision (TRD section 21). 18 is a placeholder.
 export const MIN_AGE = 18;
@@ -40,7 +41,7 @@ export default function AgreementSheet({ open, pending, onClose, onAgree }: Agre
     <Sheet open={open} onClose={onClose} label="Before you join">
       <div className="flex flex-col gap-5 pt-2">
         <div className="flex items-center gap-3.5">
-          <Image src="/brand/storm-icon.png" alt="" width={56} height={55} />
+          <Image {...BRAND.icon} {...brandSize(BRAND.icon, 55)} alt="" />
           <div className="flex flex-col gap-0.5">
             <h2 className="font-display text-display-m text-brand-plum">One last thing</h2>
             <p className="text-body-s text-ink-600">The quick version of how Trybe works.</p>

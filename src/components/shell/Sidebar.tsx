@@ -3,12 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GearSix, ShieldCheck } from "@phosphor-icons/react";
-import { MY_PROFILE } from "@/components/profile/sampleProfiles";
+import { ShieldCheck } from "@phosphor-icons/react";
 import { SAMPLE_TRADES } from "@/components/trades/sampleTrades";
 import { canRespond } from "@/components/trades/tradeModel";
-import Avatar from "@/components/ui/Avatar";
 import { buttonClassName } from "@/components/ui/Button";
+import { BRAND, brandSize } from "@/shared/brand";
+import AccountMenu from "./AccountMenu";
 import { NAV_ITEMS, NEW_POST_HREF, isActive } from "./navItems";
 
 // Desktop only (lg and up), matching the Figma "Desktop Sidebar" component.
@@ -21,7 +21,7 @@ export default function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col gap-1.5 border-r border-line bg-surface-white px-5 pt-7 pb-6 lg:flex">
       <Link href="/feed" className="flex items-center gap-2 pb-[22px] pl-1.5" aria-label="Trybe home">
-        <Image src="/brand/storm-icon.png" alt="" width={42} height={41} />
+        <Image {...BRAND.icon} {...brandSize(BRAND.icon, 41)} alt="" />
         <span className="font-display text-display-m text-brand-plum">TRYBE</span>
       </Link>
 
@@ -67,20 +67,7 @@ export default function Sidebar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-2.5 px-1.5 py-2.5">
-          <Link href="/profile" className="flex min-w-0 flex-1 items-center gap-2.5">
-            <Avatar name={MY_PROFILE.displayName} size={36} />
-            <span className="flex min-w-0 flex-col">
-              <span className="text-body-s font-bold text-ink-900">Your profile</span>
-              <span className="text-caption text-ink-600">
-                ★ {MY_PROFILE.rating.toFixed(1)} · {MY_PROFILE.tradeCount} trades
-              </span>
-            </span>
-          </Link>
-          <Link href="/settings" aria-label="Settings" className="relative text-ink-600 before:absolute before:-inset-3">
-            <GearSix size={18} weight="bold" aria-hidden />
-          </Link>
-        </div>
+        <AccountMenu />
       </div>
     </aside>
   );

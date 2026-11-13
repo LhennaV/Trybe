@@ -2,6 +2,7 @@ import Image from "next/image";
 import LandingSection from "@/components/landing/LandingSection";
 import SectionLabel from "@/components/landing/SectionLabel";
 import Tilt from "@/components/ui/Tilt";
+import { BRAND, brandSize } from "@/shared/brand";
 
 // Top of /about: what Trybe is for, next to the first logo sketch and the
 // logo it became.
@@ -46,7 +47,7 @@ export default function AboutHero() {
           className="absolute -top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-3 rounded-sm bg-brand-box/60"
         />
         <div className="absolute -right-2 -bottom-8 rotate-6 rounded-card bg-brand-lavender p-3 shadow-dropdown lg:-right-8">
-          <Image src="/brand/storm-icon.png" alt="The finished Trybe logo" width={82} height={80} className="size-16 lg:size-20" />
+          <Image {...BRAND.icon} {...brandSize(BRAND.icon, 80)} alt="The finished Trybe logo" className="size-16 lg:size-20" />
         </div>
       </div>
     </LandingSection>

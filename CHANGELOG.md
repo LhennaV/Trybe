@@ -17,8 +17,15 @@ How versions work (details in the README, "Versions and releases"):
 - Profile photos: upload, replace, and remove from Edit profile
   (`POST` and `DELETE /api/me/photo`). Photos are shrunk on the phone first,
   then turned upright, stripped of location data, and saved as WebP.
+- Turnstile bot check on sign up, log in, forgot password, and "send the
+  link again".
+- Edit profile saves for real: name, handle, bio, and city. Add a profile
+  photo from the camera or your library, crop it, or remove it.
+- Your profile page and the sidebar show your real name, photo, handle,
+  and city, and update right after you save.
+- Log out in Settings works (it did nothing before).
 - Brand assets in one place (`src/shared/brand.ts`), so changing the logo
-  means changing one file.
+  means changing one file. Every screen and the app icons now use it.
 - `robots.txt`: search engines can find public pages on the live site;
   preview links and logged-in pages stay out of search results.
 

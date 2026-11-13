@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { resendVerification } from "./authApi";
+import Turnstile from "./Turnstile";
+import { useTurnstile } from "./useTurnstile";
 
 const COOLDOWN_SECONDS = 60;
 
@@ -11,6 +13,7 @@ export default function ResendVerification({ email, startCoolingDown = false }: 
   const [secondsLeft, setSecondsLeft] = useState(startCoolingDown ? COOLDOWN_SECONDS : 0);
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
+  const captcha = useTurnstile();
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -21,7 +24,8 @@ export default function ResendVerification({ email, startCoolingDown = false }: 
   async function resend() {
     setSending(true);
     setMessage("");
-    const result = await resendVerification({ email });
+    const result = await resendVerification({ email, captchaToken: await captcha.getToken() });
+    captcha.reset();
     setSending(false);
     if (result.ok) {
       setMessage("Sent a new link! Use the newest email.");
@@ -35,6 +39,8 @@ export default function ResendVerification({ email, startCoolingDown = false }: 
 
   return (
     <div className="flex flex-col gap-1">
+      {/* Hidden unless Cloudflare needs a tap, so this stays a simple link. */}
+      <Turnstile controller={captcha} action="resend_verification" appearance="interaction-only" />
       <button
         type="button"
         onClick={resend}

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { CaretLeft } from "@phosphor-icons/react/dist/ssr";
 import IconButton from "./IconButton";
 
@@ -7,13 +7,16 @@ type TopBarProps = {
   backHref: string;
   // Optional action on the right, like Save.
   action?: ReactNode;
+  // Runs before going back. Call event.preventDefault() to stay, for
+  // example to ask about unsaved changes first.
+  onBack?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 // Back button + screen title, used on settings-style screens.
-export default function TopBar({ title, backHref, action }: TopBarProps) {
+export default function TopBar({ title, backHref, action, onBack }: TopBarProps) {
   return (
     <div className="flex items-center gap-3 py-2">
-      <IconButton href={backHref} label="Back">
+      <IconButton href={backHref} label="Back" onClick={onBack}>
         <CaretLeft size={20} weight="bold" aria-hidden />
       </IconButton>
       <h1 className="text-title-m text-ink-900">{title}</h1>

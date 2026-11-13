@@ -22,7 +22,7 @@ export default function Avatar({ name, src, size = 40, className }: AvatarProps)
 
   if (src) {
     return (
-      <span className={base} style={{ width: size, height: size }}>
+      <span className={`${base} block`} style={{ width: size, height: size }}>
         <Image src={src} alt={name} fill sizes={`${size}px`} className="object-cover" />
       </span>
     );
