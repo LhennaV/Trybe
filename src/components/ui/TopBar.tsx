@@ -16,10 +16,12 @@ type TopBarProps = {
 export default function TopBar({ title, backHref, action, onBack }: TopBarProps) {
   return (
     <div className="flex items-center gap-3 py-2">
-      <IconButton href={backHref} label="Back" onClick={onBack}>
+      <IconButton href={backHref} label="Back" onClick={onBack} data-topbar-back>
         <CaretLeft size={20} weight="bold" aria-hidden />
       </IconButton>
-      <h1 className="text-title-m text-ink-900">{title}</h1>
+      <h1 data-topbar-title className="text-title-m text-ink-900">
+        {title}
+      </h1>
       {action && <div className="ml-auto">{action}</div>}
     </div>
   );

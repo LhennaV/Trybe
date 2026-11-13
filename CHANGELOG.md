@@ -24,6 +24,10 @@ How versions work (details in the README, "Versions and releases"):
 - Your profile page and the sidebar show your real name, photo, handle,
   and city, and update right after you save.
 - Log out in Settings works (it did nothing before).
+- Settings looks right on desktop: no back button, bigger titles, lined up
+  with the rest of the app.
+- The landing page menu highlights the section you're reading.
+- Deleting your account asks twice: type DELETE, then a last check.
 - Brand assets in one place (`src/shared/brand.ts`), so changing the logo
   means changing one file. Every screen and the app icons now use it.
 - `robots.txt`: search engines can find public pages on the live site;
