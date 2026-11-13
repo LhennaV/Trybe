@@ -31,9 +31,9 @@ Tags: **[BE]** Tristan, **[FE]** Lhenna, **[Both]** together.
 | Phase | Name                              | Target | Status      |
 | ----- | --------------------------------- | ------ | ----------- |
 | 0     | Foundation                        | TBD    | Done        |
-| 1     | Accounts and profiles             | TBD    | In progress |
-| 2     | Items, posts, and feed            | TBD    | Not started |
-| 3     | Trades core                       | TBD    | Not started |
+| 1     | Accounts and profiles             | TBD    | Done        |
+| 2     | Items, posts, and feed            | TBD    | In progress |
+| 3     | Trades core                       | TBD    | In progress |
 | 4     | Chat, meetup, completion, ratings | TBD    | Not started |
 | 5     | Safety and compliance             | TBD    | Not started |
 | 6     | Explore, PWA, and polish          | TBD    | Not started |
@@ -160,12 +160,13 @@ profile.
 - [x] **[FE]** Sign up with terms checkbox, age confirmation, Turnstile
 - [x] **[FE]** Log in, forgot password, verify email screens
   - Also the reset password page and the resend link.
-- [ ] **[FE]** Onboarding: hobbies you have and want to try (PROF-01)
-  - Not wired yet: still a sample hobby list and nothing is saved. Use `GET /api/hobbies` and
-    `PATCH /api/me` (`hobbies`, `city`, and `otherHobbies` for the "Other" field).
-- [ ] **[FE]** Own profile and other user's profile (PROF-02, PROF-03)
-  - Own profile is real (`MyProfile`, 2026-11-13). Left: other users' profiles still use sample
-    data; call `GET /api/users/:handle`.
+- [x] **[FE]** Onboarding: hobbies you have and want to try (PROF-01)
+  - Wired 2026-11-14 (PR #29): `GET /api/hobbies`, then `PATCH /api/me` with `hobbies`,
+    `otherHobbies`, and the city.
+- [x] **[FE]** Own profile and other user's profile (PROF-02, PROF-03)
+  - Both real (PR #29): other people's profiles read `getPublicProfile`. The posts and gear
+    tabs are empty until `GET /api/users/:handle/posts` exists (added to Phase 2 below);
+    trade history and reviews come with Phases 3 and 4.
 - [x] **[FE]** Edit profile (PROF-06)
   - Saves name, handle, bio, city, and the profile photo (with crop). Log out works.
 - [x] **[FE]** Settings screen layout (SET-01), links can be placeholders
@@ -204,6 +205,7 @@ Goal: users can add gear, post what they made, and browse a feed.
 - [x] **[BE]** Feed endpoint with hobby filter and cursor pagination (POST-05)
   - Hidden posts and suspended authors are left out. Tested: no repeats when new posts arrive.
 - [x] **[BE]** Like and save endpoints (POST-06, POST-07)
+- [ ] **[BE]** `GET /api/users/:handle/posts` and the person's gear up for trade, for the profile tabs (PROF-03)
 - [ ] **[BE]** Hide blocked and muted users' posts in the feed (ready for Phase 5 tables)
   - Waits for the blocks and mutes tables (Phase 5). Add the filter to `listFeed` in
     `src/server/posts/read.ts`, next to the hidden and suspended checks.

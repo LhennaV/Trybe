@@ -72,7 +72,8 @@ test("log in: wrong password, unverified email, then success", async ({ page }) 
 test("forgot password: email link, new password, log in with it", async ({ page }) => {
   const user = await createUser({ label: "e2ereset" });
   created.push(user.id);
-  const newPassword = "brand-new-password-456";
+  // Has to meet the form's password rules too.
+  const newPassword = "Brand-new-password-456!";
 
   await page.goto("/forgot-password");
   await page.getByLabel("Email").fill(user.email);

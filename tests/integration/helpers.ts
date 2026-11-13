@@ -7,7 +7,9 @@ import postgres from "postgres";
 
 const NO_SESSION = { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false };
 
-export const PASSWORD = "test-password-123";
+// Meets the sign up form's password rules (uppercase, number, symbol), so
+// E2E tests can type it in. src/components/auth/signupChecks.ts has the rules.
+export const PASSWORD = "Test-password-123!";
 
 export function adminClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
