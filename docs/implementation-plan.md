@@ -128,9 +128,11 @@ profile.
     The Brevo SMTP key ("trybeapp") expires 2027-11-07, or after 90 days
     without use. When it expires, sign up and reset emails stop sending.
     When the app moves to Vercel, update the Site URL in Supabase Auth settings.
-- [ ] **[BE]** Turnstile verification on sign up and log in (AUTH-02)
-  - In progress: endpoints pass the Turnstile token to Supabase Auth's built-in CAPTCHA.
-    Left: create the Turnstile widget, turn on CAPTCHA in Supabase Auth settings.
+- [x] **[BE]** Turnstile verification on sign up and log in (AUTH-02)
+  - Done 2026-11-13: Cloudflare widget `Trybe`, Lhenna's widget on all four forms (PR #26), and
+    CAPTCHA turned on in Supabase with the widget's secret key (the secret lives only there).
+    Checked from outside: sign up and log in without a token answer CAPTCHA_FAILED, and a real
+    sign up on the live site sent the verification email.
 - [x] **[BE]** Store terms acceptance and age confirmation (AUTH-03, AUTH-04)
   - The sign up trigger (migration 0004) refuses accounts without both and stores the times.
 - [x] **[BE]** Endpoints: `GET /api/me`, `PATCH /api/me`, `GET /api/users/:handle`, `GET /api/hobbies`
@@ -141,8 +143,9 @@ profile.
     sharp (`src/server/uploads/`), files go to the public `photos` bucket (migration 0006).
     Left: apply migration 0006 to the dev database before merging (`pnpm db:migrate`);
     Lhenna wires Edit profile to `resizeForUpload()` and `POST /api/me/photo`.
-- [ ] **[Both]** Logo in one place: `src/shared/brand.ts` (added 2026-11-11). Left: Lhenna
-    replaces the 16 hard-coded `/brand/storm-icon.png` paths and sizes with `BRAND` and `brandSize()`.
+- [x] **[Both]** Logo in one place: `src/shared/brand.ts` (added 2026-11-11)
+  - Lhenna moved all screens, icons, and the offline page to `BRAND` (PR #26). Nothing is
+    hard-coded any more.
 - [x] **[BE]** Derived "new trader" flag (PROF-04)
   - `src/server/users/newTrader.ts`. Decided by Tristan 2026-11-10: the badge stays until the
     account is 30 days old AND has 3 completed trades. Lhenna to confirm.
@@ -153,14 +156,20 @@ profile.
     `otherHobbies` in `PATCH /api/me` and `GET /api/me` (up to 5, owner only).
     Left: apply migration 0005 to the dev database before merging (`pnpm db:migrate`);
     Lhenna wires the onboarding "Other" field to `otherHobbies`.
-- [ ] **[FE]** Landing screen
-- [ ] **[FE]** Sign up with terms checkbox, age confirmation, Turnstile
-- [ ] **[FE]** Log in, forgot password, verify email screens
+- [x] **[FE]** Landing screen
+- [x] **[FE]** Sign up with terms checkbox, age confirmation, Turnstile
+- [x] **[FE]** Log in, forgot password, verify email screens
+  - Also the reset password page and the resend link.
 - [ ] **[FE]** Onboarding: hobbies you have and want to try (PROF-01)
+  - Not wired yet: still a sample hobby list and nothing is saved. Use `GET /api/hobbies` and
+    `PATCH /api/me` (`hobbies`, `city`, and `otherHobbies` for the "Other" field).
 - [ ] **[FE]** Own profile and other user's profile (PROF-02, PROF-03)
-- [ ] **[FE]** Edit profile (PROF-06)
-- [ ] **[FE]** Settings screen layout (SET-01), links can be placeholders
-- [ ] **[Both]** First drafts of Terms, Privacy Policy, Community Guidelines pages
+  - Own profile is real (`MyProfile`, 2026-11-13). Left: other users' profiles still use sample
+    data; call `GET /api/users/:handle`.
+- [x] **[FE]** Edit profile (PROF-06)
+  - Saves name, handle, bio, city, and the profile photo (with crop). Log out works.
+- [x] **[FE]** Settings screen layout (SET-01), links can be placeholders
+- [x] **[Both]** First drafts of Terms, Privacy Policy, Community Guidelines pages
 
 ### Done when
 
@@ -224,8 +233,13 @@ counter, accept, decline, and cancel.
 ### Tasks
 
 - [ ] **[BE]** Tables: trades, trade_offers, trade_offer_items
-- [ ] **[BE]** State machine in `src/server/trades/` (TRD section 11)
-- [ ] **[BE]** Tests first: every allowed and forbidden transition
+- [x] **[BE]** State machine in `src/server/trades/` (TRD section 11)
+  - `transitionTrade()` and `canRespond()` in `src/server/trades/stateMachine.ts` (Tristan,
+    reviewed and completed 2026-11-13): outsiders, confirm complete, and API error codes.
+- [x] **[BE]** Tests first: every allowed and forbidden transition
+  - The whole matrix from `docs/testing.md` 7.1 as data in `tests/unit/server/trades/matrix.ts`
+    (72 cases plus completion). Left for the database functions: run the same matrix against
+    Postgres once `app.trade_*` exists.
 - [ ] **[BE]** Tests: two people acting on the same trade at the same time
 - [ ] **[BE]** Tests: accepting a trade with an item already reserved elsewhere
 - [ ] **[BE]** Row locking with `SELECT ... FOR UPDATE` on trades and items
