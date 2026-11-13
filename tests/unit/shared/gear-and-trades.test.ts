@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ITEM_PHOTOS_MAX, createItemSchema, updateItemSchema } from "@/shared/contracts/items";
-import { POST_PHOTOS_MAX, createPostSchema, feedQuerySchema } from "@/shared/contracts/posts";
+import { POST_PHOTOS_MAX, createPostSchema, feedQuerySchema, updatePostSchema } from "@/shared/contracts/posts";
 import {
   cancelTradeSchema,
   offerTermsSchema,
@@ -32,6 +32,11 @@ describe("createItemSchema", () => {
   it("never lets an edit set the status (ITEM-03)", () => {
     expect(updateItemSchema.safeParse({ status: "available" }).success).toBe(false);
   });
+
+  it("leaves fields that weren't sent alone on an edit", () => {
+    // A default here would take an item off the trade list on every rename.
+    expect(updateItemSchema.parse({ name: "New name" })).toEqual({ name: "New name" });
+  });
 });
 
 describe("createPostSchema", () => {
@@ -46,6 +51,11 @@ describe("createPostSchema", () => {
     expect(createPostSchema.safeParse({ ...post, hobbyIds: [id(2), id(3)] }).success).toBe(false);
     expect(createPostSchema.safeParse({ ...post, photoIds: ids(POST_PHOTOS_MAX) }).success).toBe(true);
     expect(createPostSchema.safeParse({ ...post, photoIds: ids(POST_PHOTOS_MAX + 1) }).success).toBe(false);
+  });
+
+  it("leaves fields that weren't sent alone on an edit", () => {
+    // Defaults here would wipe the caption and tagged items on every title edit.
+    expect(updatePostSchema.parse({ title: "New title" })).toEqual({ title: "New title" });
   });
 
   it("has no manual for-trade toggle (POST-02)", () => {

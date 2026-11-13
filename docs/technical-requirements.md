@@ -422,13 +422,17 @@ POST   /api/posts/:id/save
 DELETE /api/posts/:id/save
 
 Items
-GET    /api/me/items
+GET    /api/categories?hobby=              categories of a hobby, Other last
+POST   /api/photos                          upload a photo, then attach it by id
+GET    /api/me/items?status=&cursor=
 POST   /api/items
 PATCH  /api/items/:id
 DELETE /api/items/:id
 
 Users
 GET    /api/users/:handle
+POST   /api/me/photo                        profile photo
+DELETE /api/me/photo
 GET    /api/users/:handle/posts
 GET    /api/users/:handle/reviews
 GET    /api/me

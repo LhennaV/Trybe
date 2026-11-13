@@ -21,6 +21,11 @@ How versions work (details in the README, "Versions and releases"):
   means changing one file.
 - `robots.txt`: search engines can find public pages on the live site;
   preview links and logged-in pages stay out of search results.
+- Backend for gear and posts, ready for the screens: add, edit, and remove
+  gear with photos and a category; post what you made with up to 6 photos
+  and the gear you used; a post is "Up for trade" on its own when tagged gear
+  is; a feed by hobby that never shows the same post twice while scrolling;
+  likes and saves.
 
 ### Docs
 

@@ -184,13 +184,20 @@ Goal: users can add gear, post what they made, and browse a feed.
     (upload first, attach by id), and `posts.hobby_id` instead of `post_hobbies` (one hobby per
     post). 74 categories seeded, "Other" last in every hobby. RLS on all, audit on items and posts.
     Left: apply migrations 0007 to 0009 to the dev database before merging (`pnpm db:migrate`).
-- [ ] **[BE]** Image pipeline: type check, size limit, strip EXIF and GPS, resize, WebP (TRD section 13)
-- [ ] **[BE]** Item endpoints: list mine, create, edit, delete (ITEM-01 to ITEM-05)
-- [ ] **[BE]** Post endpoints: create, get, edit, delete (POST-01, POST-09)
-- [ ] **[BE]** Derive "for trade" from tagged items (POST-02)
-- [ ] **[BE]** Feed endpoint with hobby filter and cursor pagination (POST-05)
-- [ ] **[BE]** Like and save endpoints (POST-06, POST-07)
+- [x] **[BE]** Image pipeline: type check, size limit, strip EXIF and GPS, resize, WebP (TRD section 13)
+  - `src/server/uploads/` (built with the profile photo) and `POST /api/photos` (2026-11-13):
+    full size 1600px and 400px thumbnail. The browser shrinks first with `resizeForUpload()`.
+- [x] **[BE]** Item endpoints: list mine, create, edit, delete (ITEM-01 to ITEM-05)
+  - Plus `GET /api/categories?hobby=`. Reserved and traded items can't be edited or deleted.
+- [x] **[BE]** Post endpoints: create, get, edit, delete (POST-01, POST-09)
+- [x] **[BE]** Derive "for trade" from tagged items (POST-02)
+  - Computed when read: a post is for trade while any tagged item is up for trade and available.
+- [x] **[BE]** Feed endpoint with hobby filter and cursor pagination (POST-05)
+  - Hidden posts and suspended authors are left out. Tested: no repeats when new posts arrive.
+- [x] **[BE]** Like and save endpoints (POST-06, POST-07)
 - [ ] **[BE]** Hide blocked and muted users' posts in the feed (ready for Phase 5 tables)
+  - Waits for the blocks and mutes tables (Phase 5). Add the filter to `listFeed` in
+    `src/server/posts/read.ts`, next to the hidden and suspended checks.
 - [ ] **[FE]** New post step 1: pick up to 6 photos, camera
 - [ ] **[FE]** New post step 2: title, caption, hobby, tools used
 - [ ] **[FE]** Add a tool sheet: photo, name, category, condition, up for trade, looking for

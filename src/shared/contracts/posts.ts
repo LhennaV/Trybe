@@ -63,19 +63,36 @@ export type PostDetail = z.infer<typeof postDetailSchema>;
 // Requests
 // ---------------------------------------------------------------------------
 
-// POST /api/posts (POST-01). Tagged items must be the author's own.
-export const createPostSchema = z.strictObject({
+// The editable fields, with no defaults. Defaults live only on create: on an
+// edit, a field that wasn't sent must stay as it is, not reset to a default.
+const postFields = {
   title: z.string().trim().min(1, "Give your post a title.").max(POST_TITLE_MAX),
-  caption: z.string().trim().max(POST_CAPTION_MAX).default(""),
+  caption: z.string().trim().max(POST_CAPTION_MAX),
   photoIds: photoIdsSchema(1, POST_PHOTOS_MAX),
   hobbyId: z.uuid("Pick a hobby."),
-  itemIds: uniqueIds(POST_ITEMS_MAX, "items").default([]),
+  itemIds: uniqueIds(POST_ITEMS_MAX, "items"),
+};
+
+// POST /api/posts (POST-01). Tagged items must be the author's own.
+export const createPostSchema = z.strictObject({
+  ...postFields,
+  caption: postFields.caption.default(""),
+  itemIds: postFields.itemIds.default([]),
 });
 export type CreatePost = z.infer<typeof createPostSchema>;
 
-// PATCH /api/posts/:id (POST-09)
-export const updatePostSchema = createPostSchema.partial();
+// PATCH /api/posts/:id (POST-09). Only the fields sent change.
+export const updatePostSchema = z.strictObject(postFields).partial();
 export type UpdatePost = z.infer<typeof updatePostSchema>;
+
+// POST and DELETE /api/posts/:id/like (POST-06). Safe to repeat: liking twice
+// still counts once.
+export const likeResultSchema = z.object({ likedByMe: z.boolean(), likeCount: z.number().int().min(0) });
+export type LikeResult = z.infer<typeof likeResultSchema>;
+
+// POST and DELETE /api/posts/:id/save (POST-07). Safe to repeat.
+export const saveResultSchema = z.object({ savedByMe: z.boolean() });
+export type SaveResult = z.infer<typeof saveResultSchema>;
 
 // GET /api/feed?hobby=pottery&cursor=&limit= (POST-05). `hobby` is a slug.
 export const feedQuerySchema = pageQuerySchema.extend({
