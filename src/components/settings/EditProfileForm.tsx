@@ -41,7 +41,7 @@ function HobbyList({ title, hobbies }: { title: string; hobbies: string[] }) {
     <section className="flex flex-col gap-2">
       <div className="flex items-center">
         <h2 className="text-label-s text-ink-600">{title}</h2>
-        <Link href="/onboarding/hobbies" className="ml-auto flex min-h-11 items-center text-body-s font-bold text-brand-plum">
+        <Link href="/onboarding/hobbies?next=/settings/profile" className="ml-auto flex min-h-11 items-center text-body-s font-bold text-brand-plum">
           Edit
         </Link>
       </div>
