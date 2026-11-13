@@ -254,9 +254,13 @@ and logged in, exactly like a browser:
 | Auth             | Handle uniqueness at sign up and in Edit profile                     | ✅     |
 | Auth             | Verification is copied to the profile; unverified log in is refused  | ✅     |
 | Audit trail      | Profile edits record who made them                                   | ✅     |
-| Items            | Reserved and traded items cannot be edited into new trades           | ⏳     |
-| Posts            | "For trade" is derived from tagged items (POST-02); max 6 photos     | ⏳     |
-| Feed             | Cursor pagination returns no duplicates when new posts arrive        | ⏳     |
+| Items            | Reserved and traded items can't be edited or deleted (ITEM-04, ITEM-05) | ✅     |
+| Items            | Reserved and traded items can't be offered in new trades            | ⏳ Phase 3 |
+| Items            | An edit changes only the fields sent (no reset to defaults)          | ✅     |
+| Photos           | A photo can only be attached once, and only by its owner             | ✅     |
+| Posts            | "For trade" is derived from tagged items (POST-02); max 6 photos     | ✅     |
+| Feed             | Cursor pagination returns no duplicates when new posts arrive        | ✅     |
+| Feed             | Hidden posts and suspended authors are left out                      | ✅     |
 | Images           | Uploaded photos have no EXIF or GPS data; wrong file types rejected  | ✅     |
 | Images           | Profile photo upload, replace, and delete against real storage       | ✅     |
 | Brand            | Logo files in `src/shared/brand.ts` exist and have the sizes written there | ✅ |

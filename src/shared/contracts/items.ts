@@ -73,21 +73,36 @@ export type ItemSummary = z.infer<typeof itemSummarySchema>;
 // Requests
 // ---------------------------------------------------------------------------
 
-// POST /api/items (ITEM-01, ITEM-02)
-export const createItemSchema = z.strictObject({
+// The editable fields, with no defaults. Defaults live only on create: on an
+// edit, a field that wasn't sent must stay as it is, not reset to a default.
+const itemFields = {
   name: z.string().trim().min(1, "Name your gear.").max(ITEM_NAME_MAX),
   categoryId: z.uuid(),
   condition: itemConditionSchema,
   photoIds: photoIdsSchema(1, ITEM_PHOTOS_MAX),
-  upForTrade: z.boolean().default(false),
+  upForTrade: z.boolean(),
   // An empty string clears it.
-  lookingFor: z.string().trim().max(LOOKING_FOR_MAX).optional(),
+  lookingFor: z.string().trim().max(LOOKING_FOR_MAX),
+};
+
+// POST /api/items (ITEM-01, ITEM-02)
+export const createItemSchema = z.strictObject({
+  ...itemFields,
+  upForTrade: itemFields.upForTrade.default(false),
+  lookingFor: itemFields.lookingFor.optional(),
 });
 export type CreateItem = z.infer<typeof createItemSchema>;
 
-// PATCH /api/items/:id (ITEM-05). Status can't be set here; trades set it.
-export const updateItemSchema = createItemSchema.partial();
+// PATCH /api/items/:id (ITEM-05). Only the fields sent change. Status can't
+// be set here; trades set it.
+export const updateItemSchema = z.strictObject(itemFields).partial();
 export type UpdateItem = z.infer<typeof updateItemSchema>;
+
+// GET /api/categories?hobby=pottery -> { data: Category[] }, in display order
+// with "Other" last. `hobby` is a slug; leave it out for every category.
+export const categoriesQuerySchema = z.strictObject({
+  hobby: z.string().min(1).optional(),
+});
 
 // GET /api/me/items?status=&cursor=
 export const myItemsQuerySchema = pageQuerySchema.extend({

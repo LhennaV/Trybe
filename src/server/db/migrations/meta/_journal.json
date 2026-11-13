@@ -50,6 +50,27 @@
       "when": 1794396237767,
       "tag": "0006_photos_bucket",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794577123374,
+      "tag": "0007_items_posts_feed",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794577136331,
+      "tag": "0008_seed_categories",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794577137707,
+      "tag": "0009_items_posts_triggers",
+      "breakpoints": true
     }
   ]
 }
