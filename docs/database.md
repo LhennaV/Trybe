@@ -332,14 +332,24 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | user_hobbies      | `idx_user_hobbies_hobby_id (hobby_id)`                                          | Users by hobby, matches        |
 | hobby_requests    | `uq_hobby_requests_user_id_name (user_id, lower(name))`                         | One request per name per user  |
 | hobby_requests    | `idx_hobby_requests_name (lower(name))`                                         | Counting requests per hobby    |
+| categories        | `uq_categories_hobby_id_slug (hobby_id, slug)`                                  | Categories of a hobby, seed upsert |
+| photos            | `idx_photos_owner_id (owner_id)`, `uq_photos_path (path)`                       | A person's photos, account deletion |
+| photos            | `idx_photos_created_at (created_at)`                                             | Orphan photo cleanup           |
 | items             | `idx_items_owner_id_status (owner_id, status)`                                  | "My gear", propose screen      |
 | items             | `idx_items_tradeable (category_id) where status = 'available' and up_for_trade` | Explore, matches               |
+| items             | `idx_items_category_id (category_id)`                                            | Restrict check on category delete |
+| item_photos       | `uq_item_photos_photo_id`, `uq_item_photos_item_id_position`                    | One item per photo, photo order |
 | posts             | `idx_posts_feed (created_at desc, id desc) where hidden_at is null`             | Feed with cursor pagination    |
 | posts             | `idx_posts_user_id_created_at (user_id, created_at desc)`                       | Profile posts tab              |
-| post_hobbies      | `idx_post_hobbies_hobby_id_post_id (hobby_id, post_id)`                         | Feed filtered by hobby         |
+| posts             | `idx_posts_hobby_id (hobby_id)`                                                  | Restrict check on hobby delete |
+| post_photos       | `uq_post_photos_photo_id`, `uq_post_photos_post_id_position`                    | One post per photo, photo order |
+| post_items        | `uq_post_items_post_id_item_id`                                                  | Tag an item once per post      |
+| posts             | `idx_posts_hobby_feed (hobby_id, created_at desc, id desc) where hidden_at is null` | Feed filtered by hobby (replaces post_hobbies) |
 | post_items        | `idx_post_items_item_id (item_id)`                                              | Posts that tag an item         |
 | likes             | `uq_likes_user_id_post_id`                                                      | One like per user per post     |
+| likes             | `idx_likes_post_id (post_id)`                                                    | Like counts per post           |
 | saves             | `uq_saves_user_id_post_id`                                                      | One save per user per post     |
+| saves             | `idx_saves_post_id (post_id)`                                                    | Account deletion of a post's savers |
 | trades            | `idx_trades_initiator_id_status (initiator_id, status)`                         | Trades list                    |
 | trades            | `idx_trades_recipient_id_status (recipient_id, status)`                         | Trades list                    |
 | trades            | `idx_trades_meetup_at_accepted (meetup_at) where status = 'accepted'`           | Expired meetup job             |
@@ -359,9 +369,10 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | audit_log         | `idx_audit_log_actor_id (actor_id)`                                             | Actions by a user              |
 | audit_log         | `idx_audit_log_changed_at (changed_at)`                                         | Purge job                      |
 
-**Built so far (2026-11-11):** every index for `users`, `hobbies`,
-`user_hobbies`, `hobby_requests`, and `audit_log`. The others are created
-in the migration that creates their table.
+**Built so far (2026-11-13):** every index above except the ones for tables
+not built yet (trades, messages, ratings, reports, blocks, notifications).
+The Phase 2 tables arrived in migration 0007. The rest are created in the
+migration that creates their table.
 
 Text search for posts, items, and people is added in Phase 6 after the
 search design is decided.

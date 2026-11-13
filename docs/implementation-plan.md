@@ -179,7 +179,11 @@ Goal: users can add gear, post what they made, and browse a feed.
 
 ### Tasks
 
-- [ ] **[BE]** Tables: categories, items, item_photos, posts, post_photos, post_items, post_hobbies, likes, saves
+- [x] **[BE]** Tables: categories, items, item_photos, posts, post_photos, post_items, post_hobbies, likes, saves
+  - Built 2026-11-13 (migrations 0007 to 0009), approved by Tristan: a separate `photos` table
+    (upload first, attach by id), and `posts.hobby_id` instead of `post_hobbies` (one hobby per
+    post). 74 categories seeded, "Other" last in every hobby. RLS on all, audit on items and posts.
+    Left: apply migrations 0007 to 0009 to the dev database before merging (`pnpm db:migrate`).
 - [ ] **[BE]** Image pipeline: type check, size limit, strip EXIF and GPS, resize, WebP (TRD section 13)
 - [ ] **[BE]** Item endpoints: list mine, create, edit, delete (ITEM-01 to ITEM-05)
 - [ ] **[BE]** Post endpoints: create, get, edit, delete (POST-01, POST-09)

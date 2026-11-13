@@ -5,7 +5,21 @@ import { accessToken, anonClient, createUser, deleteUsers } from "../helpers";
 // Row Level Security (docs/testing.md section 7.4, docs/database.md section 10).
 // The browser has the public anon key, so these use it exactly like a browser
 // would: no service role, no server connection.
-const TABLES = ["users", "hobbies", "user_hobbies", "hobby_requests"] as const;
+const TABLES = [
+  "users",
+  "hobbies",
+  "user_hobbies",
+  "hobby_requests",
+  "categories",
+  "photos",
+  "items",
+  "item_photos",
+  "posts",
+  "post_photos",
+  "post_items",
+  "likes",
+  "saves",
+] as const;
 const created: string[] = [];
 let signedIn: ReturnType<typeof anonClient>;
 
