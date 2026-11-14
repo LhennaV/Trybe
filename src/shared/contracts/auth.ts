@@ -18,10 +18,62 @@ export const emailSchema = z
 // 72 is the most bcrypt (used by Supabase Auth) reads; longer is cut off.
 export const PASSWORD_MIN = 8;
 export const PASSWORD_MAX = 72;
+
+// The symbols Supabase Auth counts as symbols. Using the same set means a
+// password the form accepts is never refused by Supabase (decided 2026-11-14).
+const PASSWORD_SYMBOLS = /[!@#$%^&*()_+\-=[\]{};'\\:"|<>?,./`~]/;
+
+// Password rules for new passwords (sign up and reset), agreed by both owners
+// 2026-11-14. They match Supabase Auth's "lower_upper_letters_digits_symbols"
+// setting with a minimum length of 8, which enforces them a second time.
+// The sign up form shows this list as a checklist.
+export const PASSWORD_RULES = [
+  {
+    id: "length",
+    label: `At least ${PASSWORD_MIN} characters`,
+    problem: `Use at least ${PASSWORD_MIN} characters.`,
+    test: (p: string) => p.length >= PASSWORD_MIN,
+  },
+  {
+    id: "lower",
+    label: "A lowercase letter",
+    problem: "Add a lowercase letter.",
+    test: (p: string) => /[a-z]/.test(p),
+  },
+  {
+    id: "upper",
+    label: "An uppercase letter",
+    problem: "Add an uppercase letter.",
+    test: (p: string) => /[A-Z]/.test(p),
+  },
+  {
+    id: "number",
+    label: "A number",
+    problem: "Add a number.",
+    test: (p: string) => /[0-9]/.test(p),
+  },
+  {
+    id: "symbol",
+    label: "A symbol, like ! or #",
+    problem: "Add a symbol, like ! or #.",
+    test: (p: string) => PASSWORD_SYMBOLS.test(p),
+  },
+] as const;
+
 export const passwordSchema = z
   .string()
-  .min(PASSWORD_MIN, `Use at least ${PASSWORD_MIN} characters.`)
-  .max(PASSWORD_MAX, `Use ${PASSWORD_MAX} characters or fewer.`);
+  .max(PASSWORD_MAX, `Use ${PASSWORD_MAX} characters or fewer.`)
+  .superRefine((password, ctx) => {
+    for (const rule of PASSWORD_RULES) {
+      if (!rule.test(password))
+        ctx.addIssue({ code: "custom", message: rule.problem });
+    }
+  });
+
+// The rules a password still misses, in order. Empty when it's good.
+export function passwordProblems(password: string) {
+  return PASSWORD_RULES.filter((rule) => !rule.test(password));
+}
 
 // The Cloudflare Turnstile token from the widget (AUTH-02). Optional here so
 // local dev works without Turnstile; Supabase Auth enforces it once CAPTCHA
@@ -38,7 +90,10 @@ export const signUpSchema = z.strictObject({
   password: passwordSchema,
   displayName: displayNameSchema,
   handle: handleSchema,
-  acceptTerms: z.literal(true, "Accept the Terms and Community Guidelines to join."),
+  acceptTerms: z.literal(
+    true,
+    "Accept the Terms and Community Guidelines to join.",
+  ),
   confirmAge: z.literal(true, "Confirm your age to join."),
   captchaToken: captchaTokenSchema,
 });
@@ -70,10 +125,17 @@ export type NewPassword = z.infer<typeof newPasswordSchema>;
 
 // POST /api/auth/signup. Same answer whether or not the email already has an
 // account, so the form can't be used to find out who uses Trybe.
-export const signUpResultSchema = z.object({ email: z.email(), needsVerification: z.literal(true) });
+export const signUpResultSchema = z.object({
+  email: z.email(),
+  needsVerification: z.literal(true),
+});
 
 // POST /api/auth/login
-export const sessionUserSchema = z.object({ id: z.uuid(), email: z.email(), emailVerified: z.boolean() });
+export const sessionUserSchema = z.object({
+  id: z.uuid(),
+  email: z.email(),
+  emailVerified: z.boolean(),
+});
 
 // ---------------------------------------------------------------------------
 // Email links

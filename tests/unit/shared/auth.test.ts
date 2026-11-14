@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { emailSchema, logInSchema, newPasswordSchema, signUpSchema } from "@/shared/contracts/auth";
+import { emailSchema, logInSchema, newPasswordSchema, passwordProblems, signUpSchema } from "@/shared/contracts/auth";
 
 const SIGN_UP = {
   email: "Tester1@Example.com ",
-  password: "kiln-and-co-2026",
+  password: "Kiln-and-co-2026",
   displayName: "Test Kiln",
   handle: "Test_Kiln",
   acceptTerms: true,
@@ -57,10 +57,45 @@ describe("logInSchema", () => {
   });
 });
 
-describe("newPasswordSchema", () => {
-  it("applies the password rules", () => {
-    expect(newPasswordSchema.safeParse({ password: "12345678" }).success).toBe(true);
-    expect(newPasswordSchema.safeParse({ password: "1234567" }).success).toBe(false);
-    expect(newPasswordSchema.safeParse({ password: "x".repeat(73) }).success).toBe(false);
+describe("password rules (agreed 2026-11-14, same as Supabase)", () => {
+  it("accepts a password with every kind of character", () => {
+    for (const good of ["Kiln-and-co-2026", "Aa1!aaaa", "Test-password-123!", "Brand-new-password-456!"]) {
+      expect(newPasswordSchema.safeParse({ password: good }).success, good).toBe(true);
+    }
+  });
+
+  it.each([
+    ["Aa1!aaa", "length"],
+    ["AA1!AAAA", "lower"],
+    ["aa1!aaaa", "upper"],
+    ["Aa!aaaaa", "number"],
+    ["Aa1aaaaa", "symbol"],
+  ])("refuses %s (missing %s)", (password, missing) => {
+    expect(newPasswordSchema.safeParse({ password }).success).toBe(false);
+    expect(passwordProblems(password).map((rule) => rule.id)).toEqual([missing]);
+  });
+
+  it("only counts the symbols Supabase counts", () => {
+    // A letter Supabase doesn't treat as a symbol must not tick the box.
+    expect(passwordProblems("Aa1ñaaaa").map((rule) => rule.id)).toEqual(["symbol"]);
+  });
+
+  it("refuses passwords longer than bcrypt reads", () => {
+    expect(newPasswordSchema.safeParse({ password: `Aa1!${"x".repeat(69)}` }).success).toBe(false);
+  });
+
+  it("gives one message per missing rule, for the form", () => {
+    const result = newPasswordSchema.safeParse({ password: "abc" });
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      "Use at least 8 characters.",
+      "Add an uppercase letter.",
+      "Add a number.",
+      "Add a symbol, like ! or #.",
+    ]);
+  });
+
+  it("still lets old passwords log in", () => {
+    // Log in never applies the new rules, or accounts made before them would be locked out.
+    expect(logInSchema.safeParse({ email: "a@example.com", password: "oldpass1" }).success).toBe(true);
   });
 });
