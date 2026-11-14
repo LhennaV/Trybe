@@ -12,6 +12,12 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-14
+
+Accounts and profiles are done (Phase 1), plus the backend for gear, posts,
+and the feed (Phase 2) and the trade rules (Phase 3). Live at
+https://trybe-puce.vercel.app on the dev database.
+
 ### Added
 
 - Profile photos: upload, replace, and remove from Edit profile
@@ -27,7 +33,8 @@ How versions work (details in the README, "Versions and releases"):
 - Settings looks right on desktop: no back button, bigger titles, lined up
   with the rest of the app.
 - The landing page menu highlights the section you're reading.
-- Deleting your account asks twice: type DELETE, then a last check.
+- Deleting your account asks twice: type DELETE, then a last check. The
+  deletion itself arrives in Phase 5; until then the screen says so.
 - Onboarding saves your hobbies (including "Other") and your city.
 - Other people's profiles show their real name, photo, city, and hobbies.
 - Sign up checks as you type: a free handle (with suggestions if yours is
@@ -42,6 +49,8 @@ How versions work (details in the README, "Versions and releases"):
   and the gear you used; a post is "Up for trade" on its own when tagged gear
   is; a feed by hobby that never shows the same post twice while scrolling;
   likes and saves.
+- Trade rules: who can counter, accept, decline, cancel, and confirm a trade,
+  checked against every case before any trade screen is built.
 
 ### Docs
 
@@ -77,5 +86,6 @@ Live at https://trybe-puce.vercel.app on the dev database.
   every pull request.
 - Error tracking with Sentry and deploys to Vercel.
 
-[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/LhennaV/Trybe/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/LhennaV/Trybe/releases/tag/v0.1.0
