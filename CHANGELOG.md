@@ -12,6 +12,12 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+### Changed
+
+- The password checklist on sign up and reset password now asks for a
+  lowercase letter too (5 rules). It uses the same rules as the server, so a
+  password the form accepts is never refused by Supabase.
+
 ## [0.2.0] - 2026-11-14
 
 Accounts and profiles are done (Phase 1), plus the backend for gear, posts,

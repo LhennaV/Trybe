@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, type ReactNode } from "react";
 import { CheckCircle } from "@phosphor-icons/react";
-import { signUpSchema, type SignUp } from "@/shared/contracts/auth";
+import { PASSWORD_MAX, passwordProblems, signUpSchema, type SignUp } from "@/shared/contracts/auth";
 import { displayNameSchema } from "@/shared/contracts/users";
 import { firstFieldErrors } from "@/components/api/request";
 import Button, { buttonClassName } from "@/components/ui/Button";
@@ -17,7 +17,7 @@ import { signUp } from "./authApi";
 import { handleCandidates, inboxLink } from "./handleSuggestion";
 import PasswordChecklist from "./PasswordChecklist";
 import ResendVerification from "./ResendVerification";
-import { emailProblem, passwordProblems } from "./signupChecks";
+import { emailProblem } from "./signupChecks";
 import Turnstile from "./Turnstile";
 import { useHandleCheck, type HandleCheck } from "./useHandleCheck";
 import { useTurnstile } from "./useTurnstile";
@@ -281,6 +281,7 @@ export default function SignupForm() {
             name="password"
             placeholder="Make it a strong one"
             autoComplete="new-password"
+            maxLength={PASSWORD_MAX}
             value={values.password}
             onChange={(event) => update("password", event.target.value)}
             onBlur={() => touch("password")}

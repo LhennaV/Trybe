@@ -1,5 +1,5 @@
 import { Check, Circle } from "@phosphor-icons/react";
-import { PASSWORD_RULES } from "./signupChecks";
+import { PASSWORD_RULES } from "@/shared/contracts/auth";
 
 // The password rules, ticking off as you type. Each rule has text and an icon,
 // never color alone. `showMissing` turns unmet rules red after a submit try.

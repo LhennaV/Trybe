@@ -1,27 +1,10 @@
 // Live checks for the sign up form. Plain TS (no React) so a native app can
-// reuse them.
+// reuse them. Password rules live in src/shared/contracts/auth.ts
+// (PASSWORD_RULES, passwordProblems), shared with the server.
 
-import { emailSchema, PASSWORD_MAX } from "@/shared/contracts/auth";
+import { emailSchema } from "@/shared/contracts/auth";
 import { HANDLE_MAX } from "@/shared/contracts/users";
 import { apiRequest } from "@/components/api/request";
-
-// ---------------------------------------------------------------------------
-// Password
-// ---------------------------------------------------------------------------
-
-// Stricter than the shared passwordSchema (8+ characters only). The server
-// doesn't enforce these yet, so they live here until both owners agree to
-// move them into src/shared/contracts/auth.ts.
-export const PASSWORD_RULES = [
-  { id: "length", label: "At least 8 characters", test: (p: string) => p.length >= 8 && p.length <= PASSWORD_MAX },
-  { id: "upper", label: "An uppercase letter", test: (p: string) => /[A-Z]/.test(p) },
-  { id: "number", label: "A number", test: (p: string) => /[0-9]/.test(p) },
-  { id: "symbol", label: "A symbol, like ! or #", test: (p: string) => /[^A-Za-z0-9\s]/.test(p) },
-] as const;
-
-export function passwordProblems(password: string) {
-  return PASSWORD_RULES.filter((rule) => !rule.test(password));
-}
 
 // ---------------------------------------------------------------------------
 // Email
