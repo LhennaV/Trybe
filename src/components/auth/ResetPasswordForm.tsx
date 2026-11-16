@@ -4,14 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CheckCircle } from "@phosphor-icons/react";
-import { newPasswordSchema } from "@/shared/contracts/auth";
+import { newPasswordSchema, PASSWORD_MAX, passwordProblems } from "@/shared/contracts/auth";
 import { firstFieldErrors } from "@/components/api/request";
 import Button, { buttonClassName } from "@/components/ui/Button";
 import PasswordInput from "@/components/ui/PasswordInput";
 import AuthNotice from "./AuthNotice";
 import { setNewPassword } from "./authApi";
 import PasswordChecklist from "./PasswordChecklist";
-import { passwordProblems } from "./signupChecks";
 
 // Opened from a reset email: GET /api/auth/confirm signed the person in and
 // sent them here (AUTH_REDIRECTS.recovery). Sets the new password with
@@ -112,6 +111,7 @@ export default function ResetPasswordForm() {
           name="password"
           placeholder="Make it a strong one"
           autoComplete="new-password"
+          maxLength={PASSWORD_MAX}
           value={password}
           onChange={(event) => {
             setPassword(event.target.value);
