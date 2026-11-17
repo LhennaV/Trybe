@@ -20,17 +20,24 @@ type SettingsRowProps = {
   icon: ReactNode;
   label: string;
   value?: ReactNode;
-  href: string;
+  // Leave it out for a row that only shows a value and has no screen behind it.
+  href?: string;
 };
 
 // A row that opens another screen. Shows the current value on the right.
 export function SettingsLinkRow({ icon, label, value, href }: SettingsRowProps) {
-  return (
-    <Link href={href} className={rowClassName}>
+  const content = (
+    <>
       <span className="shrink-0 text-brand-plum">{icon}</span>
       <span className="flex-1 text-body-s text-ink-900">{label}</span>
       {value && <span className="text-caption text-ink-400">{value}</span>}
-      <CaretRight size={16} weight="bold" className="shrink-0 text-ink-400" aria-hidden />
+      {href && <CaretRight size={16} weight="bold" className="shrink-0 text-ink-400" aria-hidden />}
+    </>
+  );
+  if (!href) return <div className={rowClassName}>{content}</div>;
+  return (
+    <Link href={href} className={rowClassName}>
+      {content}
     </Link>
   );
 }

@@ -11,12 +11,8 @@ export default function BlockedUsersPage() {
       <p className="text-body-s text-ink-600">
         Blocked people can&apos;t message you, see your posts, or propose trades. They aren&apos;t told you blocked them.
       </p>
-      <BlockedUsers
-        initial={[
-          { handle: "thrift.n.tinker", since: "Oct 20" },
-          { handle: "quickflip.ph", since: "Sep 12" },
-        ]}
-      />
+      {/* Empty until the blocks endpoint exists (Phase 5, SAFE-02), so real accounts never see sample people. */}
+      <BlockedUsers initial={[]} />
     </main>
   );
 }
