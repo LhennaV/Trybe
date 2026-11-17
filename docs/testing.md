@@ -195,7 +195,7 @@ Also test:
 - A no-show cancel frees items and creates a report (MEET-06).
 - Completion needs both confirmations (MEET-05).
 
-### 7.2 Concurrency (required with Phase 3) ⏳
+### 7.2 Concurrency (required with Phase 3) ✅
 
 These tests run two actions at the same time on separate database
 connections and check that exactly one wins.
@@ -206,6 +206,11 @@ connections and check that exactly one wins.
 | Responder accepts while also sending a counter (two tabs) | One succeeds, the other gets 409                 |
 | Two different trades accept the same item at once         | One succeeds, the other gets 409 or is cancelled |
 | Both people confirm completion at the same moment         | Trade ends completed exactly once                |
+
+Built in `tests/integration/db/trade-concurrency.test.ts` (2026-11-17), all but the last row,
+which waits for Phase 4. Counter vs accept is the same lock as double accept, so it is covered
+by that test. A deadlock (`40P01`) between two trades racing for one item is allowed: the API
+returns it as `CONFLICT` (409) and the client retries.
 
 Example shape:
 
@@ -397,6 +402,8 @@ Run on real devices before every production release.
 - [ ] Offline page appears with no connection
 - [ ] Report, block, and delete account work
 - [ ] Text is readable and buttons are easy to tap with one thumb
+- [ ] Main flows work with a keyboard only (desktop), with a visible focus ring
+- [ ] Images have alt text (check with a screen reader on one phone)
 - [ ] No new errors in Sentry after testing
 
 ## 14. Play Store closed test

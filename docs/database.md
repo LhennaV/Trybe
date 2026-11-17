@@ -81,6 +81,17 @@ This does **not** weaken SQL injection protection. postgres-js still sends
 every query with its values as separate bind parameters (Postgres extended
 query protocol). It just doesn't save the statement under a name for reuse.
 
+### 1.2 Database checklist
+
+| Item | Where it is covered |
+| --- | --- |
+| Stored procedures | Critical changes are `app.*` functions (section 5) |
+| Audit trail | `app.audit_log` and triggers on every main table (section 7) |
+| Indexing | Section 6, checked before launch (section 6.3) |
+| Prepared statements | Every query uses bind parameters (section 1.1). Server-side prepared statements stay off (`prepare: false`) because the Supabase transaction pooler does not support them |
+| Purging data | pg_cron jobs and the retention table (sections 8 and 9) |
+| One transaction and a reference id | A change that touches several rows runs in one transaction inside one function. The trade id is the reference that ties offers, messages, ratings, reports, and audit rows together |
+
 ## 2. Schemas
 
 | Schema            | Contains                                           | Exposed to the browser                   |
@@ -144,16 +155,17 @@ Only the server connection (`DATABASE_URL`) calls `app` functions.
 
 | Function                                                                                    | Does                                                              | Requirement IDs        |
 | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------- |
-| `app.trade_propose(actor, recipient, want_item_ids, give_item_ids, cash_amount, cash_from)` | Creates the trade and first offer                                 | TRD-01, TRD-02, TRD-09 |
-| `app.trade_counter(trade_id, actor, want_item_ids, give_item_ids, cash_amount, cash_from)`  | Adds a new offer, updates `current_offer_id`                      | TRD-03, TRD-04         |
-| `app.trade_accept(trade_id, actor)`                                                         | Accepts, reserves items, cancels conflicting trades               | TRD-04, TRD-06         |
-| `app.trade_decline(trade_id, actor)`                                                        | Declines the current offer                                        | TRD-04                 |
-| `app.trade_cancel(trade_id, actor, reason)`                                                 | Cancels, frees reserved items, files a report on no-show          | TRD-08, MEET-06        |
+| `app.trade_propose(actor, give_item_ids, want_item_ids, cash_amount, cash_from)` ✅          | Creates the trade and first offer. The recipient is the owner of the wanted items; `cash_from` is `me` or `them` | TRD-01, TRD-02, TRD-09 |
+| `app.trade_counter(trade_id, actor, give_item_ids, want_item_ids, cash_amount, cash_from)` ✅ | Adds a new offer, updates `current_offer_id`                      | TRD-03, TRD-04         |
+| `app.trade_accept(trade_id, actor)` ✅                                                        | Accepts, reserves items, cancels conflicting trades               | TRD-04, TRD-06         |
+| `app.trade_decline(trade_id, actor)` ✅                                                       | Declines the current offer                                        | TRD-04                 |
+| `app.trade_cancel(trade_id, actor, reason)` ✅                                                | Cancels, frees reserved items, files a report on no-show          | TRD-08, MEET-06        |
 | `app.trade_set_meetup(trade_id, actor, spot_id, meetup_at)`                                 | Proposes a meetup                                                 | MEET-01                |
 | `app.trade_confirm_meetup(trade_id, actor)`                                                 | Confirms the meetup                                               | MEET-01                |
 | `app.trade_confirm_complete(trade_id, actor)`                                               | Records one side; completes when both confirm, marks items traded | MEET-05                |
 | `app.rating_submit(trade_id, actor, score, tags, note)`                                     | Saves a rating; reveals both if both are in                       | RATE-01, RATE-02       |
 | `app.account_delete(user_id)`                                                               | Cancels active trades, frees items, deletes and anonymizes data   | DEL-01, DEL-03         |
+| `app.trades_cancel_for_deleted_item()` ✅ (trigger on `items`)                                | Before an item is deleted: cancels active trades using it (`item_unavailable`), frees the other person's items | ITEM-05, DEL-03 |
 
 ### 5.2 Rules for every function
 
@@ -352,9 +364,11 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | saves             | `idx_saves_post_id (post_id)`                                                    | Account deletion of a post's savers |
 | trades            | `idx_trades_initiator_id_status (initiator_id, status)`                         | Trades list                    |
 | trades            | `idx_trades_recipient_id_status (recipient_id, status)`                         | Trades list                    |
+| trades            | `idx_trades_current_offer_id`, `idx_trades_cancelled_by`                          | Foreign key checks (section 6.1 rule 9) |
+| trade_offers      | `idx_trade_offers_made_by (made_by)`                                              | Account deletion                |
 | trades            | `idx_trades_meetup_at_accepted (meetup_at) where status = 'accepted'`           | Expired meetup job             |
 | trade_offers      | `idx_trade_offers_trade_id_created_at (trade_id, created_at)`                   | Offer history                  |
-| trade_offer_items | `idx_trade_offer_items_offer_id (offer_id)`                                     | Items in an offer              |
+| trade_offer_items | `uq_trade_offer_items_offer_id_item_id (offer_id, item_id)`                       | Items in an offer, once each   |
 | trade_offer_items | `idx_trade_offer_items_item_id (item_id)`                                       | Conflicting trades on accept   |
 | messages          | `idx_messages_trade_id_created_at (trade_id, created_at)`                       | Chat history                   |
 | ratings           | `uq_ratings_trade_id_rater_id`                                                  | One rating per rater per trade |
@@ -552,6 +566,7 @@ with SQL does not delete the actual files. ⏳ Built with post photos (Phase 2).
 | Read notifications         | 90 days                                                     | `notifications_purge`       |
 | Messages                   | Until either user deletes their account (**Proposed**)      | `app.account_delete`        |
 | Ratings                    | Kept, author shown as "Deleted user" after account deletion | `app.account_delete`        |
+| Trades and offers          | Kept for the other person; the deleted person shows as "Deleted user" (2026-11-17) | `on delete set null`, `app.account_delete` cancels active ones first |
 | Reports                    | 1 year after resolution (**Proposed**)                      | Purge job, added in Phase 5 |
 | Audit log                  | 1 year                                                      | `audit_log_purge`           |
 | Backups                    | Supabase Pro retention                                      | Supabase                    |

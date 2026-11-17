@@ -1,6 +1,6 @@
 import "server-only";
 import { and, asc, desc, eq, inArray, sql, type SQL } from "drizzle-orm";
-import type { Page } from "@/shared/contracts/common";
+import type { Page, PageQuery } from "@/shared/contracts/common";
 import type { Item, MyItemsQuery } from "@/shared/contracts/items";
 import { getDb } from "@/server/db";
 import { categories, itemPhotos, items, photos } from "@/server/db/schema";
@@ -49,9 +49,21 @@ export async function loadItems(ids: string[]): Promise<Item[]> {
 
 // GET /api/me/items?status=&cursor=&limit=. Newest first.
 export async function listMyItems(ownerId: string, query: MyItemsQuery): Promise<Page<Item>> {
+  const filters: SQL[] = [eq(items.ownerId, ownerId)];
+  if (query.status) filters.push(eq(items.status, query.status));
+  return pageOfItems(filters, query);
+}
+
+// GET /api/users/:handle/items (PROF-03). The profile's gear tab: only what
+// someone can actually get, so up for trade and available. Gear that isn't
+// up for trade, or is reserved or traded, stays private to its owner.
+export async function listUserTradeItems(ownerId: string, query: PageQuery): Promise<Page<Item>> {
+  return pageOfItems([eq(items.ownerId, ownerId), eq(items.upForTrade, true), eq(items.status, "available")], query);
+}
+
+async function pageOfItems(filters: SQL[], query: PageQuery): Promise<Page<Item>> {
   const cursor = decodeCursor(query.cursor);
-  const conditions: SQL[] = [eq(items.ownerId, ownerId)];
-  if (query.status) conditions.push(eq(items.status, query.status));
+  const conditions: SQL[] = [...filters];
   if (cursor) conditions.push(sql`(${items.createdAt}, ${items.id}) < (${cursor.at}::timestamptz, ${cursor.id}::uuid)`);
 
   // One extra row tells us whether there is a next page.

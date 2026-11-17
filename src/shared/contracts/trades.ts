@@ -7,7 +7,7 @@
 
 import { z } from "zod";
 import { pageQuerySchema } from "@/shared/contracts/common";
-import { itemSummarySchema } from "@/shared/contracts/items";
+import { itemConditionSchema } from "@/shared/contracts/items";
 import { userSummarySchema } from "@/shared/contracts/users";
 
 // ---------------------------------------------------------------------------
@@ -46,11 +46,22 @@ export const RATING_TAGS_MAX = 5;
 // Responses
 // ---------------------------------------------------------------------------
 
+// An item in an offer. The offer keeps a copy of the name, so it still reads
+// right after the item is deleted; then id, condition, and thumbUrl are null
+// (decided 2026-11-17).
+export const offerItemSchema = z.object({
+  id: z.uuid().nullable(),
+  name: z.string(),
+  condition: itemConditionSchema.nullable(),
+  thumbUrl: z.url().nullable(),
+});
+export type OfferItem = z.infer<typeof offerItemSchema>;
+
 export const tradeOfferSchema = z.object({
   id: z.uuid(),
   madeBy: sideSchema,
-  myItems: z.array(itemSummarySchema),
-  theirItems: z.array(itemSummarySchema),
+  myItems: z.array(offerItemSchema),
+  theirItems: z.array(offerItemSchema),
   cash: cashSchema.nullable(),
   createdAt: z.iso.datetime({ offset: true }),
 });
@@ -70,7 +81,9 @@ export type MeetupSpot = z.infer<typeof meetupSpotSchema>;
 export const tradeSummarySchema = z.object({
   id: z.uuid(),
   status: tradeStatusSchema,
-  other: userSummarySchema,
+  // null when the other person deleted their account: show "Deleted user"
+  // (decided 2026-11-17).
+  other: userSummarySchema.nullable(),
   currentOffer: tradeOfferSchema,
   // True when the viewer can accept, decline, or counter right now (TRD-04).
   // False means "waiting for them" while pending (TRD-05).

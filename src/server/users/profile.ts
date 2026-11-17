@@ -54,8 +54,9 @@ async function buildProfile(row: UserRow) {
   return toPublicProfile(row, hobbyList, stats);
 }
 
-// GET /api/users/:handle. Suspended accounts are hidden.
-export async function getPublicProfile(rawHandle: string): Promise<PublicProfile> {
+// The person behind a handle, if anyone may see them. Suspended accounts are
+// hidden everywhere public: profile, posts tab, and gear tab.
+async function findVisibleUser(rawHandle: string): Promise<UserRow> {
   const handle = handleSchema.safeParse(rawHandle);
   if (!handle.success) throw new AppError("NOT_FOUND", "We couldn't find that trader.");
 
@@ -65,8 +66,16 @@ export async function getPublicProfile(rawHandle: string): Promise<PublicProfile
     .where(and(eq(users.handle, handle.data), isNull(users.suspendedAt)))
     .limit(1);
   if (!row) throw new AppError("NOT_FOUND", "We couldn't find that trader.");
+  return row;
+}
 
-  return buildProfile(row);
+export async function findVisibleUserId(rawHandle: string): Promise<string> {
+  return (await findVisibleUser(rawHandle)).id;
+}
+
+// GET /api/users/:handle. Suspended accounts are hidden.
+export async function getPublicProfile(rawHandle: string): Promise<PublicProfile> {
+  return buildProfile(await findVisibleUser(rawHandle));
 }
 
 // GET /api/me. Email and verification come from the session (Supabase Auth).

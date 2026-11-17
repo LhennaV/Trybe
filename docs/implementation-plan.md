@@ -208,7 +208,9 @@ Goal: users can add gear, post what they made, and browse a feed.
 - [x] **[BE]** Feed endpoint with hobby filter and cursor pagination (POST-05)
   - Hidden posts and suspended authors are left out. Tested: no repeats when new posts arrive.
 - [x] **[BE]** Like and save endpoints (POST-06, POST-07)
-- [ ] **[BE]** `GET /api/users/:handle/posts` and the person's gear up for trade, for the profile tabs (PROF-03)
+- [x] **[BE]** `GET /api/users/:handle/posts` and the person's gear up for trade, for the profile tabs (PROF-03)
+  - Done 2026-11-17: `/api/users/:handle/posts` and `/api/users/:handle/items` (up for trade and
+    available only). Tests run and passed by Tristan.
 - [ ] **[BE]** Hide blocked and muted users' posts in the feed (ready for Phase 5 tables)
   - Waits for the blocks and mutes tables (Phase 5). Add the filter to `listFeed` in
     `src/server/posts/read.ts`, next to the hidden and suspended checks.
@@ -243,22 +245,44 @@ counter, accept, decline, and cancel.
 
 ### Tasks
 
-- [ ] **[BE]** Tables: trades, trade_offers, trade_offer_items
+- [x] **[BE]** Tables: trades, trade_offers, trade_offer_items
+  - Built 2026-11-17 (migrations 0010 and 0011): RLS, audit, and checks for self-trades, cash
+    (whole pesos, both amount and direction), and cancel reasons. Decided with Tristan: a deleted
+    account keeps the other person's trade history (ids become null, "Deleted user"), and
+    offers keep a copy of each item's name. Meetup and completion columns come with Phase 4.
+    Left: apply 0010 and 0011 to the dev database before merging (`pnpm db:migrate`).
+- [x] **[BE]** Deleting an item cancels the pending trades that use it (reason `item_unavailable`,
+      decided 2026-11-17)
+  - Trigger `trg_items_cancel_trades` (migration 0012), so it also runs when a deleted account
+    takes its items. It also cancels accepted trades then and frees the other person's items.
 - [x] **[BE]** State machine in `src/server/trades/` (TRD section 11)
   - `transitionTrade()` and `canRespond()` in `src/server/trades/stateMachine.ts` (Tristan,
     reviewed and completed 2026-11-13): outsiders, confirm complete, and API error codes.
 - [x] **[BE]** Tests first: every allowed and forbidden transition
   - The whole matrix from `docs/testing.md` 7.1 as data in `tests/unit/server/trades/matrix.ts`
-    (72 cases plus completion). Left for the database functions: run the same matrix against
-    Postgres once `app.trade_*` exists.
-- [ ] **[BE]** Tests: two people acting on the same trade at the same time
-- [ ] **[BE]** Tests: accepting a trade with an item already reserved elsewhere
-- [ ] **[BE]** Row locking with `SELECT ... FOR UPDATE` on trades and items
-- [ ] **[BE]** Propose endpoint, requires verified email (TRD-01, TRD-02, TRD-09)
-- [ ] **[BE]** Counter, accept, decline, cancel endpoints (TRD-03, TRD-04, TRD-08)
-- [ ] **[BE]** On accept: reserve items, auto-cancel other pending trades using them (TRD-06)
-- [ ] **[BE]** Trade list and trade detail endpoints
-- [ ] **[BE]** Return `409` with a clear error code on state conflicts
+    (72 cases plus completion). The same matrix runs against the database functions in
+    `tests/integration/db/trade-functions.test.ts` (confirm complete waits for Phase 4).
+- [x] **[BE]** Tests: two people acting on the same trade at the same time
+  - `tests/integration/db/trade-concurrency.test.ts` (2026-11-17): double accept, accept vs cancel,
+    and five rounds of two trades racing for one item.
+- [x] **[BE]** Tests: accepting a trade with an item already reserved elsewhere
+- [x] **[BE]** Row locking with `SELECT ... FOR UPDATE` on trades and items
+  - `app.trade_propose`, `_counter`, `_accept`, `_decline`, `_cancel` (migration 0012), called from
+    `src/server/trades/write.ts`. Database codes become AppErrors in `dbErrors.ts`; a deadlock
+    becomes `CONFLICT` (409, retry). Left: apply 0012 to the dev database (`pnpm db:migrate`).
+- [x] **[BE]** Propose endpoint, requires verified email (TRD-01, TRD-02, TRD-09)
+- [x] **[BE]** Counter, accept, decline, cancel endpoints (TRD-03, TRD-04, TRD-08)
+- [x] **[BE]** On accept: reserve items, auto-cancel other pending trades using them (TRD-06)
+  - Done in `app.trade_accept`. The endpoint itself comes with the accept endpoint above.
+- [x] **[BE]** Trade list and trade detail endpoints
+  - Done 2026-11-17: `POST /api/trades`, `GET /api/trades` (`?status=`, cursor paging, most
+    recently changed first), `GET /api/trades/:id`, and `/counter`, `/accept`, `/decline`, `/cancel`.
+    Every action returns the updated trade detail. Answers are from the viewer's side ("me"/"them").
+    A trade someone isn't in is a 404, so ids can't be probed. Contract change for Lhenna to
+    confirm: `other` is null for a deleted account ("Deleted user"), and offer items use
+    `offerItemSchema` (id, condition, and thumbUrl null once the item is deleted). Meetup,
+    completion, and ratedByMe are placeholders until Phase 4. Tests: `tests/integration/trades/`.
+- [x] **[BE]** Return `409` with a clear error code on state conflicts
 - [x] **[FE]** Propose a trade: pick their items and yours, balance with cash (with direction) or items (TRD-01, TRD-02)
 - [x] **[FE]** Empty state when the user has no gear (TRD-10)
 - [x] **[FE]** Trades list with status chips
@@ -337,7 +361,8 @@ use the app safely.
 - [ ] **[BE]** Admin role and admin-only endpoints
 - [ ] **[BE]** Admin can hide content and suspend accounts (SAFE-05)
 - [ ] **[BE]** Account deletion: cancel active trades, delete data (DEL-01, DEL-03)
-- [ ] **[BE]** Rate limits on sign up, log in, posts, proposals, messages, reports
+- [ ] **[BE]** Rate limits on every API route, tighter on sign up, log in, posts, proposals,
+      messages, reports. Pick the shared store first (TRD section 21)
 - [ ] **[BE]** Security review against TRD section 14
 - [ ] **[BE]** Purge jobs needed before launch (`docs/database.md` sections 8 and 9): enable
       pg_cron, `users_purge_unverified`, `audit_log_purge`, and orphan photo cleanup.
@@ -353,7 +378,11 @@ use the app safely.
   - Phase 5 screens are UI only. Left: wire report, block, mute, the admin queue, and
     account deletion to their endpoints once they exist.
 - [ ] **[Both]** Final Terms, Privacy Policy, Community Guidelines (SAFE-07)
-- [ ] **[Both]** Accessibility pass: contrast, 44px targets, labels
+- [ ] **[Both]** Legal pages per TRD section 15 "Legal pages and consent": cookies and third
+      parties in the privacy policy, no-refund line in the Terms, re-ask when the Terms change,
+      and check the local laws listed there
+- [ ] **[Both]** Accessibility pass: contrast, 44px targets, labels, alt text, keyboard-only use,
+      and a list of font, icon, and image licenses (TRD section 16)
 
 ### Done when
 
@@ -390,7 +419,8 @@ Runs during the closed test.
 - [x] **[FE]** PWA manifest, icons, offline page
 - [x] **[FE]** Unique titles and descriptions for posts and profiles
   - Profiles use real data. Posts still read sample posts until post detail is wired.
-- [ ] **[Both]** Performance pass against TRD section 16
+- [ ] **[Both]** Performance pass against TRD section 16 (the "Speed" row: lazy loading,
+      debounced search, caching)
 - [ ] **[Both]** Fix bugs reported by closed test testers
 - [ ] **[Both]** Build any open-decision features you chose to include
 

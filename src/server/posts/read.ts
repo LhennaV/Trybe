@@ -1,34 +1,19 @@
 import "server-only";
 import { and, asc, desc, eq, inArray, isNull, sql, type SQL } from "drizzle-orm";
-import type { Page } from "@/shared/contracts/common";
+import type { Page, PageQuery } from "@/shared/contracts/common";
 import type { FeedQuery, PostCard, PostDetail } from "@/shared/contracts/posts";
-import type { UserSummary } from "@/shared/contracts/users";
 import { getDb } from "@/server/db";
 import { hobbies, items, likes, photos, postItems, postPhotos, posts, saves, users } from "@/server/db/schema";
 import { AppError } from "@/server/errors";
 import { decodeCursor, encodeCursor } from "@/server/http/cursor";
 import { loadItems } from "@/server/items/read";
 import { toPhoto } from "@/server/photos/photos";
-import { isNewTrader } from "@/server/users/newTrader";
+import { toUserSummary } from "@/server/users/summary";
 
 // Reading posts: feed cards and post details (TRD section 8.4).
 
 // Posts anyone may see: not hidden by moderation, author not suspended.
 const visible = and(isNull(posts.hiddenAt), isNull(users.suspendedAt));
-
-function toSummary(user: typeof users.$inferSelect): UserSummary {
-  // Ratings and trade counts arrive with Phases 3 and 4.
-  return {
-    id: user.id,
-    handle: user.handle,
-    displayName: user.displayName,
-    photoUrl: user.photoUrl,
-    city: user.city,
-    isNewTrader: isNewTrader({ createdAt: user.createdAt, completedTrades: 0 }),
-    rating: null,
-    tradeCount: 0,
-  };
-}
 
 // Feed cards for these post ids, in the same order. `viewerId` fills
 // likedByMe and savedByMe; null when logged out.
@@ -63,7 +48,7 @@ export async function loadPostCards(ids: string[], viewerId: string | null): Pro
       {
         id: r.post.id,
         title: r.post.title,
-        author: toSummary(r.author),
+        author: toUserSummary(r.author),
         hobby: r.hobby,
         cover: toPhoto(r.cover),
         upForTrade: r.upForTrade,
@@ -112,15 +97,28 @@ export async function getPostDetail(postId: string, viewerId: string | null): Pr
 // the last post's exact (created_at, id), so new posts arriving at the top
 // never shift later pages: no repeats, no gaps.
 export async function listFeed(query: FeedQuery, viewerId: string | null): Promise<Page<PostCard>> {
+  if (!query.hobby) return pageOfPosts([], query, viewerId);
+
+  const [hobby] = await getDb().select({ id: hobbies.id }).from(hobbies).where(eq(hobbies.slug, query.hobby)).limit(1);
+  if (!hobby) return { items: [], nextCursor: null };
+  return pageOfPosts([eq(posts.hobbyId, hobby.id)], query, viewerId);
+}
+
+// GET /api/users/:handle/posts?cursor=&limit= (PROF-03). The profile's posts
+// tab: same cards and paging as the feed, one person's posts only.
+export async function listUserPosts(
+  userId: string,
+  query: PageQuery,
+  viewerId: string | null,
+): Promise<Page<PostCard>> {
+  return pageOfPosts([eq(posts.userId, userId)], query, viewerId);
+}
+
+// One page of visible posts, newest first, for the feed and profiles.
+async function pageOfPosts(filters: SQL[], query: PageQuery, viewerId: string | null): Promise<Page<PostCard>> {
   const db = getDb();
   const cursor = decodeCursor(query.cursor);
-  const conditions: SQL[] = [visible!];
-
-  if (query.hobby) {
-    const [hobby] = await db.select({ id: hobbies.id }).from(hobbies).where(eq(hobbies.slug, query.hobby)).limit(1);
-    if (!hobby) return { items: [], nextCursor: null };
-    conditions.push(eq(posts.hobbyId, hobby.id));
-  }
+  const conditions: SQL[] = [visible!, ...filters];
   if (cursor) conditions.push(sql`(${posts.createdAt}, ${posts.id}) < (${cursor.at}::timestamptz, ${cursor.id}::uuid)`);
 
   const rows = await db

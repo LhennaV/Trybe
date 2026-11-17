@@ -12,6 +12,17 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+### Added
+
+- Backend for the profile tabs: a person's posts, and their gear that's up
+  for trade (`GET /api/users/:handle/posts` and `/items`).
+- Trades in the database: propose, counter, accept, decline, and cancel, with
+  row locking so two people acting at once always get one clear result.
+  Accepting reserves the items and cancels other pending trades for them.
+  Deleting an item or an account cancels the trades that used it.
+- Trade endpoints: propose, counter, accept, decline, cancel, your trades
+  list, and trade details (`/api/trades`).
+
 ### Changed
 
 - Settings, Profile, Trades, Notifications, New post, Saved, Report, Admin,
