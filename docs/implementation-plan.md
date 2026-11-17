@@ -205,7 +205,9 @@ Goal: users can add gear, post what they made, and browse a feed.
 - [x] **[BE]** Feed endpoint with hobby filter and cursor pagination (POST-05)
   - Hidden posts and suspended authors are left out. Tested: no repeats when new posts arrive.
 - [x] **[BE]** Like and save endpoints (POST-06, POST-07)
-- [ ] **[BE]** `GET /api/users/:handle/posts` and the person's gear up for trade, for the profile tabs (PROF-03)
+- [x] **[BE]** `GET /api/users/:handle/posts` and the person's gear up for trade, for the profile tabs (PROF-03)
+  - Done 2026-11-17: `/api/users/:handle/posts` and `/api/users/:handle/items` (up for trade and
+    available only). Tests run and passed by Tristan.
 - [ ] **[BE]** Hide blocked and muted users' posts in the feed (ready for Phase 5 tables)
   - Waits for the blocks and mutes tables (Phase 5). Add the filter to `listFeed` in
     `src/server/posts/read.ts`, next to the hidden and suspended checks.
@@ -237,7 +239,14 @@ counter, accept, decline, and cancel.
 
 ### Tasks
 
-- [ ] **[BE]** Tables: trades, trade_offers, trade_offer_items
+- [x] **[BE]** Tables: trades, trade_offers, trade_offer_items
+  - Built 2026-11-17 (migrations 0010 and 0011): RLS, audit, and checks for self-trades, cash
+    (whole pesos, both amount and direction), and cancel reasons. Decided with Tristan: a deleted
+    account keeps the other person's trade history (ids become null, "Deleted user"), and
+    offers keep a copy of each item's name. Meetup and completion columns come with Phase 4.
+    Left: apply 0010 and 0011 to the dev database before merging (`pnpm db:migrate`).
+- [ ] **[BE]** Deleting an item cancels the pending trades that use it (reason `item_unavailable`,
+      decided 2026-11-17). Build it with the trade functions; `deleteItem` doesn't do it yet.
 - [x] **[BE]** State machine in `src/server/trades/` (TRD section 11)
   - `transitionTrade()` and `canRespond()` in `src/server/trades/stateMachine.ts` (Tristan,
     reviewed and completed 2026-11-13): outsiders, confirm complete, and API error codes.

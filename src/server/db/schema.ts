@@ -8,6 +8,7 @@
 
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   boolean,
   check,
   index,
@@ -29,6 +30,7 @@ import {
   LOOKING_FOR_MAX,
 } from "@/shared/contracts/items";
 import { POST_CAPTION_MAX, POST_PHOTOS_MAX, POST_TITLE_MAX } from "@/shared/contracts/posts";
+import { CANCEL_REASONS, CASH_MAX, TRADE_STATUSES } from "@/shared/contracts/trades";
 import {
   BIO_MAX,
   CITY_MAX,
@@ -423,5 +425,117 @@ export const saves = pgTable(
     // "My saved posts", and the user_id key.
     uniqueIndex("uq_saves_user_id_post_id").on(t.userId, t.postId),
     index("idx_saves_post_id").on(t.postId),
+  ],
+).enableRLS();
+
+// ===========================================================================
+// Phase 3: trades
+// ===========================================================================
+//
+// Changed only by the app.trade_* database functions, which lock the trade
+// row first (docs/database.md section 5). The rules they follow are
+// src/server/trades/stateMachine.ts.
+//
+// Deleting an account keeps the other person's trade history (decided
+// 2026-11-17): the deleted person's ids become null and the app shows
+// "Deleted user". Active trades are cancelled before that (app.account_delete).
+
+// Who gives what, and who adds cash: the two people, by their role in the trade.
+export const TRADE_SIDES = ["initiator", "recipient"] as const;
+
+// ---------------------------------------------------------------------------
+// trades
+// ---------------------------------------------------------------------------
+
+export const trades = pgTable(
+  "trades",
+  {
+    id: id(),
+    // The person who proposed. Null after they delete their account.
+    initiatorId: uuid("initiator_id").references(() => users.id, { onDelete: "set null" }),
+    recipientId: uuid("recipient_id").references(() => users.id, { onDelete: "set null" }),
+    status: text("status", { enum: TRADE_STATUSES }).notNull().default("pending"),
+    // The latest offer or counter (TRD-03). Null only for a moment while the
+    // propose function creates the trade and its first offer.
+    currentOfferId: uuid("current_offer_id").references((): AnyPgColumn => tradeOffers.id, { onDelete: "set null" }),
+    cancelledBy: uuid("cancelled_by").references(() => users.id, { onDelete: "set null" }),
+    cancelReason: text("cancel_reason", { enum: CANCEL_REASONS }),
+    // Meetup and completion columns arrive with Phase 4.
+    ...timestamps(),
+  },
+  (t) => [
+    // Trades list for each side (and the user keys for account deletion).
+    index("idx_trades_initiator_id_status").on(t.initiatorId, t.status),
+    index("idx_trades_recipient_id_status").on(t.recipientId, t.status),
+    index("idx_trades_current_offer_id").on(t.currentOfferId),
+    index("idx_trades_cancelled_by").on(t.cancelledBy),
+    check("ck_trades_status", sql`${t.status} in (${inList(TRADE_STATUSES)})`),
+    check("ck_trades_cancel_reason", sql`${t.cancelReason} in (${inList(CANCEL_REASONS)})`),
+    // CANNOT_TRADE_WITH_SELF, also enforced by the database. Null-safe: a
+    // deleted account (null) never trips it.
+    check("ck_trades_not_self", sql`${t.initiatorId} <> ${t.recipientId}`),
+    // A cancel reason exactly when the trade is cancelled.
+    check("ck_trades_cancel_reason_when_cancelled", sql`(${t.status} = 'cancelled') = (${t.cancelReason} is not null)`),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// trade_offers
+// ---------------------------------------------------------------------------
+
+// One row per offer or counter (TRD-03). Never edited after it's made.
+export const tradeOffers = pgTable(
+  "trade_offers",
+  {
+    id: id(),
+    tradeId: uuid("trade_id")
+      .notNull()
+      .references(() => trades.id, { onDelete: "cascade" }),
+    // Null after the maker deletes their account.
+    madeBy: uuid("made_by").references(() => users.id, { onDelete: "set null" }),
+    // Whole pesos, handed over in person. Both set or both empty.
+    cashAmount: integer("cash_amount"),
+    cashFrom: text("cash_from", { enum: TRADE_SIDES }),
+    ...timestamps(),
+  },
+  (t) => [
+    // Offer history in order (TRD-07), and the trade_id key.
+    index("idx_trade_offers_trade_id_created_at").on(t.tradeId, t.createdAt),
+    index("idx_trade_offers_made_by").on(t.madeBy),
+    check("ck_trade_offers_cash_amount", sql`${t.cashAmount} between 1 and ${num(CASH_MAX)}`),
+    check("ck_trade_offers_cash_from", sql`${t.cashFrom} in (${inList(TRADE_SIDES)})`),
+    check("ck_trade_offers_cash_pair", sql`(${t.cashAmount} is null) = (${t.cashFrom} is null)`),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// trade_offer_items
+// ---------------------------------------------------------------------------
+
+// The items in an offer and which side gives each one.
+export const tradeOfferItems = pgTable(
+  "trade_offer_items",
+  {
+    id: id(),
+    offerId: uuid("offer_id")
+      .notNull()
+      .references(() => tradeOffers.id, { onDelete: "cascade" }),
+    // Null after the item is deleted. Deleting an item first cancels the
+    // pending trades that use it (decided 2026-11-17, done by the trade
+    // functions), so only finished trades keep a null here.
+    itemId: uuid("item_id").references(() => items.id, { onDelete: "set null" }),
+    // The item's name when the offer was made, so history still reads right
+    // after the item is renamed or deleted.
+    itemName: text("item_name").notNull(),
+    side: text("side", { enum: TRADE_SIDES }).notNull(),
+    ...timestamps(),
+  },
+  (t) => [
+    // Items in an offer, and the offer_id key.
+    uniqueIndex("uq_trade_offer_items_offer_id_item_id").on(t.offerId, t.itemId),
+    // Pending trades that use an item: cancelled on accept (TRD-06) and on delete.
+    index("idx_trade_offer_items_item_id").on(t.itemId),
+    check("ck_trade_offer_items_side", sql`${t.side} in (${inList(TRADE_SIDES)})`),
+    check("ck_trade_offer_items_item_name", sql`char_length(${t.itemName}) between 1 and ${num(ITEM_NAME_MAX)}`),
   ],
 ).enableRLS();

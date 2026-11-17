@@ -352,9 +352,11 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | saves             | `idx_saves_post_id (post_id)`                                                    | Account deletion of a post's savers |
 | trades            | `idx_trades_initiator_id_status (initiator_id, status)`                         | Trades list                    |
 | trades            | `idx_trades_recipient_id_status (recipient_id, status)`                         | Trades list                    |
+| trades            | `idx_trades_current_offer_id`, `idx_trades_cancelled_by`                          | Foreign key checks (section 6.1 rule 9) |
+| trade_offers      | `idx_trade_offers_made_by (made_by)`                                              | Account deletion                |
 | trades            | `idx_trades_meetup_at_accepted (meetup_at) where status = 'accepted'`           | Expired meetup job             |
 | trade_offers      | `idx_trade_offers_trade_id_created_at (trade_id, created_at)`                   | Offer history                  |
-| trade_offer_items | `idx_trade_offer_items_offer_id (offer_id)`                                     | Items in an offer              |
+| trade_offer_items | `uq_trade_offer_items_offer_id_item_id (offer_id, item_id)`                       | Items in an offer, once each   |
 | trade_offer_items | `idx_trade_offer_items_item_id (item_id)`                                       | Conflicting trades on accept   |
 | messages          | `idx_messages_trade_id_created_at (trade_id, created_at)`                       | Chat history                   |
 | ratings           | `uq_ratings_trade_id_rater_id`                                                  | One rating per rater per trade |
@@ -552,6 +554,7 @@ with SQL does not delete the actual files. ⏳ Built with post photos (Phase 2).
 | Read notifications         | 90 days                                                     | `notifications_purge`       |
 | Messages                   | Until either user deletes their account (**Proposed**)      | `app.account_delete`        |
 | Ratings                    | Kept, author shown as "Deleted user" after account deletion | `app.account_delete`        |
+| Trades and offers          | Kept for the other person; the deleted person shows as "Deleted user" (2026-11-17) | `on delete set null`, `app.account_delete` cancels active ones first |
 | Reports                    | 1 year after resolution (**Proposed**)                      | Purge job, added in Phase 5 |
 | Audit log                  | 1 year                                                      | `audit_log_purge`           |
 | Backups                    | Supabase Pro retention                                      | Supabase                    |
