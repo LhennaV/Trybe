@@ -215,7 +215,10 @@ Goal: users can add gear, post what they made, and browse a feed.
 - [ ] **[FE]** Feed: hobby chips, Pinterest-style grid, "Up for trade" badge (POST-03)
 - [ ] **[FE]** Post detail with tools list; "Propose a trade" only on for-trade posts (POST-04)
 - [ ] **[FE]** Like and save buttons with 44px tap areas
-- [ ] **[FE]** Empty and loading states for feed and profile tabs
+- [x] **[FE]** Empty and loading states for feed and profile tabs
+  - Skeletons for feed, post detail, profile, explore, search, and trades, plus the empty feed.
+  - Note (2026-11-17): Lhenna built the Phase 2 screens above during the prototype, on sample
+    data. Each [FE] task here is ticked once its screen uses the real API.
 
 ### Done when
 
@@ -257,6 +260,8 @@ counter, accept, decline, and cancel.
 - [ ] **[FE]** Waiting state when you made the current offer (TRD-05)
 - [ ] **[FE]** Counter offer screen
 - [ ] **[FE]** Handle `409` errors with a friendly message and a refresh
+  - Note (2026-11-17): Lhenna built the Phase 3 trade screens above during the prototype, on sample
+    data. Each [FE] task here is ticked once its screen uses the real API.
 
 ### Done when
 
@@ -292,7 +297,10 @@ Goal: a trade can go all the way from offer to rating.
 - [ ] **[FE]** Confirm handoff and "didn't show up" actions
 - [ ] **[FE]** Rate your trade screen (stars, tags, note)
 - [ ] **[FE]** Notifications list and bell badge
-- [ ] **[FE]** Desktop trades layout: list, chat, trade details panel
+- [x] **[FE]** Desktop trades layout: list, chat, trade details panel
+  - Layout done (`TradeDetailsPanel`); the data inside is still sample data.
+  - Note (2026-11-17): Lhenna built the chat, meetup, rating, and notification screens above during the prototype, on sample
+    data. Each [FE] task here is ticked once its screen uses the real API.
 
 ### Done when
 
@@ -330,7 +338,9 @@ use the app safely.
 - [ ] **[FE]** Simple admin page for the report queue (SAFE-04)
 - [ ] **[FE]** Delete account flow with a clear confirmation screen
 - [ ] **[FE]** Public account deletion page that works without the app (DEL-02)
-- [ ] **[FE]** Safety tips page and "Trade safely" card (SAFE-06)
+- [x] **[FE]** Safety tips page and "Trade safely" card (SAFE-06)
+  - Note (2026-11-17): Lhenna built the report, block, admin, and delete account screens above during the prototype, on sample
+    data. Each [FE] task here is ticked once its screen uses the real API.
 - [ ] **[Both]** Final Terms, Privacy Policy, Community Guidelines (SAFE-07)
 - [ ] **[Both]** Accessibility pass: contrast, 44px targets, labels
 
@@ -363,8 +373,13 @@ Runs during the closed test.
 - [ ] **[FE]** Explore screen
 - [ ] **[FE]** Search screen and results
 - [ ] **[FE]** Notification settings toggles (NOTIF-03)
-- [ ] **[FE]** PWA manifest, icons, offline page
+- [x] **[FE]** PWA manifest, icons, offline page
+  - `src/app/manifest.ts`, `icon.tsx`, `apple-icon.tsx` (from `BRAND`), and `/offline`.
 - [ ] **[FE]** Unique titles and descriptions for posts and profiles
+  - Profiles done with real data. Posts have them too, but from sample data until the post
+    detail uses `GET /api/posts/:id`.
+  - Note (2026-11-17): Lhenna built the explore and search screens above during the prototype, on sample
+    data. Each [FE] task here is ticked once its screen uses the real API.
 - [ ] **[Both]** Performance pass against TRD section 16
 - [ ] **[Both]** Fix bugs reported by closed test testers
 - [ ] **[Both]** Build any open-decision features you chose to include

@@ -673,6 +673,9 @@ Check current pricing before paying. Prices change.
 | "Replies in ~1 hr"               | Keep or cut                         | Both    |
 | Dark mode                        | v1 or later                         | Lhenna  |
 | Weekly email digest              | v1 or later                         | Both    |
+| Running costs (domain)           | **Decided 2026-11-17:** Tristan and Lhenna split the domain (about PHP 600 to 900 a year). Trybe stays non-commercial, so the free Vercel Hobby plan still applies | Both    |
+| Earning money (v2 plan)          | **Planned 2026-11-17, not built:** after launch, maybe listing boosts (PHP 20 to 50) and Trybe Plus (about PHP 99 a month, wishlist alerts), with posting, chat, trades, and safety always free. Before building: in-app payments are "Not in v1" (AGENTS.md); Vercel needs a paid plan once Trybe earns (section 20); Play Store digital goods usually need Google Play Billing. Check current terms first | Both    |
+| "Founding Paw" badge            | **Decided 2026-11-17:** on the About page only, for Tristan and Lhenna. Not stored on accounts, and never shown as a trust or verification badge | Both    |
 | "New trader" badge               | **Decided 2026-11-10:** stays until the account is 30 days old and has 3 completed trades | Both    |
 | "Other" hobby in onboarding      | **Decided 2026-11-10:** saved as a hobby request, not shown on the profile; popular ones are added to the list | Both    |
 | Branch protection on `main`      | **Decided 2026-11-10:** off. Merge only when CI is green (docs/testing.md section 10) | Both    |
