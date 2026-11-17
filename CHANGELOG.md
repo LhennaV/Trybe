@@ -20,6 +20,8 @@ How versions work (details in the README, "Versions and releases"):
   row locking so two people acting at once always get one clear result.
   Accepting reserves the items and cancels other pending trades for them.
   Deleting an item or an account cancels the trades that used it.
+- Trade endpoints: propose, counter, accept, decline, cancel, your trades
+  list, and trade details (`/api/trades`).
 
 ### Changed
 

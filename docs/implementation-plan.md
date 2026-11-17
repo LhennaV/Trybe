@@ -270,12 +270,19 @@ counter, accept, decline, and cancel.
   - `app.trade_propose`, `_counter`, `_accept`, `_decline`, `_cancel` (migration 0012), called from
     `src/server/trades/write.ts`. Database codes become AppErrors in `dbErrors.ts`; a deadlock
     becomes `CONFLICT` (409, retry). Left: apply 0012 to the dev database (`pnpm db:migrate`).
-- [ ] **[BE]** Propose endpoint, requires verified email (TRD-01, TRD-02, TRD-09)
-- [ ] **[BE]** Counter, accept, decline, cancel endpoints (TRD-03, TRD-04, TRD-08)
+- [x] **[BE]** Propose endpoint, requires verified email (TRD-01, TRD-02, TRD-09)
+- [x] **[BE]** Counter, accept, decline, cancel endpoints (TRD-03, TRD-04, TRD-08)
 - [x] **[BE]** On accept: reserve items, auto-cancel other pending trades using them (TRD-06)
   - Done in `app.trade_accept`. The endpoint itself comes with the accept endpoint above.
-- [ ] **[BE]** Trade list and trade detail endpoints
-- [ ] **[BE]** Return `409` with a clear error code on state conflicts
+- [x] **[BE]** Trade list and trade detail endpoints
+  - Done 2026-11-17: `POST /api/trades`, `GET /api/trades` (`?status=`, cursor paging, most
+    recently changed first), `GET /api/trades/:id`, and `/counter`, `/accept`, `/decline`, `/cancel`.
+    Every action returns the updated trade detail. Answers are from the viewer's side ("me"/"them").
+    A trade someone isn't in is a 404, so ids can't be probed. Contract change for Lhenna to
+    confirm: `other` is null for a deleted account ("Deleted user"), and offer items use
+    `offerItemSchema` (id, condition, and thumbUrl null once the item is deleted). Meetup,
+    completion, and ratedByMe are placeholders until Phase 4. Tests: `tests/integration/trades/`.
+- [x] **[BE]** Return `409` with a clear error code on state conflicts
 - [x] **[FE]** Propose a trade: pick their items and yours, balance with cash (with direction) or items (TRD-01, TRD-02)
 - [x] **[FE]** Empty state when the user has no gear (TRD-10)
 - [x] **[FE]** Trades list with status chips

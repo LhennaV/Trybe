@@ -441,13 +441,13 @@ PATCH  /api/me
 DELETE /api/me
 
 Trades
-POST   /api/trades
-GET    /api/trades
-GET    /api/trades/:id
+POST   /api/trades                   propose; the other person owns wantItemIds. Returns the trade (201)
+GET    /api/trades?status=&cursor=   my trades, most recently changed first
+GET    /api/trades/:id               404 for anyone not in the trade
 POST   /api/trades/:id/counter
 POST   /api/trades/:id/accept
 POST   /api/trades/:id/decline
-POST   /api/trades/:id/cancel
+POST   /api/trades/:id/cancel        reason withdrawn or no_show (no_show only after accepting)
 POST   /api/trades/:id/meetup
 POST   /api/trades/:id/meetup/confirm
 POST   /api/trades/:id/complete
