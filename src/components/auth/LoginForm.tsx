@@ -11,6 +11,7 @@ import PasswordInput from "@/components/ui/PasswordInput";
 import { resetMe } from "@/components/profile/useMe";
 import AuthNotice from "./AuthNotice";
 import { logIn } from "./authApi";
+import { safeNextPath } from "./nextPath";
 import ResendVerification from "./ResendVerification";
 import Turnstile from "./Turnstile";
 import { useTurnstile } from "./useTurnstile";
@@ -19,7 +20,8 @@ type Notice = { tone: "info" | "error"; body: ReactNode } | null;
 
 // `linkInvalid`: the page was opened from an expired or used email link
 // (AUTH_REDIRECTS.invalidLink, /login?error=link_invalid).
-export default function LoginForm({ linkInvalid = false }: { linkInvalid?: boolean }) {
+// `next`: the page to return to after logging in (from src/proxy.ts).
+export default function LoginForm({ linkInvalid = false, next }: { linkInvalid?: boolean; next?: string | null }) {
   const router = useRouter();
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState<Notice>(
@@ -58,7 +60,7 @@ export default function LoginForm({ linkInvalid = false }: { linkInvalid?: boole
 
     if (result.ok) {
       resetMe();
-      router.replace("/feed");
+      router.replace(safeNextPath(next));
       router.refresh();
       return;
     }

@@ -5,10 +5,13 @@ type MatchBannerProps = {
   title: string;
   subtitle: string;
   href: string;
+  // Desktop button text.
+  action?: string;
 };
 
-// Nudge toward trades that match a hobby the user wants to try.
-export default function MatchBanner({ title, subtitle, href }: MatchBannerProps) {
+// Nudge toward trades that match a hobby the user wants to try. Logged out,
+// the feed reuses it to invite people to sign up.
+export default function MatchBanner({ title, subtitle, href, action = "See matches" }: MatchBannerProps) {
   return (
     <Link
       href={href}
@@ -22,7 +25,7 @@ export default function MatchBanner({ title, subtitle, href }: MatchBannerProps)
         <span className="text-caption text-ink-600">{subtitle}</span>
       </span>
       <CaretRight size={18} weight="bold" className="shrink-0 text-brand-plum lg:hidden" aria-hidden />
-      <span className="hidden shrink-0 pr-6 text-body-m font-bold text-brand-plum lg:block">See matches</span>
+      <span className="hidden shrink-0 pr-6 text-body-m font-bold text-brand-plum lg:block">{action}</span>
     </Link>
   );
 }

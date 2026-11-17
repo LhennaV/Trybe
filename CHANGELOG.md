@@ -14,6 +14,12 @@ How versions work (details in the README, "Versions and releases"):
 
 ### Changed
 
+- Settings, Profile, Trades, Notifications, New post, Saved, Report, Admin,
+  onboarding, and Propose a trade now send you to Log in when you're logged
+  out, then bring you back after you log in.
+- Logged out, the feed hides account-only parts (trades count, notifications,
+  "For you", hobby matches) and shows a "Sign up" banner instead.
+
 - The password checklist on sign up and reset password now asks for a
   lowercase letter too (5 rules). It uses the same rules as the server, so a
   password the form accepts is never refused by Supabase.

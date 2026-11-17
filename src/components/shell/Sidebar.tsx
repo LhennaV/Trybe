@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShieldCheck } from "@phosphor-icons/react";
+import { useMe } from "@/components/profile/useMe";
 import { SAMPLE_TRADES } from "@/components/trades/sampleTrades";
 import { canRespond } from "@/components/trades/tradeModel";
 import { buttonClassName } from "@/components/ui/Button";
@@ -15,8 +16,10 @@ import { NAV_ITEMS, NEW_POST_HREF, isActive } from "./navItems";
 // Below lg, BottomNav is used instead.
 export default function Sidebar() {
   const pathname = usePathname();
-  // Trades waiting on you. Sample data until the trades endpoint exists.
-  const tradesBadge = SAMPLE_TRADES.filter(canRespond).length;
+  const signedIn = useMe().status === "ready";
+  // Trades waiting on you, only when logged in. Sample data until the trades
+  // endpoint exists.
+  const tradesBadge = signedIn ? SAMPLE_TRADES.filter(canRespond).length : 0;
 
   return (
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col gap-1.5 border-r border-line bg-surface-white px-5 pt-7 pb-6 lg:flex">
