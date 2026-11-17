@@ -4,9 +4,19 @@
 
 export const AFTER_LOGIN = "/feed";
 
-// Only paths inside Trybe. "//evil.com" and "/\evil.com" are other sites to a
-// browser, so they fall back to the feed, as does anything not starting with "/".
+// Only paths inside Trybe. Checking the string by hand misses tricks like
+// "/\t/evil.com" (browsers drop the tab, leaving "//evil.com"), so the path is
+// parsed the way a browser would and must stay on our own origin. Anything else
+// falls back to the feed.
+const BASE = "https://trybe.invalid";
+
 export function safeNextPath(next: string | null | undefined): string {
-  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return AFTER_LOGIN;
-  return next;
+  if (!next || !next.startsWith("/")) return AFTER_LOGIN;
+  try {
+    const url = new URL(next, BASE);
+    if (url.origin !== BASE) return AFTER_LOGIN;
+    return url.pathname + url.search + url.hash;
+  } catch {
+    return AFTER_LOGIN;
+  }
 }
