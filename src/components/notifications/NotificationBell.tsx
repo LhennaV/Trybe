@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Bell } from "@phosphor-icons/react";
+import { useMe } from "@/components/profile/useMe";
 import IconButton from "@/components/ui/IconButton";
 import { NotificationRow, useNotifications } from "./NotificationList";
 import { SAMPLE_NOTIFICATIONS } from "./sampleNotifications";
@@ -12,6 +13,7 @@ import { SAMPLE_NOTIFICATIONS } from "./sampleNotifications";
 // screen; from lg up it opens a dropdown, as in the desktop Figma.
 export default function NotificationBell({ className = "" }: { className?: string }) {
   const router = useRouter();
+  const signedOutOrLoading = useMe().status !== "ready";
   const { notifications, markAllRead, anyUnread } = useNotifications(SAMPLE_NOTIFICATIONS);
   const [open, setOpen] = useState(false);
   const wrapper = useRef<HTMLDivElement>(null);
@@ -33,6 +35,10 @@ export default function NotificationBell({ className = "" }: { className?: strin
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
+
+  // Notifications belong to an account, so the bell is hidden when logged out
+  // (and while that's still being checked).
+  if (signedOutOrLoading) return null;
 
   return (
     <div ref={wrapper} className={`relative ${className}`}>

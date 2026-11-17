@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AuthSwitch from "@/components/auth/AuthSwitch";
 import FeedHeader from "@/components/feed/FeedHeader";
 import FeedSearch from "@/components/feed/FeedSearch";
 import HobbyFilter from "@/components/feed/HobbyFilter";
@@ -27,10 +28,22 @@ export default function FeedPage() {
         </div>
       </div>
       <HobbyFilter posts={SAMPLE_POSTS}>
-        <MatchBanner
-          title="3 pottery setups up for trade near you"
-          subtitle='Matches "Pottery", a hobby you want to try'
-          href="/search?hobby=Pottery&show=trade"
+        <AuthSwitch
+          signedIn={
+            <MatchBanner
+              title="3 pottery setups up for trade near you"
+              subtitle='Matches "Pottery", a hobby you want to try'
+              href="/search?hobby=Pottery&show=trade"
+            />
+          }
+          signedOut={
+            <MatchBanner
+              title="Spot something you'd swap for?"
+              subtitle="Join free to make offers, save posts, and post your own gear."
+              href="/signup"
+              action="Sign up"
+            />
+          }
         />
       </HobbyFilter>
     </div>

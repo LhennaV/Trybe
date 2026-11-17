@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useMe } from "@/components/profile/useMe";
 import Chip from "@/components/ui/Chip";
 import FeedEmpty from "./FeedEmpty";
 import FeedGrid from "./FeedGrid";
 import type { FeedPost } from "./samplePosts";
 
-const ALL = "For you";
+// The first chip shows everything. It's "For you" when logged in (picked from
+// your hobbies) and "All" when logged out, since there are no hobbies yet.
+const ALL = "all";
 const HOBBIES = [ALL, "Pottery", "Film photo", "Crochet", "Watercolor", "Baking"];
 
 type HobbyFilterProps = {
@@ -19,6 +22,7 @@ type HobbyFilterProps = {
 // on the page for now; the feed endpoint will filter on the server later.
 export default function HobbyFilter({ posts, children }: HobbyFilterProps) {
   const [selected, setSelected] = useState(ALL);
+  const allLabel = useMe().status === "ready" ? "For you" : "All";
   const visible = selected === ALL ? posts : posts.filter((post) => post.hobby === selected);
 
   return (
@@ -37,7 +41,7 @@ export default function HobbyFilter({ posts, children }: HobbyFilterProps) {
             onClick={() => setSelected(hobby)}
             className="shrink-0 whitespace-nowrap"
           >
-            {hobby}
+            {hobby === ALL ? allLabel : hobby}
           </Chip>
         ))}
       </div>
