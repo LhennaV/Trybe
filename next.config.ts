@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // Set by the Next.js security upgrade (16.4.2 to 16.4.6, 2026-11-17).
+    agentUpgrade: "security",
+  },
   turbopack: {
     rules: {
       "*.css": {
