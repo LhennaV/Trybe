@@ -34,9 +34,9 @@ Tags: **[BE]** Tristan, **[FE]** Lhenna, **[Both]** together.
 | 1     | Accounts and profiles             | TBD    | Done        |
 | 2     | Items, posts, and feed            | TBD    | In progress |
 | 3     | Trades core                       | TBD    | In progress |
-| 4     | Chat, meetup, completion, ratings | TBD    | Not started |
-| 5     | Safety and compliance             | TBD    | Not started |
-| 6     | Explore, PWA, and polish          | TBD    | Not started |
+| 4     | Chat, meetup, completion, ratings | TBD    | In progress |
+| 5     | Safety and compliance             | TBD    | In progress |
+| 6     | Explore, PWA, and polish          | TBD    | In progress |
 | 7     | Play Store launch                 | TBD    | Not started |
 
 ## Timeline shape
@@ -170,6 +170,9 @@ profile.
 - [x] **[FE]** Edit profile (PROF-06)
   - Saves name, handle, bio, city, and the profile photo (with crop). Log out works.
 - [x] **[FE]** Settings screen layout (SET-01), links can be placeholders
+  - Real since 2026-11-17: email (masked) and "Who can message me" (CHAT-06, `PATCH /api/me`).
+    Left: change email and change password while logged in need endpoints (AUTH-07, BE);
+    blocked users waits for Phase 5; notification toggles wait for NOTIF-03.
 - [x] **[Both]** First drafts of Terms, Privacy Policy, Community Guidelines pages
 
 ### Done when
@@ -209,13 +212,19 @@ Goal: users can add gear, post what they made, and browse a feed.
 - [ ] **[BE]** Hide blocked and muted users' posts in the feed (ready for Phase 5 tables)
   - Waits for the blocks and mutes tables (Phase 5). Add the filter to `listFeed` in
     `src/server/posts/read.ts`, next to the hidden and suspended checks.
-- [ ] **[FE]** New post step 1: pick up to 6 photos, camera
-- [ ] **[FE]** New post step 2: title, caption, hobby, tools used
-- [ ] **[FE]** Add a tool sheet: photo, name, category, condition, up for trade, looking for
-- [ ] **[FE]** Feed: hobby chips, Pinterest-style grid, "Up for trade" badge (POST-03)
-- [ ] **[FE]** Post detail with tools list; "Propose a trade" only on for-trade posts (POST-04)
-- [ ] **[FE]** Like and save buttons with 44px tap areas
-- [ ] **[FE]** Empty and loading states for feed and profile tabs
+- [x] **[FE]** New post step 1: pick up to 6 photos, camera
+  - UI done. Left: shrink with `resizeForUpload()` and upload to `POST /api/photos`.
+- [x] **[FE]** New post step 2: title, caption, hobby, tools used
+  - UI done on a sample hobby list. Left: `GET /api/hobbies` and save with `POST /api/posts`.
+- [x] **[FE]** Add a tool sheet: photo, name, category, condition, up for trade, looking for
+  - UI done on sample categories. Left: `GET /api/categories?hobby=` and `POST /api/items`.
+- [x] **[FE]** Feed: hobby chips, Pinterest-style grid, "Up for trade" badge (POST-03)
+  - UI done on `samplePosts`. Left: `GET /api/feed` with the hobby filter and cursor paging.
+- [x] **[FE]** Post detail with tools list; "Propose a trade" only on for-trade posts (POST-04)
+  - UI done on sample posts. Left: `GET /api/posts/:id`.
+- [x] **[FE]** Like and save buttons with 44px tap areas
+  - UI done, local state only. Left: `POST/DELETE /api/posts/:id/like` and `/save`.
+- [x] **[FE]** Empty and loading states for feed and profile tabs
 
 ### Done when
 
@@ -250,13 +259,15 @@ counter, accept, decline, and cancel.
 - [ ] **[BE]** On accept: reserve items, auto-cancel other pending trades using them (TRD-06)
 - [ ] **[BE]** Trade list and trade detail endpoints
 - [ ] **[BE]** Return `409` with a clear error code on state conflicts
-- [ ] **[FE]** Propose a trade: pick their items and yours, balance with cash (with direction) or items (TRD-01, TRD-02)
-- [ ] **[FE]** Empty state when the user has no gear (TRD-10)
-- [ ] **[FE]** Trades list with status chips
-- [ ] **[FE]** Offer card with Accept, Counter, Decline
-- [ ] **[FE]** Waiting state when you made the current offer (TRD-05)
-- [ ] **[FE]** Counter offer screen
-- [ ] **[FE]** Handle `409` errors with a friendly message and a refresh
+- [x] **[FE]** Propose a trade: pick their items and yours, balance with cash (with direction) or items (TRD-01, TRD-02)
+- [x] **[FE]** Empty state when the user has no gear (TRD-10)
+- [x] **[FE]** Trades list with status chips
+- [x] **[FE]** Offer card with Accept, Counter, Decline
+- [x] **[FE]** Waiting state when you made the current offer (TRD-05)
+- [x] **[FE]** Counter offer screen
+- [x] **[FE]** Handle `409` errors with a friendly message and a refresh
+  - All Phase 3 screens are done on `sampleTrades`. Left: wire them to the trade endpoints
+    once they exist (propose, counter, accept, decline, cancel, list, detail).
 
 ### Done when
 
@@ -286,13 +297,21 @@ Goal: a trade can go all the way from offer to rating.
 - [ ] **[BE]** Hide ratings until both rate or 7 days pass, using a scheduled job (RATE-02)
 - [ ] **[BE]** notifications table and in-app notification endpoints (NOTIF-01)
 - [ ] **[FE]** Chat screen with Supabase Realtime subscription (CHAT-05)
-- [ ] **[FE]** Requests tab with "Reply" or "Accept chat" wording (CHAT-03)
-- [ ] **[FE]** Contact info warning banner
-- [ ] **[FE]** Set up the meetup screen with map and checklist (MEET-03, MEET-04)
-- [ ] **[FE]** Confirm handoff and "didn't show up" actions
-- [ ] **[FE]** Rate your trade screen (stars, tags, note)
-- [ ] **[FE]** Notifications list and bell badge
-- [ ] **[FE]** Desktop trades layout: list, chat, trade details panel
+  - Chat UI done on sample messages. Left: the Realtime subscription and the send endpoint.
+- [x] **[FE]** Requests tab with "Reply" or "Accept chat" wording (CHAT-03)
+- [x] **[FE]** Contact info warning banner
+  - Done in the browser while typing. Left: also show the server's CHAT-04 result.
+- [x] **[FE]** Set up the meetup screen with map and checklist (MEET-03, MEET-04)
+  - Leaflet + OpenStreetMap map added 2026-11-17 (`src/components/trades/MeetupMap.tsx`), on two
+    sample Quezon City spots in the `MeetupSpot` contract shape. Left: `GET /api/meetup-spots?city=`
+    and the meetup propose and confirm endpoints. Before launch, check the OpenStreetMap tile
+    usage policy still fits our traffic.
+- [x] **[FE]** Confirm handoff and "didn't show up" actions
+- [x] **[FE]** Rate your trade screen (stars, tags, note)
+- [x] **[FE]** Notifications list and bell badge
+- [x] **[FE]** Desktop trades layout: list, chat, trade details panel
+  - Phase 4 screens run on sample data. Left: wire them to the chat, meetup, completion,
+    rating, and notification endpoints once they exist.
 
 ### Done when
 
@@ -325,12 +344,14 @@ use the app safely.
       The other jobs come with the features they clean up after.
 - [ ] **[BE]** Index check before launch (`docs/database.md` section 6.3): no unused
       indexes, no foreign keys without an index
-- [ ] **[FE]** Report flow from profiles, posts, trades, reviews, messages
-- [ ] **[FE]** Block and mute from profile menu; blocked users list in settings
-- [ ] **[FE]** Simple admin page for the report queue (SAFE-04)
-- [ ] **[FE]** Delete account flow with a clear confirmation screen
-- [ ] **[FE]** Public account deletion page that works without the app (DEL-02)
-- [ ] **[FE]** Safety tips page and "Trade safely" card (SAFE-06)
+- [x] **[FE]** Report flow from profiles, posts, trades, reviews, messages
+- [x] **[FE]** Block and mute from profile menu; blocked users list in settings
+- [x] **[FE]** Simple admin page for the report queue (SAFE-04)
+- [x] **[FE]** Delete account flow with a clear confirmation screen
+- [x] **[FE]** Public account deletion page that works without the app (DEL-02)
+- [x] **[FE]** Safety tips page and "Trade safely" card (SAFE-06)
+  - Phase 5 screens are UI only. Left: wire report, block, mute, the admin queue, and
+    account deletion to their endpoints once they exist.
 - [ ] **[Both]** Final Terms, Privacy Policy, Community Guidelines (SAFE-07)
 - [ ] **[Both]** Accessibility pass: contrast, 44px targets, labels
 
@@ -360,11 +381,15 @@ Runs during the closed test.
   - robots.txt done 2026-11-11 (`src/app/robots.ts`): production allows public pages and blocks
     logged-in ones; previews and local builds block everything. Left: `src/app/sitemap.ts`
     (then add it to robots.ts), and per-page titles and descriptions for posts and profiles.
-- [ ] **[FE]** Explore screen
-- [ ] **[FE]** Search screen and results
-- [ ] **[FE]** Notification settings toggles (NOTIF-03)
-- [ ] **[FE]** PWA manifest, icons, offline page
-- [ ] **[FE]** Unique titles and descriptions for posts and profiles
+- [x] **[FE]** Explore screen
+- [x] **[FE]** Search screen and results
+  - Explore and search run on sample data. Left: wire to the search, hobby count, and
+    "near you" endpoints (EXP-01 to EXP-03).
+- [x] **[FE]** Notification settings toggles (NOTIF-03)
+  - UI only. Left: save the settings once the endpoint exists.
+- [x] **[FE]** PWA manifest, icons, offline page
+- [x] **[FE]** Unique titles and descriptions for posts and profiles
+  - Profiles use real data. Posts still read sample posts until post detail is wired.
 - [ ] **[Both]** Performance pass against TRD section 16
 - [ ] **[Both]** Fix bugs reported by closed test testers
 - [ ] **[Both]** Build any open-decision features you chose to include
