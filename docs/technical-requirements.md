@@ -553,6 +553,22 @@ If a check fails because something changed, return `409`.
 - Blocked users are filtered out of feed, search, chat, and trades on the
   server.
 - Dependencies updated regularly. Review `pnpm audit` before release.
+- Rate limits apply to every API route, not only the actions above: a default
+  limit per user (or per IP when logged out) and tighter ones on those actions.
+  The count must be shared by all serverless instances, so it needs a store
+  (a Postgres table or Upstash Redis free tier, **open decision**, see section 21).
+- Data integrity: rules that must always hold live in the database as checks,
+  foreign keys, and unique constraints, not only in Zod. Changes that touch
+  more than one row run in one transaction.
+- Cross-API checks: never trust ids sent by the client. Each endpoint re-checks
+  that every id it receives exists, belongs to the right person, and is in the
+  right state (for example, an offered item is the offerer's and still
+  available), even if another endpoint checked it earlier.
+- Input: Zod trims and limits every field. Text is stored as typed and shown
+  as text, so no HTML sanitizing is needed unless rich text is ever added.
+- Audit trail on all main tables (docs/database.md section 7).
+- Reference id: every error response and Sentry event carries a request id
+  (**Proposed**), so a user's bug report can be matched to the logs.
 
 ## 15. Privacy and compliance
 
@@ -576,6 +592,19 @@ If a check fails because something changed, return `409`.
   grows. Confirm the current thresholds with the NPC.
 - Have a basic data breach response plan.
 
+### Legal pages and consent
+
+| Item | What Trybe needs | Status |
+| --- | --- | --- |
+| Privacy policy | Required by Google Play and the Data Privacy Act. Lists the data we collect, why, how long we keep it (docs/database.md section 9), and every third party below | ⏳ Phase 5 (SAFE-07) |
+| Terms of Service, Community Guidelines | Accepted before posting. The acceptance time is stored (`users.terms_accepted_at`) | Stored ✅, final text ⏳ Phase 5 |
+| Form consent | Sign up asks for Terms and age with a checkbox that is not pre-ticked. If the Terms change, ask again and store the new time | Sign up ✅, re-asking ⏳ |
+| Cookies and consent banner | v1 uses only essential cookies (login session, Turnstile) and no analytics or ad tracking, so no consent banner is needed. List the cookies in the privacy policy. Adding analytics or tracking later means checking consent first | Re-check before adding analytics |
+| Third parties | Cloudflare Turnstile, Sentry (no session replay, no personal data in events), OpenStreetMap tiles (the viewer's IP goes to the tile server; follow the OSM tile policy and show attribution), Supabase, Vercel, the SMTP provider. Name each in the privacy policy | ⏳ Phase 5 |
+| Refund policy | Not needed: Trybe never takes or holds money. The Terms say cash is between the two traders and Trybe cannot refund it. Revisit if v2 boosts or Trybe Plus happen (Google Play refund rules) | Terms text ⏳ |
+| Data deletion request | In the app and on a public web page (DEL-01 to DEL-03) | ⏳ Phase 5 |
+| Local laws | Data Privacy Act (above). Check whether the Internet Transactions Act (RA 11967) or the Consumer Act applies to a free, non-commercial trading app before launch | ⏳ before launch |
+
 ### Data we collect
 
 Email, display name, handle, profile photo, bio, city, hobbies, posts and
@@ -589,6 +618,9 @@ data through Sentry. No payment data, no exact location, no contacts.
 | Performance   | Feed first load under 2.5 s Largest Contentful Paint on a mid-range Android phone on 4G (**Proposed**)       |
 | API speed     | Most API calls under 300 ms at the server (**Proposed**)                                                     |
 | Accessibility | WCAG 2.1 AA contrast, 44px minimum tap targets, no hover-only actions, labels on all inputs and icon buttons |
+| Accessibility (more) | Alt text on every image (photos use the post or item name), every action reachable by keyboard with a visible focus ring, forms submit with Enter and show errors next to the field, icon buttons have labels |
+| Licenses      | Fonts (Lilita One, Nunito) are SIL Open Font License, free to use. Every icon set and image we did not make needs a license we can show; keep the list in the repo |
+| Speed         | Photos shrunk and stored as WebP; images below the fold lazy load (`next/image`); skeletons while loading; search input debounced (about 300 ms); lists always paginated and queries select only needed columns. Vercel already gives a CDN, compression, and load balancing. Cache public data with Next.js caching first; add Redis only if measured slowness needs it (paid service, ask first) |
 | Reliability   | Supabase Pro daily backups enabled before launch                                                             |
 | Observability | Sentry on client and server, alerts for new errors                                                           |
 | PWA           | Installable, offline page shown when there is no connection                                                  |
@@ -682,6 +714,7 @@ Check current pricing before paying. Prices change.
 | Branch protection on `main`      | **Decided 2026-11-10:** off. Merge only when CI is green (docs/testing.md section 10) | Both    |
 | Post and trade details           | **Decided 2026-11-08:** one hobby per post; offers need an item on both sides (no cash-only); fixed rating tags (`RATING_TAGS` in `src/shared/contracts/trades.ts`); item condition "worn" shows as "Well loved" | Both    |
 | Who can message by default       | **Decided 2026-11-05:** anyone via Requests (`message_permission` default `anyone`); users can switch to traded-only | Both    |
+| Rate limit store                 | Postgres table or Upstash Redis (free tier). Decide in Phase 5 | Tristan |
 | Item photo limit and upload size | See section 13                      | Tristan |
 | End-to-end test tool             | **Decided 2026-11-09:** Playwright for E2E, k6 for performance, Supabase local stack for the test database (see docs/testing.md) | Tristan |
 
