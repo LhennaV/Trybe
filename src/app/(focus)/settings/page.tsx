@@ -14,6 +14,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import LogOutButton from "@/components/settings/LogOutButton";
 import NotificationToggles from "@/components/settings/NotificationToggles";
+import AccountValue from "@/components/settings/AccountValue";
 import { SettingsGroup, SettingsLinkRow } from "@/components/settings/SettingsList";
 import ThemeValue from "@/components/settings/ThemeValue";
 import TopBar from "@/components/ui/TopBar";
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
   title: "Settings",
 };
 
-// Settings layout (SET-01). Most rows lead to screens that come in later
-// phases, so their links are placeholders for now. Values are sample data.
+// Settings (SET-01). Email and "Who can message me" come from GET /api/me.
+// Notification toggles are still local until their endpoint exists (NOTIF-03).
 export default function SettingsPage() {
   const icon = { size: 18, weight: "bold" as const, "aria-hidden": true };
 
@@ -34,7 +35,8 @@ export default function SettingsPage() {
       <SettingsGroup title="Account">
         <SettingsLinkRow icon={<User {...icon} />} label="Edit profile" href="/settings/profile" />
         <SettingsLinkRow icon={<BookmarkSimple {...icon} />} label="Saved" href="/saved" />
-        <SettingsLinkRow icon={<EnvelopeSimple {...icon} />} label="Email" value="s•••@email.com" href="/settings" />
+        {/* No screen yet: changing your email needs a backend endpoint (AUTH-07). */}
+        <SettingsLinkRow icon={<EnvelopeSimple {...icon} />} label="Email" value={<AccountValue field="email" />} />
         <SettingsLinkRow icon={<Key {...icon} />} label="Password" href="/forgot-password" />
       </SettingsGroup>
 
@@ -48,10 +50,15 @@ export default function SettingsPage() {
       </SettingsGroup>
 
       <SettingsGroup title="Privacy & safety">
-        {/* The default is an open decision (TRD section 21), so no value is shown yet. */}
-        <SettingsLinkRow icon={<Tray {...icon} />} label="Who can message me" href="/settings" />
-        <SettingsLinkRow icon={<Prohibit {...icon} />} label="Blocked users" value="2" href="/settings/blocked" />
-        <SettingsLinkRow icon={<MapPin {...icon} />} label="Location shown" value="City only" href="/settings" />
+        <SettingsLinkRow
+          icon={<Tray {...icon} />}
+          label="Who can message me"
+          value={<AccountValue field="messagePermission" />}
+          href="/settings/messages"
+        />
+        <SettingsLinkRow icon={<Prohibit {...icon} />} label="Blocked users" href="/settings/blocked" />
+        {/* Not a choice: Trybe only ever shows your city (PROF-05). */}
+        <SettingsLinkRow icon={<MapPin {...icon} />} label="Location shown" value="City only" />
         <SettingsLinkRow icon={<ShieldCheck {...icon} />} label="Safe trading tips" href="/safety" />
       </SettingsGroup>
 

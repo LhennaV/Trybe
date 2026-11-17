@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
-import { ArrowsLeftRight, Camera, Check, Info, Money, Package } from "@phosphor-icons/react";
+import { ArrowsLeftRight, Camera, Check, Info, Package } from "@phosphor-icons/react";
 import type { ToolItem } from "@/components/posts/samplePostDetails";
 import Button, { buttonClassName } from "@/components/ui/Button";
 import SegmentedControl from "@/components/ui/SegmentedControl";
@@ -187,7 +187,6 @@ export default function ProposeForm({
             {balance === "cash" && (
               <>
                 <div className="flex h-[52px] items-center gap-2.5 rounded-input border-[1.5px] border-line bg-surface-white px-4">
-                  <Money size={20} weight="bold" className="shrink-0 text-status-success" aria-hidden />
                   <label htmlFor={cashId} className="text-body-m font-bold text-ink-400">
                     PHP
                   </label>

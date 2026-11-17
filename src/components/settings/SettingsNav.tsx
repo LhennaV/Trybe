@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GearSix, Palette, Prohibit, Trash, User, type Icon } from "@phosphor-icons/react";
+import { GearSix, Palette, Prohibit, Trash, Tray, User, type Icon } from "@phosphor-icons/react";
 import LogOutButton from "./LogOutButton";
 
 const ITEMS: { href: string; label: string; icon: Icon }[] = [
   { href: "/settings", label: "All settings", icon: GearSix },
   { href: "/settings/profile", label: "Profile", icon: User },
   { href: "/settings/appearance", label: "Appearance", icon: Palette },
+  { href: "/settings/messages", label: "Messages", icon: Tray },
   { href: "/settings/blocked", label: "Blocked users", icon: Prohibit },
   { href: "/settings/delete-account", label: "Delete account", icon: Trash },
 ];

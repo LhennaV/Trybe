@@ -1,18 +1,44 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useId, useState } from "react";
-import { CalendarBlank, MapPin, ShieldCheck } from "@phosphor-icons/react";
+import { CalendarBlank, ShieldCheck } from "@phosphor-icons/react";
+import type { MeetupSpot } from "@/shared/contracts/trades";
 import Button from "@/components/ui/Button";
 import Checkbox from "@/components/ui/Checkbox";
 import ChoiceList from "@/components/ui/ChoiceList";
+import Skeleton from "@/components/ui/Skeleton";
 import TopBar from "@/components/ui/TopBar";
 import TradeProgress from "./TradeProgress";
 
-// Sample safe spots. They'll come from the meetup_spots table (MEET-02).
-const SPOTS = [
-  { value: "trinoma", title: "Trinoma Mall · main entrance", description: "Suggested safe spot · public, CCTV, guards" },
-  { value: "qmc", title: "Quezon Memorial Circle · park gate", description: "Suggested safe spot · open area, daylight only" },
+// Leaflet needs `window`, so the map only loads in the browser.
+const MeetupMap = dynamic(() => import("./MeetupMap"), {
+  ssr: false,
+  loading: () => <Skeleton tone="photo" className="h-full w-full" />,
+});
+
+// Sample safe spots in the contract's shape. They'll come from
+// GET /api/meetup-spots?city= (MEET-02).
+const SPOTS: MeetupSpot[] = [
+  {
+    id: "5b0d6c1e-3f7a-4c2e-9a51-0e8f4d2b7c01",
+    city: "Quezon City",
+    name: "Trinoma Mall · main entrance",
+    description: "Suggested safe spot · public, CCTV, guards",
+    lat: 14.6535,
+    lng: 121.0335,
+  },
+  {
+    id: "5b0d6c1e-3f7a-4c2e-9a51-0e8f4d2b7c02",
+    city: "Quezon City",
+    name: "Quezon Memorial Circle · park gate",
+    description: "Suggested safe spot · open area, daylight only",
+    lat: 14.6517,
+    lng: 121.0494,
+  },
 ];
+
+const SPOT_OPTIONS = SPOTS.map((spot) => ({ value: spot.id, title: spot.name, description: spot.description }));
 
 const CHECKLIST = [
   "Meet at the public spot above, not at home",
@@ -24,7 +50,7 @@ const CHECKLIST = [
 // Set up the meetup (MEET-01, MEET-03, MEET-04). Both people confirm the same
 // spot and time; that part waits for the meetup endpoints.
 export default function MeetupForm({ tradeId, otherHandle }: { tradeId: string; otherHandle: string }) {
-  const [spot, setSpot] = useState<string | null>(SPOTS[0].value);
+  const [spot, setSpot] = useState<string | null>(SPOTS[0].id);
   const [notice, setNotice] = useState("");
   const whenId = useId();
 
@@ -45,29 +71,17 @@ export default function MeetupForm({ tradeId, otherHandle }: { tradeId: string; 
           <p className="text-body-s text-ink-600">Pick a public spot and run through the checklist before you swap.</p>
         </div>
 
-        {/* Map placeholder in theme colors. Leaflet + OpenStreetMap replaces it with the real spots. */}
-        <div className="relative h-[100px] overflow-hidden rounded-card bg-brand-lavender-soft" aria-hidden>
-          <span className="absolute inset-x-0 top-[48px] h-2 -rotate-3 bg-surface-white" />
-          <span className="absolute inset-x-0 top-[88px] h-1.5 rotate-1 bg-surface-white" />
-          <span className="absolute inset-y-0 left-[34%] w-2 rotate-6 bg-surface-white" />
-          <span className="absolute inset-y-0 left-[68%] w-1.5 -rotate-3 bg-surface-white" />
-          <span
-            className={`absolute top-[30px] left-[38%] flex size-[30px] items-center justify-center rounded-chip ${
-              spot === "trinoma" ? "bg-brand-plum text-surface-white" : "border-2 border-brand-plum bg-surface-white text-brand-plum"
-            }`}
-          >
-            <MapPin size={16} weight="bold" />
-          </span>
-          <span
-            className={`absolute top-[50px] left-[70%] flex size-[30px] items-center justify-center rounded-chip ${
-              spot === "qmc" ? "bg-brand-plum text-surface-white" : "border-2 border-brand-plum bg-surface-white text-brand-plum"
-            }`}
-          >
-            <MapPin size={16} weight="bold" />
-          </span>
+        {/* The list below is the accessible way to pick; the map shows where each spot is.
+            isolate keeps Leaflet's high z-indexes under the fixed footer. */}
+        <div
+          role="group"
+          aria-label="Map of the suggested meetup spots"
+          className="relative isolate h-[180px] overflow-hidden rounded-card border-[1.5px] border-line lg:h-[220px]"
+        >
+          <MeetupMap spots={SPOTS} selectedId={spot} onSelect={setSpot} />
         </div>
 
-        <ChoiceList label="Meetup spot" options={SPOTS} value={spot} onChange={setSpot} />
+        <ChoiceList label="Meetup spot" options={SPOT_OPTIONS} value={spot} onChange={setSpot} />
 
         <div className="flex items-center gap-2.5 rounded-input border-[1.5px] border-line bg-surface-white px-3 py-1.5">
           <CalendarBlank size={18} weight="bold" className="shrink-0 text-brand-plum" aria-hidden />

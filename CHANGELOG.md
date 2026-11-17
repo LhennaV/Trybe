@@ -20,6 +20,13 @@ How versions work (details in the README, "Versions and releases"):
 - Logged out, the feed hides account-only parts (trades count, notifications,
   "For you", hobby matches) and shows a "Sign up" banner instead.
 
+- The meetup screen has a real map (OpenStreetMap) with the suggested safe
+  spots. Pick a spot from the list or tap its pin.
+- Settings shows your real email (partly hidden), and "Who can message me"
+  now works: pick anyone or only people you've traded with. The fake
+  blocked-users count and sample blocked people are gone until blocking
+  arrives.
+
 - The password checklist on sign up and reset password now asks for a
   lowercase letter too (5 rules). It uses the same rules as the server, so a
   password the form accepts is never refused by Supabase.
