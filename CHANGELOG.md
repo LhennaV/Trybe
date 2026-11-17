@@ -12,6 +12,11 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+### Added
+
+- Backend for the profile tabs: a person's posts, and their gear that's up
+  for trade (`GET /api/users/:handle/posts` and `/items`).
+
 ### Changed
 
 - Settings, Profile, Trades, Notifications, New post, Saved, Report, Admin,

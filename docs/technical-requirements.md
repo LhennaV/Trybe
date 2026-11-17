@@ -433,7 +433,8 @@ Users
 GET    /api/users/:handle
 POST   /api/me/photo                        profile photo
 DELETE /api/me/photo
-GET    /api/users/:handle/posts
+GET    /api/users/:handle/posts?cursor=      profile posts tab
+GET    /api/users/:handle/items?cursor=      profile gear tab: up for trade and available only
 GET    /api/users/:handle/reviews
 GET    /api/me
 PATCH  /api/me
