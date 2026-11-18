@@ -37,18 +37,25 @@ Tags: **[BE]** Tristan, **[FE]** Lhenna, **[Both]** together.
 | 4     | Chat, meetup, completion, ratings | TBD    | In progress |
 | 5     | Safety and compliance             | TBD    | In progress |
 | 6     | Explore, PWA, and polish          | TBD    | In progress |
+| M     | Mobile app (Expo)                 | TBD    | Not started |
 | 7     | Play Store launch                 | TBD    | Not started |
 
 ## Timeline shape
 
 ```
 Phase 0 → 1 → 2 → 3 → 4 → 5 ──→ 6 ─────────────→ 7
+                 └─ M: mobile app, built screen by screen ─┘
                               └─ Play Store closed test runs here (14+ days)
 ```
 
+Decided 2026-11-18: the store app is a native Expo app (Phase M), not the PWA
+packaged with PWABuilder. The website keeps going through Phases 2 to 6.
+Phase M builds each app screen once its API exists, so it runs alongside them.
+The closed test starts when Phase 5 and the app's Phase M screens for those
+phases are done.
+
 The Google Play closed test needs at least 12 testers for 14 days in a row.
-Start it as soon as Phase 5 is done, and build Phase 6 while it runs, so the
-14 days are not wasted waiting.
+Build Phase 6 while it runs, so the 14 days are not wasted waiting.
 
 ## Decisions needed before each phase
 
@@ -59,6 +66,8 @@ Start it as soon as Phase 5 is done, and build Phase 6 while it runs, so the
 | 2            | Item photo limit and max upload size               | TRD section 13 |
 | 2            | Saved boards or simple save                        | TRD section 21 |
 | 6            | Followers, "Wanted" posts, dark mode, email digest | TRD section 21 |
+| M            | Mobile log in (tokens) and bot check               | TRD section 10 |
+| 7            | App Store at launch or after                       | TRD section 21 |
 
 ---
 
@@ -433,6 +442,48 @@ Runs during the closed test.
 
 ---
 
+## Phase M: Mobile app (Expo)
+
+Goal: a native Android app with native mobile design, on the same API as the
+website. Each screen is built once its endpoints exist.
+
+**Depends on:** the docs update (this change), Tristan's mobile log in.
+
+### Setup
+
+- [ ] **[FE]** Expo app in `mobile/` with Expo Router and TypeScript (strict), added to the pnpm workspace
+- [ ] **[FE]** NativeWind with the `DESIGN.md` tokens, light, dark, and high contrast
+- [ ] **[FE]** Fonts (Lilita One, Nunito) and `phosphor-react-native` icons
+- [ ] **[FE]** App shell: native tab bar (Feed, Explore, +, Trades, Profile), stack screens, safe areas
+- [ ] **[FE]** API client: `apiRequest` from `src/shared/` with the API URL and Bearer token, TanStack Query
+- [ ] **[FE]** App icon and splash screen from the Figma App Logo page
+- [ ] **[BE]** Log in and sign up return the session for the app (TRD section 10, Auth)
+- [ ] **[BE]** `/captcha` page for Turnstile in a WebView, or another bot check (TRD section 21)
+- [ ] **[BE]** Confirm the API accepts Bearer tokens on every endpoint
+
+### Screens
+
+- [ ] **[FE]** Welcome, sign up (terms, age, Turnstile), log in, forgot password, verify email (AUTH-01 to AUTH-06)
+- [ ] **[FE]** Onboarding: hobbies and city (PROF-01)
+- [ ] **[FE]** Feed with hobby chips and pull to refresh (POST-03, POST-05)
+- [ ] **[FE]** Post detail, like, save, "Propose a trade" only on for-trade posts (POST-04, POST-06, POST-07)
+- [ ] **[FE]** New post and add a tool: camera, photo picker, shrink before upload (POST-01, ITEM-01)
+- [ ] **[FE]** Profile, other people's profiles, edit profile with photo (PROF-02, PROF-03, PROF-06)
+- [ ] **[FE]** Propose, counter, trades list, offer card, waiting state (TRD-01 to TRD-10)
+- [ ] **[FE]** Chat with Realtime, requests, contact info warning (CHAT-01 to CHAT-05)
+- [ ] **[FE]** Meetup with map and checklist, confirm handoff, rate (MEET-01 to MEET-06, RATE-01)
+- [ ] **[FE]** Notifications and push (NOTIF-01, NOTIF-02)
+- [ ] **[FE]** Explore and search (EXP-01, EXP-02)
+- [ ] **[FE]** Settings, report, block, mute, delete account, safety tips (SET-01, SAFE-01 to SAFE-06, DEL-01)
+
+### Done when
+
+- The full trade flow works in the app on a real Android phone.
+- The app passes the same safety checks as the website (report, block, delete account).
+- Every screen works in light, dark, and high contrast.
+
+---
+
 ## Phase 7: Play Store launch
 
 Goal: Trybe is live on the web and Google Play.
@@ -443,7 +494,7 @@ Goal: Trybe is live on the web and Google Play.
 - [ ] **[BE]** Production environment variables in Vercel
 - [ ] **[BE]** Domain connected to Vercel
 - [ ] **[Both]** Create the Google Play developer account
-- [ ] **[FE]** Package the PWA with PWABuilder, set up `assetlinks.json`
+- [ ] **[FE]** Build the app with EAS Build and upload it with EAS Submit (replaces PWABuilder, decided 2026-11-18)
 - [ ] **[Both]** Store listing: name, description, screenshots, icon, privacy policy URL
 - [ ] **[Both]** Data safety form, including account deletion link
 - [ ] **[Both]** Content rating questionnaire, answer honestly about user content
@@ -453,7 +504,7 @@ Goal: Trybe is live on the web and Google Play.
 ### Part B: After the closed test
 
 - [ ] **[Both]** Apply for production access in Play Console
-- [ ] **[Both]** Final check on a real Android phone and a real iPhone (web)
+- [ ] **[Both]** Final check: the app on a real Android phone, the website on a real iPhone
 - [ ] **[BE]** Run production migrations, check Sentry is receiving events
 - [ ] **[Both]** Release to production
 - [ ] **[Both]** Watch reports, errors, and sign ups daily for the first two weeks
@@ -467,7 +518,7 @@ Goal: Trybe is live on the web and Google Play.
 
 ## After launch (not planned yet)
 
-- Expo native app and Apple App Store
+- Apple App Store for the Expo app, if not done at launch
 - Google sign in (AUTH-08)
 - Followers, saved boards, "Wanted" posts if cut from v1
 - Moving to Vercel Pro and registering a business once Trybe earns money
