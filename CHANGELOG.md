@@ -44,6 +44,11 @@ How versions work (details in the README, "Versions and releases"):
 - Starter kits on Explore can be tapped.
 - The feed no longer has its own search bar. Search lives in Explore.
 - No cash icon on the cash amount field or the landing page cash chip.
+- On desktop, clicking a message request opens it on the right with Accept
+  chat, Decline, and Report. Accept and Decline now respond (they stay on this
+  screen until chats are connected).
+- Report, Propose a trade, Counter offer, Meetup, Check-in, and Rate look
+  like desktop pages instead of a phone card on big screens.
 
 - The password checklist on sign up and reset password now asks for a
   lowercase letter too (5 rules). It uses the same rules as the server, so a
