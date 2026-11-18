@@ -37,6 +37,13 @@ How versions work (details in the README, "Versions and releases"):
   now works: pick anyone or only people you've traded with. The fake
   blocked-users count and sample blocked people are gone until blocking
   arrives.
+- Tablets get more room: full-screen pages (chat, post, settings, forms) use a
+  wider column instead of a phone-width strip, the feed shows 3 columns, and
+  post photos keep a 4:3 shape.
+- Saved fills the screen on desktop like the feed, with posts in 5 columns.
+- Starter kits on Explore can be tapped.
+- The feed no longer has its own search bar. Search lives in Explore.
+- No cash icon on the cash amount field or the landing page cash chip.
 
 - The password checklist on sign up and reset password now asks for a
   lowercase letter too (5 rules). It uses the same rules as the server, so a
