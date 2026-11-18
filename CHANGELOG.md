@@ -12,6 +12,8 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-18
+
 ### Added
 
 - Backend for the profile tabs: a person's posts, and their gear that's up
@@ -30,7 +32,6 @@ How versions work (details in the README, "Versions and releases"):
   out, then bring you back after you log in.
 - Logged out, the feed hides account-only parts (trades count, notifications,
   "For you", hobby matches) and shows a "Sign up" banner instead.
-
 - The meetup screen has a real map (OpenStreetMap) with the suggested safe
   spots. Pick a spot from the list or tap its pin.
 - Settings shows your real email (partly hidden), and "Who can message me"
@@ -49,7 +50,6 @@ How versions work (details in the README, "Versions and releases"):
   screen until chats are connected).
 - Report, Propose a trade, Counter offer, Meetup, Check-in, and Rate look
   like desktop pages instead of a phone card on big screens.
-
 - The password checklist on sign up and reset password now asks for a
   lowercase letter too (5 rules). It uses the same rules as the server, so a
   password the form accepts is never refused by Supabase.
@@ -134,6 +134,7 @@ Live at https://trybe-puce.vercel.app on the dev database.
   every pull request.
 - Error tracking with Sentry and deploys to Vercel.
 
-[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/LhennaV/Trybe/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LhennaV/Trybe/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/LhennaV/Trybe/releases/tag/v0.1.0
