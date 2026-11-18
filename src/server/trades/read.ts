@@ -10,7 +10,7 @@ import type {
   TradesQuery,
 } from "@/shared/contracts/trades";
 import { getDb } from "@/server/db";
-import { itemPhotos, items, photos, tradeOfferItems, tradeOffers, trades, users } from "@/server/db/schema";
+import { itemPhotos, items, photos, ratings, tradeOfferItems, tradeOffers, trades, users } from "@/server/db/schema";
 import { AppError } from "@/server/errors";
 import { decodeCursor, encodeCursor } from "@/server/http/cursor";
 import { canRespond } from "@/server/trades/stateMachine";
@@ -166,18 +166,25 @@ export async function getTrade(viewerId: string, tradeId: string): Promise<Trade
     .limit(1);
   if (!trade) throw new AppError("TRADE_NOT_FOUND");
 
-  const offers = await loadOffers(eq(tradeOffers.tradeId, trade.id), () => trade, viewerId);
+  const [offers, [myRating]] = await Promise.all([
+    loadOffers(eq(tradeOffers.tradeId, trade.id), () => trade, viewerId),
+    getDb()
+      .select({ id: ratings.id })
+      .from(ratings)
+      .where(and(eq(ratings.tradeId, trade.id), eq(ratings.raterId, viewerId)))
+      .limit(1),
+  ]);
   const [summary] = await buildSummaries([trade], viewerId, new Map(offers.map((o) => [o.id, o])));
 
   return {
     ...summary,
     offers,
-    // Meetup, completion, and ratings come with Phase 4.
+    // Meetup and completion come later in Phase 4.
     meetup: { spot: null, at: null, proposedBy: null, confirmedByMe: false, confirmedByThem: false },
     completion: { confirmedByMe: false, confirmedByThem: false },
     cancelledBy: trade.cancelledBy ? whoIs(trade.cancelledBy, viewerId) : null,
     cancelReason: trade.cancelReason,
-    ratedByMe: false,
+    ratedByMe: myRating !== undefined,
     createdAt: trade.createdAt.toISOString(),
   };
 }

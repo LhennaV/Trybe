@@ -12,6 +12,12 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+### Added
+
+- Rate a trade after it's completed: stars, tags, and a note. Ratings stay
+  hidden until both people rate or 7 days pass. Profiles show the real
+  rating, review count, and number of completed trades.
+
 ## [0.3.0] - 2026-11-18
 
 ### Added

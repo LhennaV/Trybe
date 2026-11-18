@@ -1,9 +1,9 @@
 import "server-only";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { handleSchema, type Me, type PublicProfile, type UserHobby } from "@/shared/contracts/users";
 import type { SessionUser } from "@/server/auth/session";
 import { getDb } from "@/server/db";
-import { hobbies, hobbyRequests, userHobbies, users } from "@/server/db/schema";
+import { hobbies, hobbyRequests, ratings, trades, userHobbies, users } from "@/server/db/schema";
 import { AppError } from "@/server/errors";
 import { isNewTrader } from "@/server/users/newTrader";
 
@@ -43,14 +43,30 @@ async function loadHobbies(userId: string): Promise<UserHobby[]> {
     .orderBy(asc(hobbies.name));
 }
 
-// Ratings and trades arrive in Phases 3 and 4. Until then every user has none.
-// Give it the user id once the ratings and trades tables exist.
-async function loadTradeStats(): Promise<TradeStats> {
-  return { rating: null, reviewCount: 0, completedTrades: 0 };
+// PROF-02: the average of visible ratings only (hidden ones wait for RATE-02),
+// and how many trades they completed.
+async function loadTradeStats(userId: string): Promise<TradeStats> {
+  const db = getDb();
+  const [[reviews], [completed]] = await Promise.all([
+    db
+      .select({ rating: sql<string | null>`avg(${ratings.score})`, count: sql<number>`count(*)::int` })
+      .from(ratings)
+      .where(and(eq(ratings.rateeId, userId), isNotNull(ratings.visibleAt))),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(trades)
+      .where(and(eq(trades.status, "completed"), or(eq(trades.initiatorId, userId), eq(trades.recipientId, userId)))),
+  ]);
+  return {
+    // One decimal, like 4.8.
+    rating: reviews.rating === null ? null : Math.round(Number(reviews.rating) * 10) / 10,
+    reviewCount: reviews.count,
+    completedTrades: completed.count,
+  };
 }
 
 async function buildProfile(row: UserRow) {
-  const [hobbyList, stats] = await Promise.all([loadHobbies(row.id), loadTradeStats()]);
+  const [hobbyList, stats] = await Promise.all([loadHobbies(row.id), loadTradeStats(row.id)]);
   return toPublicProfile(row, hobbyList, stats);
 }
 

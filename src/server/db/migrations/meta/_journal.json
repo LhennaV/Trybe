@@ -92,6 +92,20 @@
       "when": 1794924583457,
       "tag": "0012_trade_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795012824298,
+      "tag": "0013_ratings",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1795012838802,
+      "tag": "0014_ratings_functions",
+      "breakpoints": true
     }
   ]
 }
