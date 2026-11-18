@@ -113,7 +113,7 @@ export default function ProposeForm({
 
   return (
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
+      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:mx-0 lg:min-h-0 lg:max-w-[720px] lg:px-10 lg:pt-7 lg:pb-10"
       onSubmit={(event) => {
         event.preventDefault();
         setNotice(
@@ -121,7 +121,7 @@ export default function ProposeForm({
         );
       }}
     >
-      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(110px+max(30px,env(safe-area-inset-bottom)))] lg:pb-2">
+      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(110px+max(30px,env(safe-area-inset-bottom)))] lg:gap-5 lg:p-0">
         <TopBar title={mode === "counter" ? "Counter offer" : "Propose a trade"} backHref={backHref} />
 
         <h2 className="text-label-s uppercase text-ink-600">You get</h2>
@@ -230,7 +230,7 @@ export default function ProposeForm({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-        <div className="mx-auto flex max-w-md md:max-w-2xl flex-col items-center gap-2 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-md md:max-w-2xl flex-col items-center gap-2 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:mx-0 lg:max-w-[320px] lg:items-start lg:px-0 lg:pt-6 lg:pb-0">
           <Button type="submit" fullWidth disabled={!ready}>
             {mode === "counter" ? "Send counter" : "Send proposal"}
             {hasCash && ` · ${formatPHP(cash)}`}
