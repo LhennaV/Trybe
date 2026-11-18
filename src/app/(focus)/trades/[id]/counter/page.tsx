@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function CounterPage(props: PageProps<"/trades/[id]/counter">) {
   return (
-    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md" aria-busy="true" />}>
+    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md md:max-w-2xl" aria-busy="true" />}>
       <Counter params={props.params} />
     </Suspense>
   );

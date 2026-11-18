@@ -44,7 +44,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
   const tradeableCount = post.tools.filter((tool) => tool.upForTrade).length;
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col lg:grid lg:max-w-[1144px] lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-8 lg:px-10 lg:pt-7 lg:pb-10">
+    <div className="mx-auto flex w-full max-w-md md:max-w-2xl flex-1 flex-col lg:grid lg:max-w-[1144px] lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-8 lg:px-10 lg:pt-7 lg:pb-10">
       <div className="flex flex-col lg:gap-3">
         <Link href="/feed" className="hidden min-h-11 items-center gap-3 text-body-s text-ink-600 lg:flex">
           <span className="flex size-10 items-center justify-center rounded-xl border-[1.5px] border-line bg-surface-white text-ink-900">
@@ -54,7 +54,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
         </Link>
 
         {/* Photo carousel. Placeholder until real photos exist. */}
-        <div className="relative h-[290px] w-full bg-brand-box-soft lg:h-auto lg:aspect-[4/3] lg:overflow-hidden lg:rounded-[24px]">
+        <div className="relative h-[290px] w-full bg-brand-box-soft md:h-auto md:aspect-[4/3] lg:overflow-hidden lg:rounded-[24px]">
           <div className="flex size-full items-center justify-center text-brand-box-dark/40">
             <Camera size={40} weight="bold" aria-hidden />
           </div>
@@ -155,7 +155,7 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
 
         {/* Fixed to the bottom on mobile, inline under the details on desktop. */}
         <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-          <div className="mx-auto flex max-w-md items-center gap-3 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:max-w-none lg:px-0 lg:pt-1 lg:pb-0">
+          <div className="mx-auto flex max-w-md md:max-w-2xl items-center gap-3 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:max-w-none lg:px-0 lg:pt-1 lg:pb-0">
             <span className="lg:flex lg:min-h-12 lg:items-center lg:rounded-button lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:px-3.5">
               <LikeButton postTitle={post.title} initialCount={post.likeCount} size={22} />
             </span>

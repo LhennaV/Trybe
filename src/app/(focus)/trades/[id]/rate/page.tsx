@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Rate your trade", robots: { index: f
 
 export default function RatePage(props: PageProps<"/trades/[id]/rate">) {
   return (
-    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md" aria-busy="true" />}>
+    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md md:max-w-2xl" aria-busy="true" />}>
       <Rate params={props.params} />
     </Suspense>
   );

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 // Works without logging in or installing the app.
 export default function PublicDeleteAccountPage() {
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col gap-4 px-4 py-8">
+    <main className="mx-auto flex w-full max-w-md md:max-w-2xl flex-col gap-4 px-4 py-8">
       <h1 className="font-display text-display-l text-brand-plum">Delete your Trybe account</h1>
 
       <section className="flex flex-col gap-2">

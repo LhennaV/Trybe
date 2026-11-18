@@ -43,7 +43,7 @@ export default function NewPostFlow() {
 
   return (
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md flex-col lg:min-h-0 lg:max-w-[1144px] lg:px-6 lg:pt-5"
+      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:min-h-0 lg:max-w-[1144px] lg:px-6 lg:pt-5"
       onSubmit={(event) => {
         event.preventDefault();
         if (step === 1 && !desktop) {
@@ -104,7 +104,7 @@ export default function NewPostFlow() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-        <div className="mx-auto max-w-md px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:mr-4 lg:ml-auto lg:w-[420px] lg:max-w-none lg:px-0 lg:pb-8">
+        <div className="mx-auto max-w-md md:max-w-2xl px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:mr-4 lg:ml-auto lg:w-[420px] lg:max-w-none lg:px-0 lg:pb-8">
           <Button type="submit" fullWidth disabled={photos.length === 0}>
             {photos.length === 0
               ? "Add at least one photo"

@@ -29,7 +29,7 @@ export default function SettingsPage() {
   const icon = { size: 18, weight: "bold" as const, "aria-hidden": true };
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col gap-3.5 px-4 pt-2 pb-[max(24px,env(safe-area-inset-bottom))]">
+    <main className="mx-auto flex w-full max-w-md md:max-w-2xl flex-col gap-3.5 px-4 pt-2 pb-[max(24px,env(safe-area-inset-bottom))]">
       <TopBar title="Settings" backHref="/profile" />
 
       <SettingsGroup title="Account">

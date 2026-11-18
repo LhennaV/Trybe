@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Meetup check-in", robots: { index: f
 
 export default function CheckInPage(props: PageProps<"/trades/[id]/check-in">) {
   return (
-    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md" aria-busy="true" />}>
+    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md md:max-w-2xl" aria-busy="true" />}>
       <CheckIn params={props.params} />
     </Suspense>
   );

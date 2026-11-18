@@ -13,7 +13,7 @@ const TARGETS: ReportTarget[] = ["user", "post", "trade", "review", "message"];
 // One report screen for every kind of target (SAFE-01).
 export default function ReportPage(props: PageProps<"/report">) {
   return (
-    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md" aria-busy="true" />}>
+    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md md:max-w-2xl" aria-busy="true" />}>
       <Report searchParams={props.searchParams} />
     </Suspense>
   );

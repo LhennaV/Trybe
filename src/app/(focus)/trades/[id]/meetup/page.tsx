@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Set up the meetup", robots: { index:
 
 export default function MeetupPage(props: PageProps<"/trades/[id]/meetup">) {
   return (
-    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md" aria-busy="true" />}>
+    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md md:max-w-2xl" aria-busy="true" />}>
       <Meetup params={props.params} />
     </Suspense>
   );

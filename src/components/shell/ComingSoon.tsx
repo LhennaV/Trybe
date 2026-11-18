@@ -8,7 +8,7 @@ export default function ComingSoon({ title, children }: ComingSoonProps) {
   return (
     <div className="flex flex-col gap-3">
       <h1 className="font-display text-display-l text-ink-900">{title}</h1>
-      <p className="max-w-md text-body-m text-ink-600">{children}</p>
+      <p className="max-w-md md:max-w-2xl text-body-m text-ink-600">{children}</p>
     </div>
   );
 }

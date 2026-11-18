@@ -10,7 +10,7 @@ type ScreenSkeletonProps = {
 // the back button and title, then a stack of rows.
 export default function ScreenSkeleton({ label, rows = 5 }: ScreenSkeletonProps) {
   return (
-    <div role="status" aria-label={label} className="mx-auto flex w-full max-w-md flex-col gap-3.5 px-4 pt-2">
+    <div role="status" aria-label={label} className="mx-auto flex w-full max-w-md md:max-w-2xl flex-col gap-3.5 px-4 pt-2">
       <div className="flex items-center gap-3 py-2">
         <Skeleton className="size-10 rounded-xl" />
         <Skeleton className="h-5 w-32 rounded-chip" />
