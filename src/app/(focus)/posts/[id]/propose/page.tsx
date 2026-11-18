@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function ProposePage(props: PageProps<"/posts/[id]/propose">) {
   return (
-    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md" aria-busy="true" />}>
+    <Suspense fallback={<div className="mx-auto min-h-dvh w-full max-w-md md:max-w-2xl" aria-busy="true" />}>
       <Propose params={props.params} />
     </Suspense>
   );

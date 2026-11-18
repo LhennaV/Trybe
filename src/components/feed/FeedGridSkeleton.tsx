@@ -1,11 +1,13 @@
 import Skeleton from "@/components/ui/Skeleton";
 
-// Masonry columns like FeedGrid: 2 on phones, 5 from lg up, tall and short photos alternating.
+// Masonry columns like FeedGrid: 2 on phones, 3 on tablets, 5 from lg up, tall and short photos alternating.
+const COLUMN_VISIBILITY = ["", "", "hidden md:flex", "hidden lg:flex", "hidden lg:flex"];
+
 export default function FeedGridSkeleton() {
   return (
-    <div className="flex items-start gap-2.5 lg:gap-4">
+    <div className="flex items-start gap-2.5 md:gap-3.5 lg:gap-4">
       {[0, 1, 2, 3, 4].map((column) => (
-        <div key={column} className={`flex flex-1 flex-col gap-3.5 ${column >= 2 ? "hidden lg:flex" : ""}`}>
+        <div key={column} className={`flex flex-1 flex-col gap-3.5 ${COLUMN_VISIBILITY[column]}`}>
           {[0, 1].map((row) => (
             <div key={row} className="flex flex-col gap-2">
               <Skeleton

@@ -46,7 +46,7 @@ export default function ReportForm({
 
   if (sent) {
     return (
-      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center gap-3 px-4 text-center">
+      <main className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col items-center justify-center gap-3 px-4 text-center">
         <CheckCircle size={56} weight="fill" className="text-status-success" aria-hidden />
         <h1 className="font-display text-display-m text-ink-900">Thanks for telling us</h1>
         <p className="max-w-[310px] text-body-s text-ink-600">
@@ -62,7 +62,7 @@ export default function ReportForm({
 
   return (
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
+      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
       onSubmit={(event) => {
         event.preventDefault();
         // Sent to POST /api/reports once it exists.
@@ -105,7 +105,7 @@ export default function ReportForm({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-        <div className="mx-auto max-w-md px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto max-w-md md:max-w-2xl px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
           <Button type="submit" variant="danger" fullWidth disabled={!reason}>
             {reason ? "Submit report" : "Pick a reason"}
           </Button>

@@ -28,7 +28,7 @@ export default function PhotoStep({ photos, error, onAdd, onRemove }: PhotoStepP
 
       <div className="relative h-[268px] w-full overflow-hidden rounded-[20px] bg-brand-box-soft">
         {cover ? (
-          <Image src={cover.url} alt="Cover photo preview" fill sizes="(min-width: 448px) 416px, 100vw" className="object-cover" />
+          <Image src={cover.url} alt="Cover photo preview" fill sizes="(min-width: 768px) 640px, (min-width: 448px) 416px, 100vw" className="object-cover" />
         ) : (
           <div className="flex size-full flex-col items-center justify-center gap-2 text-brand-box-dark">
             <Camera size={36} weight="bold" className="opacity-40" aria-hidden />

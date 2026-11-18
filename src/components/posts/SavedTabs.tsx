@@ -12,15 +12,17 @@ export default function SavedTabs({ posts, tools }: { posts: FeedPost[]; tools: 
 
   return (
     <>
-      <SegmentedControl
-        label="Saved"
-        value={tab}
-        onChange={setTab}
-        options={[
-          { value: "posts", label: `Posts · ${posts.length}` },
-          { value: "tools", label: `Tools · ${tools.length}` },
-        ]}
-      />
+      <div className="lg:w-[360px]">
+        <SegmentedControl
+          label="Saved"
+          value={tab}
+          onChange={setTab}
+          options={[
+            { value: "posts", label: `Posts · ${posts.length}` },
+            { value: "tools", label: `Tools · ${tools.length}` },
+          ]}
+        />
+      </div>
       {tab === "posts" ? (
         <>
           <div className="flex items-center">
@@ -30,7 +32,12 @@ export default function SavedTabs({ posts, tools }: { posts: FeedPost[]; tools: 
           <FeedGrid posts={posts} />
         </>
       ) : (
-        tools.map((tool) => <ToolRow key={tool.id} tool={tool} />)
+        // Two columns of tool rows on desktop so they don't stretch across the screen.
+        <div className="flex flex-col gap-3.5 lg:grid lg:grid-cols-2 lg:gap-4">
+          {tools.map((tool) => (
+            <ToolRow key={tool.id} tool={tool} />
+          ))}
+        </div>
       )}
     </>
   );

@@ -10,7 +10,7 @@ export default function TradeChatSkeleton() {
         <TradesInboxSkeleton />
       </div>
 
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col lg:max-w-none">
+      <div className="mx-auto flex w-full max-w-md md:max-w-2xl flex-1 flex-col lg:max-w-none">
         <div className="flex items-center gap-3 border-b border-line bg-surface-white px-4 py-3">
           <Skeleton className="size-10 rounded-xl" />
           <Skeleton className="size-10 rounded-chip" />

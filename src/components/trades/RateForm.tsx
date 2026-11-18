@@ -30,7 +30,7 @@ export default function RateForm({ tradeId, other, summary, completedNote }: Rat
 
   return (
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
+      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
       onSubmit={(event) => {
         event.preventDefault();
         setNotice("Thanks! Ratings aren't connected yet. They go live once the ratings API is ready.");
@@ -127,7 +127,7 @@ export default function RateForm({ tradeId, other, summary, completedNote }: Rat
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-        <div className="mx-auto flex max-w-md flex-col items-center gap-2.5 px-4 pt-3 pb-[max(26px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-md md:max-w-2xl flex-col items-center gap-2.5 px-4 pt-3 pb-[max(26px,env(safe-area-inset-bottom))]">
           <Button type="submit" fullWidth disabled={score === 0}>
             {score === 0 ? "Tap the stars to rate" : "Submit rating"}
           </Button>

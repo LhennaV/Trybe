@@ -73,7 +73,7 @@ export async function generateMetadata(props: PageProps<"/users/[handle]">): Pro
 // Not async, so the page shell shows instantly and the profile streams in.
 export default function UserProfilePage(props: PageProps<"/users/[handle]">) {
   return (
-    <Suspense fallback={<ProfileSkeleton className="mx-auto w-full max-w-md pb-8 lg:max-w-[1144px] lg:px-10 lg:pt-7" />}>
+    <Suspense fallback={<ProfileSkeleton className="mx-auto w-full max-w-md md:max-w-2xl pb-8 lg:max-w-[1144px] lg:px-10 lg:pt-7" />}>
       <UserProfile params={props.params} />
     </Suspense>
   );
@@ -85,7 +85,7 @@ async function UserProfile({ params }: { params: Promise<{ handle: string }> }) 
   if (!profile) notFound();
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-3 pb-8 lg:max-w-[1144px] lg:gap-5 lg:px-10 lg:pt-7">
+    <div className="mx-auto flex w-full max-w-md md:max-w-2xl flex-col gap-3 pb-8 lg:max-w-[1144px] lg:gap-5 lg:px-10 lg:pt-7">
       <RedirectIfMe handle={profile.header.handle} />
       <ProfileHeader
         profile={profile.header}

@@ -24,7 +24,7 @@ export default function PostCard({ post }: { post: FeedPost }) {
               src={post.photoUrl}
               alt={post.title}
               fill
-              sizes="(min-width: 1024px) 20vw, 50vw"
+              sizes="(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw"
               className="object-cover"
             />
           ) : (
