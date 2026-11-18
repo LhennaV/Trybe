@@ -56,18 +56,18 @@ export default function MeetupForm({ tradeId, otherHandle }: { tradeId: string; 
 
   return (
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
+      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:mx-0 lg:min-h-0 lg:max-w-[720px] lg:px-10 lg:pt-7 lg:pb-10"
       onSubmit={(event) => {
         event.preventDefault();
         setNotice(`Saved here for now. @${otherHandle} confirms it once meetups are connected to the API.`);
       }}
     >
-      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(100px+max(30px,env(safe-area-inset-bottom)))] lg:pb-2">
+      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(100px+max(30px,env(safe-area-inset-bottom)))] lg:gap-5 lg:p-0">
         <TopBar title="Set up the meetup" backHref={`/trades/${tradeId}`} />
         <TradeProgress current={1} />
 
         <div className="flex flex-col gap-1">
-          <h1 className="font-display text-display-m text-brand-plum">Trade accepted! 🎉</h1>
+          <h1 className="font-display text-display-m text-brand-plum lg:text-display-l">Trade accepted! 🎉</h1>
           <p className="text-body-s text-ink-600">Pick a public spot and run through the checklist before you swap.</p>
         </div>
 
@@ -114,7 +114,7 @@ export default function MeetupForm({ tradeId, otherHandle }: { tradeId: string; 
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-        <div className="mx-auto flex max-w-md md:max-w-2xl flex-col items-center gap-2 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-md md:max-w-2xl flex-col items-center gap-2 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:mx-0 lg:max-w-[320px] lg:items-start lg:px-0 lg:pt-6 lg:pb-0">
           <Button type="submit" fullWidth disabled={!spot}>
             Confirm meetup
           </Button>

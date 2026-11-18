@@ -48,7 +48,7 @@ export default function CheckInForm({
 
   return (
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
+      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:mx-0 lg:min-h-0 lg:max-w-[720px] lg:px-10 lg:pt-7 lg:pb-10"
       onSubmit={(event) => {
         event.preventDefault();
         if (outcome === "traded") router.push(`/trades/${tradeId}/rate`);
@@ -56,7 +56,7 @@ export default function CheckInForm({
         else router.push(`/trades/${tradeId}`);
       }}
     >
-      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(100px+max(30px,env(safe-area-inset-bottom)))] lg:pb-2">
+      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(100px+max(30px,env(safe-area-inset-bottom)))] lg:gap-5 lg:p-0">
         <TopBar title="Meetup check-in" backHref={`/trades/${tradeId}`} />
 
         <div className="flex items-center gap-2.5 rounded-card border-[1.5px] border-line bg-surface-white p-3">
@@ -69,7 +69,7 @@ export default function CheckInForm({
           </span>
         </div>
 
-        <h1 className="font-display text-display-m text-brand-plum">How did it go?</h1>
+        <h1 className="font-display text-display-m text-brand-plum lg:text-display-l">How did it go?</h1>
         <ChoiceList label="How did it go?" look="list" options={OUTCOMES} value={outcome} onChange={setOutcome} />
 
         {outcome === "no_show" && (
@@ -94,7 +94,7 @@ export default function CheckInForm({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-        <div className="mx-auto flex max-w-md md:max-w-2xl flex-col items-center gap-2 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-md md:max-w-2xl flex-col items-center gap-2 px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:mx-0 lg:max-w-[320px] lg:items-start lg:px-0 lg:pt-6 lg:pb-0">
           <Button type="submit" fullWidth disabled={!outcome}>
             {outcome ? BUTTON_LABELS[outcome] : "Pick what happened"}
           </Button>

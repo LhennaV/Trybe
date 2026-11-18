@@ -61,19 +61,21 @@ export default function ReportForm({
   }
 
   return (
+    // Desktop: a page lined up with the main area like Settings (28px top,
+    // 40px sides), not a floating card. Phones keep the full-screen form.
     <form
-      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:my-8 lg:min-h-0 lg:max-w-[560px] lg:rounded-sheet lg:border-[1.5px] lg:border-line lg:bg-surface-white lg:p-3 lg:shadow-modal"
+      className="mx-auto flex min-h-dvh w-full max-w-md md:max-w-2xl flex-col lg:mx-0 lg:min-h-0 lg:max-w-[720px] lg:px-10 lg:pt-7 lg:pb-10"
       onSubmit={(event) => {
         event.preventDefault();
         // Sent to POST /api/reports once it exists.
         setSent(true);
       }}
     >
-      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(90px+max(30px,env(safe-area-inset-bottom)))] lg:pb-2">
+      <div className="flex flex-1 flex-col gap-3.5 px-4 pt-2 pb-[calc(90px+max(30px,env(safe-area-inset-bottom)))] lg:gap-5 lg:p-0">
         <TopBar title={`Report ${TARGET_LABELS[target]}@${handle}`} backHref={backHref} />
 
         <div className="flex flex-col gap-1">
-          <h1 className="font-display text-display-m text-brand-plum">What&apos;s going on?</h1>
+          <h1 className="font-display text-display-m text-brand-plum lg:text-display-l">What&apos;s going on?</h1>
           <p className="text-body-s text-ink-600">Pick the closest match. The Trybe team reviews every report.</p>
         </div>
 
@@ -105,7 +107,7 @@ export default function ReportForm({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface-white lg:static lg:border-0 lg:bg-transparent">
-        <div className="mx-auto max-w-md md:max-w-2xl px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto max-w-md md:max-w-2xl px-4 pt-3 pb-[max(30px,env(safe-area-inset-bottom))] lg:mx-0 lg:max-w-[280px] lg:px-0 lg:pt-6 lg:pb-0">
           <Button type="submit" variant="danger" fullWidth disabled={!reason}>
             {reason ? "Submit report" : "Pick a reason"}
           </Button>
