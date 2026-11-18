@@ -36,9 +36,10 @@ product must never claim they do.
   to end: propose, counter, accept, meet, confirm, rate.
 - Safe by default: report, block, verified email before trading, safe meetup
   guidance.
-- Runs well on a phone browser, installs as a PWA, and is published on
-  Google Play.
-- Built so a native app can be added later without rewriting the backend.
+- A native mobile app (Expo) with native mobile design, published on Google
+  Play (decided 2026-11-18).
+- The website runs well on a phone browser and installs as a PWA.
+- One API for both clients, so neither needs its own backend.
 
 ### Non-goals for v1
 
@@ -47,17 +48,29 @@ product must never claim they do.
 - Rentals
 - Automatic item valuation
 - Formal dispute resolution beyond reports and ratings
-- Apple App Store and a native app
 
 ## 4. Platforms and delivery
 
-| Platform               | How                                                    | v1    |
-| ---------------------- | ------------------------------------------------------ | ----- |
-| Mobile web             | Next.js app in the browser                             | Yes   |
-| Desktop web            | Same app, responsive layout                            | Yes   |
-| Installable PWA        | Web manifest and service worker                        | Yes   |
-| Google Play            | PWA packaged as a Trusted Web Activity with PWABuilder | Yes   |
-| Native Android and iOS | Expo (React Native) using the same API                 | Later |
+| Platform        | How                                                       | v1     |
+| --------------- | --------------------------------------------------------- | ------ |
+| Android app     | Expo (React Native) in `mobile/`, built with EAS Build    | Yes    |
+| iOS app         | Same Expo app, App Store                                  | **Open** |
+| Mobile web      | Next.js app in the browser                                | Yes    |
+| Desktop web     | Same Next.js app, responsive layout                       | Yes    |
+| Installable PWA | Web manifest and service worker                           | Yes    |
+
+Decided 2026-11-18: the store apps are native (Expo), not the PWA packaged
+with PWABuilder, so they use native mobile design. App Store timing is open
+(Apple Developer account, USD 99 a year).
+
+### Mobile app requirements
+
+- Android 8 or newer and the two latest iOS versions (when iOS ships).
+- Native patterns: tab bar, stack screens with swipe back, native bottom
+  sheets, pull to refresh, haptics on key actions, safe areas, keyboard
+  avoidance, the phone's light or dark setting.
+- Same tokens, fonts, icons, and copy as the website (`src/styles/DESIGN.md`).
+- Every requirement in section 8 applies to the app unless it says web only.
 
 ### Supported browsers
 
@@ -73,7 +86,7 @@ mobile decision.
 ## 5. Architecture
 
 ```
-            Phone / Desktop browser (PWA)        Play Store app (TWA)
+            Phone / Desktop browser (PWA)        Mobile app (Expo)
                           \                         /
                            \                       /
                             v                     v
@@ -139,11 +152,33 @@ mobile decision.
 | Auth emails          | Custom SMTP provider (for example Resend)                  |
 | File storage         | Supabase Storage                                           |
 | Realtime chat        | Supabase Realtime                                          |
-| Maps                 | Leaflet with OpenStreetMap tiles                           |
+| Maps                 | Leaflet with OpenStreetMap tiles (website)                 |
 | Bot protection       | Cloudflare Turnstile                                       |
 | Error tracking       | Sentry                                                     |
 | Hosting              | Vercel                                                     |
-| Play Store packaging | PWABuilder (Trusted Web Activity)                          |
+
+### Mobile app (`mobile/`)
+
+| Area                 | Choice                                                         |
+| -------------------- | -------------------------------------------------------------- |
+| Framework            | Expo (React Native), Expo Router                               |
+| Language             | TypeScript, strict mode                                        |
+| Styling              | NativeWind, same tokens as `DESIGN.md`                         |
+| Icons and fonts      | `phosphor-react-native`, `@expo-google-fonts` (Lilita One, Nunito) |
+| API data             | TanStack Query with `apiRequest` and Zod contracts from `src/shared/` |
+| Session              | `expo-secure-store`, Bearer token                              |
+| Realtime chat        | `@supabase/supabase-js` Realtime (read only, RLS)              |
+| Photos               | `expo-image`, `expo-image-picker`, `expo-image-manipulator`    |
+| Maps                 | `react-native-maps` (works in Expo Go; Apple Maps on iOS)      |
+| Push                 | `expo-notifications`                                           |
+| Errors               | `@sentry/react-native`                                         |
+| Builds and releases  | EAS Build, EAS Submit, EAS Update                              |
+| Tests                | Jest, React Native Testing Library, Maestro                    |
+| Repo                 | pnpm workspaces: the web app at the root, the app in `mobile/` |
+
+Testing on a phone: Expo Go (free, Android and iPhone) while the app only uses
+Expo Go libraries. A development build is free on Android; on an iPhone it
+needs the paid Apple Developer account when building from Windows.
 
 Adding a framework, database, auth provider, or paid service requires team
 agreement and an update to this table.
@@ -165,6 +200,7 @@ trybe/
 │   │   ├── items/
 │   │   └── trades/
 │   └── shared/                 Zod schemas, types         Both
+├── mobile/                     Expo app (Android, iOS)    Lhenna
 ├── tests/                      backend tests              Tristan
 ├── AGENTS.md
 └── README.md
@@ -294,7 +330,7 @@ IDs are used in issues and pull requests. **P0** is required for launch,
 | ID       | Requirement                                                                        | Priority |
 | -------- | ---------------------------------------------------------------------------------- | -------- |
 | NOTIF-01 | In-app notifications for offers, counters, acceptances, messages, meetups, ratings | P0       |
-| NOTIF-02 | Web push for the same events (PWA and Play Store app)                              | P1       |
+| NOTIF-02 | Push for the same events: Expo push in the app, web push on the website            | P1       |
 | NOTIF-03 | Notification settings toggles                                                      | P1       |
 | NOTIF-04 | Weekly email digest (**Open**)                                                     | P2       |
 
@@ -390,8 +426,18 @@ Error:
 
 ### Auth
 
-Session comes from Supabase Auth. Web uses cookies. Future native clients
-send `Authorization: Bearer <token>`. The API accepts both.
+Session comes from Supabase Auth. The website uses cookies. The mobile app
+sends `Authorization: Bearer <token>`. The API accepts both.
+
+Mobile log in and sign up (**Proposed**, Tristan to confirm):
+
+- The same `POST /api/auth/login` and `/signup`, with a way to ask for the
+  session in the response (`access_token`, `refresh_token`) instead of
+  cookies.
+- The app stores the tokens in `expo-secure-store` and hands them to
+  `supabase.auth.setSession()`, which refreshes them and powers Realtime.
+- Turnstile still runs: the app shows the widget from a small page on our
+  site (`/captcha`) in a WebView and sends the token like the website does.
 
 ### Pagination
 
@@ -692,6 +738,8 @@ Trade logic must have tests before its endpoints are merged.
 | Domain                        | Yearly, depends on registrar                                                |
 | SMTP provider                 | Free tier likely enough at first                                            |
 | Sentry                        | Free tier likely enough at first                                            |
+| Expo EAS                      | Free plan has a monthly build limit; `eas build --local` builds for free    |
+| Apple Developer (App Store)   | USD 99 per year, only when iOS ships (**Open**)                             |
 
 Check current pricing before paying. Prices change.
 
@@ -699,6 +747,9 @@ Check current pricing before paying. Prices change.
 
 | Topic                            | Options                             | Owner   |
 | -------------------------------- | ----------------------------------- | ------- |
+| Store apps                       | **Decided 2026-11-18:** native Expo app in `mobile/`, not the PWA packaged with PWABuilder. The Next.js app stays as the website | Both    |
+| App Store at launch              | At launch or after (Apple Developer account, USD 99 a year) | Both    |
+| Mobile log in and bot check      | **Proposed:** login returns tokens for the app; Turnstile in a WebView (section 10, Auth) | Tristan |
 | Minimum age                      | 18+ or another age                  | Both    |
 | Followers                        | v1 or later                         | Both    |
 | Saved boards                     | Boards or simple save               | Both    |

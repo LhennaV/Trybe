@@ -268,6 +268,17 @@ The full set (46 icons) is on the Figma Icons page, named `Icon/<phosphor-name>`
 - `src/app/manifest.ts` with `name: "Trybe"`, `theme_color: "#674390"`, `background_color: "#FFF9F2"`, and `display: "standalone"`.
 - Icons come from the **App Icon** group on the Figma "App Logo v1" page, exported at 192px and 512px, plus a maskable version with padding.
 
+## Mobile app (Expo)
+
+The store app is native (decided 2026-11-18), in `mobile/`. Everything above applies, with these changes:
+
+- **Tokens:** the same names and values through NativeWind (`bg-brand-plum`, `text-ink-600`). Keep them in step with `src/app/globals.css`.
+- **Fonts and icons:** Lilita One and Nunito from `@expo-google-fonts`, Phosphor from `phosphor-react-native`, same weights and sizes.
+- **Native patterns, not web ones:** a native tab bar instead of the web bottom nav, stack screens with swipe back, native bottom sheets, pull to refresh, haptics on key actions (offer sent, trade accepted), and the keyboard pushing content up.
+- **No desktop layouts:** phone only, with tablets getting a wider column like the website.
+- **Theme:** follows the phone's light or dark setting by default, with the same Light / Dark / Auto and high contrast choices in Settings.
+- **Tap targets:** 44pt minimum, same as the web's 44px.
+
 ## Don'ts
 
 - Don't hardcode colors, font sizes, or radii that already exist as tokens.

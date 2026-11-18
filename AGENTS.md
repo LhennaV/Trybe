@@ -13,8 +13,17 @@ sends money and does not handle shipping.
 Trust comes from ratings, trade history, account age, email verification, and
 a "new trader" badge. The UI must never imply more protection than that.
 
-Delivered as a web app and an installable PWA, packaged for Google Play.
-A native app (Expo) may come later, so the API must work for any client.
+Delivered as two clients on one API (decided 2026-11-18):
+
+- **Mobile app:** a native app built with Expo (React Native) in `mobile/`,
+  published on Google Play (and the App Store, see Open decisions). It uses
+  native mobile design, not a packaged website.
+- **Website:** the Next.js app in `src/`. Landing page, legal pages, the
+  public account deletion page, and the full app in a browser (installable
+  PWA).
+
+The API must work for any client: cookies for the website, a Bearer token for
+the mobile app.
 
 Tagline: "Curiosity killed the cat. Trybe brought it back."
 
@@ -31,6 +40,7 @@ Tagline: "Curiosity killed the cat. Trybe brought it back."
 | `src/styles/`, `src/app/globals.css` | Lhenna |
 | `src/server/` | Tristan |
 | `tests/` | Tristan |
+| `mobile/` (Expo app) | Lhenna |
 | `src/shared/` | Both. Changes need agreement from both. |
 
 Do not edit files outside the area of the person you are working for unless
@@ -51,6 +61,20 @@ they ask.
 - Sentry for errors
 - Hosted on Vercel
 
+Mobile app (`mobile/`):
+
+- Expo (React Native) with Expo Router, TypeScript (strict)
+- NativeWind for styling, with the same tokens as `DESIGN.md`
+- `phosphor-react-native` icons, `@expo-google-fonts` for Lilita One and Nunito
+- TanStack Query for API data, Zod contracts and `apiRequest` from `src/shared/`
+- `expo-secure-store` for the session token, sent as `Authorization: Bearer`
+- `@supabase/supabase-js` for Realtime chat only (read only, RLS)
+- `expo-image`, `expo-image-picker`, `expo-image-manipulator` for photos
+- `react-native-maps` for the meetup map (works in Expo Go)
+- `expo-notifications` for push, `@sentry/react-native` for errors
+- EAS Build and EAS Submit for store releases, EAS Update for small fixes
+- Jest and React Native Testing Library; Maestro for end-to-end
+
 Do not add a new framework, database, auth provider, or paid service without
 asking first.
 
@@ -62,24 +86,33 @@ pnpm only. Never use npm or yarn, never commit `package-lock.json`.
 - `pnpm build` production build
 - `pnpm lint` lint
 - `pnpm add <pkg>` add a dependency
+- `pnpm --filter mobile start` start the Expo app (scan the QR code with
+  Expo Go)
 
 ## Architecture rules
 
 1. Business logic lives in `src/server/`, never inside route files or
    components. API routes in `src/app/api/` only parse input, call a server
    function, and return the result.
-2. All database writes go through our API or server code. The browser never
-   writes to Supabase directly.
-3. The browser may read chat messages through Supabase Realtime. Those tables
-   must have Row Level Security so only the two people in a trade can read
-   its messages.
+2. All database writes go through our API or server code. The browser and
+   the mobile app never write to Supabase directly.
+3. The browser and the mobile app may read chat messages through Supabase
+   Realtime. Those tables must have Row Level Security so only the two people
+   in a trade can read its messages.
 4. Validate every input with a Zod schema from `src/shared/`. The same schema
-   is used on the client and the server.
+   is used on the website, the mobile app, and the server.
 5. Schema changes only through Drizzle migrations. Never edit tables by hand
    in the Supabase dashboard.
 6. Use the Supabase connection pooler from serverless functions.
 7. Only add `"use client"` to components that need it (state, events,
    browser APIs). Default to server components.
+8. Code in `src/shared/` is plain TypeScript: no React, no Next.js, no
+   browser or Node-only APIs, so the website, the mobile app, and the server
+   can all import it. The one exception is `src/shared/images/resizeForUpload.ts`
+   (browser canvas, web only); the app shrinks photos with
+   `expo-image-manipulator` to the same sizes instead.
+9. Screens are written once per client: web screens in `src/app/` and
+   `src/components/`, app screens in `mobile/`. Share logic, not JSX.
 
 ## Data model (draft, confirm before changing)
 
@@ -151,6 +184,10 @@ These are required, not optional:
 - Fonts: Lilita One for headings and the wordmark, Nunito for body and UI.
 - Tone: playful and witty, not corporate.
 - Check text contrast, especially light gray on cream.
+- The mobile app uses native patterns, not web ones: a native tab bar, stack
+  screens with swipe back, native bottom sheets, pull to refresh, haptics on
+  key actions, and the keyboard pushing content up. It follows the phone's
+  light or dark setting and safe areas.
 
 ## Code conventions
 
@@ -174,10 +211,10 @@ These are required, not optional:
 
 - In-app payments, shipping, rentals, automatic pricing
 - Formal dispute resolution beyond reports and ratings
-- Apple App Store and a native app
 
 ## Open decisions (ask before building)
 
+- App Store at launch or after (Apple Developer account is USD 99 a year)
 - Followers
 - Saved boards (vs a simple save)
 - "Wanted near you" posts

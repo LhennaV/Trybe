@@ -24,7 +24,8 @@ Phase 1 (accounts and profiles). Sign up, log in, email verification, and profil
 - **Errors:** Sentry
 - **Bot protection:** Cloudflare Turnstile
 - **Tests:** Vitest (unit and integration), Playwright (end to end), k6 (performance)
-- **Hosting:** Vercel. Installable PWA, packaged for Google Play.
+- **Hosting:** Vercel. The website is also an installable PWA.
+- **Mobile app:** Expo (React Native) in `mobile/`, released to Google Play with EAS (decided 2026-11-18).
 
 Full details are in [the technical requirements](docs/technical-requirements.md).
 

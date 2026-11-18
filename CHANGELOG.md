@@ -49,6 +49,12 @@ How versions work (details in the README, "Versions and releases"):
   lowercase letter too (5 rules). It uses the same rules as the server, so a
   password the form accepts is never refused by Supabase.
 
+### Docs
+
+- The store app will be a native Expo (React Native) app with native mobile
+  design, not the website packaged for Google Play. AGENTS.md, the TRD,
+  DESIGN.md, and the plan (new Phase M) are updated.
+
 ## [0.2.0] - 2026-11-14
 
 Accounts and profiles are done (Phase 1), plus the backend for gear, posts,
