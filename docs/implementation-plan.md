@@ -32,8 +32,8 @@ Tags: **[BE]** Tristan, **[FE]** Lhenna, **[Both]** together.
 | ----- | --------------------------------- | ------ | ----------- |
 | 0     | Foundation                        | TBD    | Done        |
 | 1     | Accounts and profiles             | TBD    | Done        |
-| 2     | Items, posts, and feed            | TBD    | In progress |
-| 3     | Trades core                       | TBD    | In progress |
+| 2     | Items, posts, and feed            | TBD    | Done, except the block filter (waits for Phase 5) |
+| 3     | Trades core                       | TBD    | Done (2026-11-18) |
 | 4     | Chat, meetup, completion, ratings | TBD    | In progress |
 | 5     | Safety and compliance             | TBD    | In progress |
 | 6     | Explore, PWA, and polish          | TBD    | In progress |
@@ -150,8 +150,7 @@ profile.
   - Built 2026-11-11: `POST` and `DELETE /api/me/photo`. The browser shrinks photos first
     (`src/shared/images/resizeForUpload.ts`, decided 2026-11-11), the server re-encodes with
     sharp (`src/server/uploads/`), files go to the public `photos` bucket (migration 0006).
-    Left: apply migration 0006 to the dev database before merging (`pnpm db:migrate`);
-    Lhenna wires Edit profile to `resizeForUpload()` and `POST /api/me/photo`.
+    Left: Lhenna wires Edit profile to `resizeForUpload()` and `POST /api/me/photo`.
 - [x] **[Both]** Logo in one place: `src/shared/brand.ts` (added 2026-11-11)
   - Lhenna moved all screens, icons, and the offline page to `BRAND` (PR #26). Nothing is
     hard-coded any more.
@@ -163,8 +162,7 @@ profile.
     table, not shown on the profile. Popular ones get added to the list by migration.
     Lhenna to confirm. Built 2026-11-10: `hobby_requests` table (migration 0005),
     `otherHobbies` in `PATCH /api/me` and `GET /api/me` (up to 5, owner only).
-    Left: apply migration 0005 to the dev database before merging (`pnpm db:migrate`);
-    Lhenna wires the onboarding "Other" field to `otherHobbies`.
+    Left: Lhenna wires the onboarding "Other" field to `otherHobbies`.
 - [x] **[FE]** Landing screen
 - [x] **[FE]** Sign up with terms checkbox, age confirmation, Turnstile
 - [x] **[FE]** Log in, forgot password, verify email screens
@@ -205,7 +203,6 @@ Goal: users can add gear, post what they made, and browse a feed.
   - Built 2026-11-13 (migrations 0007 to 0009), approved by Tristan: a separate `photos` table
     (upload first, attach by id), and `posts.hobby_id` instead of `post_hobbies` (one hobby per
     post). 74 categories seeded, "Other" last in every hobby. RLS on all, audit on items and posts.
-    Left: apply migrations 0007 to 0009 to the dev database before merging (`pnpm db:migrate`).
 - [x] **[BE]** Image pipeline: type check, size limit, strip EXIF and GPS, resize, WebP (TRD section 13)
   - `src/server/uploads/` (built with the profile photo) and `POST /api/photos` (2026-11-13):
     full size 1600px and 400px thumbnail. The browser shrinks first with `resizeForUpload()`.
@@ -259,7 +256,6 @@ counter, accept, decline, and cancel.
     (whole pesos, both amount and direction), and cancel reasons. Decided with Tristan: a deleted
     account keeps the other person's trade history (ids become null, "Deleted user"), and
     offers keep a copy of each item's name. Meetup and completion columns come with Phase 4.
-    Left: apply 0010 and 0011 to the dev database before merging (`pnpm db:migrate`).
 - [x] **[BE]** Deleting an item cancels the pending trades that use it (reason `item_unavailable`,
       decided 2026-11-17)
   - Trigger `trg_items_cancel_trades` (migration 0012), so it also runs when a deleted account
@@ -278,7 +274,7 @@ counter, accept, decline, and cancel.
 - [x] **[BE]** Row locking with `SELECT ... FOR UPDATE` on trades and items
   - `app.trade_propose`, `_counter`, `_accept`, `_decline`, `_cancel` (migration 0012), called from
     `src/server/trades/write.ts`. Database codes become AppErrors in `dbErrors.ts`; a deadlock
-    becomes `CONFLICT` (409, retry). Left: apply 0012 to the dev database (`pnpm db:migrate`).
+    becomes `CONFLICT` (409, retry).
 - [x] **[BE]** Propose endpoint, requires verified email (TRD-01, TRD-02, TRD-09)
 - [x] **[BE]** Counter, accept, decline, cancel endpoints (TRD-03, TRD-04, TRD-08)
 - [x] **[BE]** On accept: reserve items, auto-cancel other pending trades using them (TRD-06)
@@ -326,8 +322,15 @@ Goal: a trade can go all the way from offer to rating.
 - [ ] **[BE]** meetup_spots table, seed safe spots for starting cities (MEET-02)
 - [ ] **[BE]** Meetup propose and confirm endpoints (MEET-01)
 - [ ] **[BE]** Both-sides completion and "didn't show up" cancel (MEET-05, MEET-06)
-- [ ] **[BE]** ratings table, one per rater per trade (RATE-01)
-- [ ] **[BE]** Hide ratings until both rate or 7 days pass, using a scheduled job (RATE-02)
+- [x] **[BE]** ratings table, one per rater per trade (RATE-01)
+  - Done 2026-11-18 (migrations 0013 and 0014): `POST /api/trades/:id/ratings` through
+    `app.rating_submit` (locks the trade, completed trades only, once per person). New error code
+    `TRADE_NOT_COMPLETED` (409) in `common.ts`, for Lhenna to confirm. Profiles now show the real
+    rating, review count, and completed trades; the small user cards still show none (left).
+    Left: `GET /api/users/:handle/reviews` for the reviews tab.
+- [x] **[BE]** Hide ratings until both rate or 7 days pass, using a scheduled job (RATE-02)
+  - The second rating reveals both at once; the hourly `ratings_reveal` pg_cron job reveals
+    the rest after 7 days. pg_cron is turned on by migration 0014 (first job).
 - [ ] **[BE]** notifications table and in-app notification endpoints (NOTIF-01)
 - [ ] **[FE]** Chat screen with Supabase Realtime subscription (CHAT-05)
   - Chat UI done on sample messages. Left: the Realtime subscription and the send endpoint.

@@ -33,6 +33,7 @@ export const ERROR_STATUS = {
   HANDLE_TAKEN: 409,
   TRADE_NOT_PENDING: 409,
   TRADE_NOT_ACCEPTED: 409,
+  TRADE_NOT_COMPLETED: 409,
   ITEM_NOT_AVAILABLE: 409,
   ALREADY_RATED: 409,
   // 429
@@ -69,6 +70,7 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   HANDLE_TAKEN: "Someone already has that handle. Try another one.",
   TRADE_NOT_PENDING: "This trade already moved on. Refresh to see the latest.",
   TRADE_NOT_ACCEPTED: "This trade hasn't been accepted yet.",
+  TRADE_NOT_COMPLETED: "You can rate once you've both confirmed the handoff.",
   ITEM_NOT_AVAILABLE: "One of those items is no longer available.",
   ALREADY_RATED: "You already rated this trade.",
   RATE_LIMITED: "Whoa, slow down a little. Try again in a minute.",

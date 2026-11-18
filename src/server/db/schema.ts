@@ -30,7 +30,14 @@ import {
   LOOKING_FOR_MAX,
 } from "@/shared/contracts/items";
 import { POST_CAPTION_MAX, POST_PHOTOS_MAX, POST_TITLE_MAX } from "@/shared/contracts/posts";
-import { CANCEL_REASONS, CASH_MAX, TRADE_STATUSES } from "@/shared/contracts/trades";
+import {
+  CANCEL_REASONS,
+  CASH_MAX,
+  RATING_NOTE_MAX,
+  RATING_TAGS,
+  RATING_TAGS_MAX,
+  TRADE_STATUSES,
+} from "@/shared/contracts/trades";
 import {
   BIO_MAX,
   CITY_MAX,
@@ -537,5 +544,53 @@ export const tradeOfferItems = pgTable(
     index("idx_trade_offer_items_item_id").on(t.itemId),
     check("ck_trade_offer_items_side", sql`${t.side} in (${inList(TRADE_SIDES)})`),
     check("ck_trade_offer_items_item_name", sql`char_length(${t.itemName}) between 1 and ${num(ITEM_NAME_MAX)}`),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// ratings
+// ---------------------------------------------------------------------------
+
+// One rating per person per completed trade (RATE-01). Hidden until both
+// people rate or 7 days pass (RATE-02): visible_at is set by
+// app.rating_submit when the second rating arrives, or by the hourly
+// ratings_reveal job (docs/database.md section 8).
+export const ratings = pgTable(
+  "ratings",
+  {
+    id: id(),
+    tradeId: uuid("trade_id")
+      .notNull()
+      .references(() => trades.id, { onDelete: "cascade" }),
+    // The rating stays when its author deletes their account, shown as
+    // "Deleted user" (docs/database.md section 9).
+    raterId: uuid("rater_id").references(() => users.id, { onDelete: "set null" }),
+    // Reviews about a deleted account go with it.
+    rateeId: uuid("ratee_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    score: smallint("score").notNull(),
+    tags: text("tags").array().notNull().default(sql`'{}'::text[]`),
+    note: text("note"),
+    visibleAt: timestamp("visible_at", { withTimezone: true }),
+    ...timestamps(),
+  },
+  (t) => [
+    // One per rater per trade, and the trade_id key.
+    uniqueIndex("uq_ratings_trade_id_rater_id").on(t.tradeId, t.raterId),
+    // Reviews on a profile.
+    index("idx_ratings_ratee_id_visible").on(t.rateeId).where(sql`${t.visibleAt} is not null`),
+    // The reveal job.
+    index("idx_ratings_hidden_created_at").on(t.createdAt).where(sql`${t.visibleAt} is null`),
+    // Foreign key checks on account deletion (section 6.1 rule 9).
+    index("idx_ratings_ratee_id").on(t.rateeId),
+    index("idx_ratings_rater_id").on(t.raterId),
+    check("ck_ratings_score", sql`${t.score} between 1 and 5`),
+    check(
+      "ck_ratings_tags",
+      sql`${t.tags} <@ array[${inList(RATING_TAGS)}]::text[] and cardinality(${t.tags}) <= ${num(RATING_TAGS_MAX)}`,
+    ),
+    check("ck_ratings_note_length", sql`char_length(${t.note}) <= ${num(RATING_NOTE_MAX)}`),
+    check("ck_ratings_not_self", sql`${t.raterId} <> ${t.rateeId}`),
   ],
 ).enableRLS();

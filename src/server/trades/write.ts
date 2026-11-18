@@ -1,6 +1,6 @@
 import "server-only";
 import { sql, type SQL } from "drizzle-orm";
-import type { CancelTrade, CounterOffer, OfferTerms, ProposeTrade } from "@/shared/contracts/trades";
+import type { CancelTrade, CounterOffer, OfferTerms, ProposeTrade, SubmitRating } from "@/shared/contracts/trades";
 import type { SessionUser } from "@/server/auth/session";
 import { withActor, type Tx } from "@/server/db/withActor";
 import { toTradeError } from "@/server/trades/dbErrors";
@@ -16,6 +16,15 @@ function uuidArray(ids: string[]): SQL {
     ids.map((id) => sql`${id}`),
     sql`, `,
   )}]::uuid[]`;
+}
+
+// A text[] parameter; an empty list still needs its type.
+function textArray(values: string[]): SQL {
+  if (values.length === 0) return sql`'{}'::text[]`;
+  return sql`array[${sql.join(
+    values.map((v) => sql`${v}`),
+    sql`, `,
+  )}]::text[]`;
 }
 
 // The offer arguments every propose and counter call shares. Cash `from` stays
@@ -59,6 +68,17 @@ export async function acceptTrade(user: SessionUser, tradeId: string): Promise<v
 // POST /api/trades/:id/decline (TRD-04)
 export async function declineTrade(user: SessionUser, tradeId: string): Promise<void> {
   await run(user.id, (tx) => tx.execute(sql`select app.trade_decline(${tradeId}, ${user.id})`));
+}
+
+// POST /api/trades/:id/ratings (RATE-01). Hidden from the other person until
+// they rate too or 7 days pass (RATE-02).
+export async function rateTrade(user: SessionUser, tradeId: string, input: SubmitRating): Promise<void> {
+  await run(user.id, (tx) =>
+    tx.execute(
+      sql`select app.rating_submit(${tradeId}, ${user.id}, ${input.score}::integer,
+        ${textArray(input.tags)}, ${input.note ?? null}::text)`,
+    ),
+  );
 }
 
 // POST /api/trades/:id/cancel (TRD-08, MEET-06). The note is for the no-show

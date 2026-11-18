@@ -163,7 +163,7 @@ Only the server connection (`DATABASE_URL`) calls `app` functions.
 | `app.trade_set_meetup(trade_id, actor, spot_id, meetup_at)`                                 | Proposes a meetup                                                 | MEET-01                |
 | `app.trade_confirm_meetup(trade_id, actor)`                                                 | Confirms the meetup                                               | MEET-01                |
 | `app.trade_confirm_complete(trade_id, actor)`                                               | Records one side; completes when both confirm, marks items traded | MEET-05                |
-| `app.rating_submit(trade_id, actor, score, tags, note)`                                     | Saves a rating; reveals both if both are in                       | RATE-01, RATE-02       |
+| `app.rating_submit(trade_id, actor, score, tags, note)` ✅                                    | Saves a rating; reveals both if both are in                       | RATE-01, RATE-02       |
 | `app.account_delete(user_id)`                                                               | Cancels active trades, frees items, deletes and anonymizes data   | DEL-01, DEL-03         |
 | `app.trades_cancel_for_deleted_item()` ✅ (trigger on `items`)                                | Before an item is deleted: cancels active trades using it (`item_unavailable`), frees the other person's items | ITEM-05, DEL-03 |
 
@@ -374,6 +374,7 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | ratings           | `uq_ratings_trade_id_rater_id`                                                  | One rating per rater per trade |
 | ratings           | `idx_ratings_ratee_id_visible (ratee_id) where visible_at is not null`          | Reviews on a profile           |
 | ratings           | `idx_ratings_hidden_created_at (created_at) where visible_at is null`           | Rating reveal job              |
+| ratings           | `idx_ratings_ratee_id`, `idx_ratings_rater_id`                                    | Foreign key checks (section 6.1 rule 9) |
 | reports           | `idx_reports_open (created_at) where status = 'open'`                           | Admin queue                    |
 | blocks            | `uq_blocks_blocker_id_blocked_id`                                               | Block lookups                  |
 | blocks            | `idx_blocks_blocked_id (blocked_id)`                                            | "Who blocked me" filtering     |
@@ -505,13 +506,14 @@ lowest.
 
 | Job                      | Schedule              | Does                                                                                              | Built            |
 | ------------------------ | --------------------- | ------------------------------------------------------------------------------------------------- | ---------------- |
-| `ratings_reveal`         | `0 * * * *` (hourly)  | Sets `visible_at` on ratings where both sides rated or 7 days passed (RATE-02)                    | ⏳ Phase 4       |
+| `ratings_reveal`         | `0 * * * *` (hourly)  | Sets `visible_at` on ratings where both sides rated or 7 days passed (RATE-02)                    | ✅ 0014          |
 | `trades_expire_meetups`  | `0 19 * * *` (daily)  | Cancels accepted trades 72 hours after `meetup_at` with no completion, frees items, notifies both | ⏳ Phase 4       |
 | `users_purge_unverified` | `15 19 * * *` (daily) | Deletes accounts never verified after 7 days, and their photos                                    | ⏳ before launch |
 | `notifications_purge`    | `30 19 * * *` (daily) | Deletes read notifications older than 90 days                                                     | ⏳ Phase 4       |
 | `audit_log_purge`        | `0 20 * * 0` (weekly) | Deletes audit rows older than 1 year                                                              | ⏳ before launch |
 
-**No job runs yet (2026-11-11).** Each one is built with the feature it
+**Jobs running (2026-11-18):** `ratings_reveal` (migration 0014, which also turned on
+pg_cron). Each other job is built with the feature it
 cleans up after. The two marked "before launch" have nothing to wait for and
 must exist before real users arrive.
 
