@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowsLeftRight, Money } from "@phosphor-icons/react/dist/ssr";
+import { ArrowsLeftRight } from "@phosphor-icons/react/dist/ssr";
 import { BRAND, brandSize } from "@/shared/brand";
 
 const SIDES = [
@@ -47,7 +47,7 @@ function SideCard({ side }: { side: (typeof SIDES)[number] }) {
 function CashChip() {
   return (
     <p className="flex items-center gap-1.5 rounded-chip bg-status-warning-soft px-3 py-1.5 text-label-s whitespace-nowrap text-status-warning">
-      <Money size={14} weight="bold" aria-hidden />+ PHP 500, paid in person
+      + PHP 500, paid in person
     </p>
   );
 }

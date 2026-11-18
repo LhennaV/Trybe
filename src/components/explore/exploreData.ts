@@ -23,10 +23,12 @@ export type StarterKit = {
   title: string;
   authorHandle: string;
   toolCount: number;
+  // Until the API exists, a kit opens search for its hobby. Later it opens the post itself.
+  hobby: string;
 };
 
 export const STARTER_KITS: StarterKit[] = [
-  { id: "kit-1", title: "Calligraphy starter: nibs, ink, pad", authorHandle: "papelero", toolCount: 4 },
-  { id: "kit-2", title: "Beginner loom + 3 skeins", authorHandle: "weftandwarp", toolCount: 3 },
-  { id: "kit-3", title: "Bouldering shoes, EU 39 + chalk bag", authorHandle: "crimp.city", toolCount: 2 },
+  { id: "kit-1", title: "Calligraphy starter: nibs, ink, pad", authorHandle: "papelero", toolCount: 4, hobby: "Calligraphy" },
+  { id: "kit-2", title: "Beginner loom + 3 skeins", authorHandle: "weftandwarp", toolCount: 3, hobby: "Weaving" },
+  { id: "kit-3", title: "Bouldering shoes, EU 39 + chalk bag", authorHandle: "crimp.city", toolCount: 2, hobby: "Bouldering" },
 ];

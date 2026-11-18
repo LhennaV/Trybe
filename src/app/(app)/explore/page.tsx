@@ -50,15 +50,17 @@ export default function ExplorePage() {
         <h2 className="text-title-m text-ink-900">Starter kits near you</h2>
         <ul className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
           {STARTER_KITS.map((kit) => (
-            <li key={kit.id} className="flex w-40 shrink-0 flex-col gap-2">
-              <div className="relative flex h-[120px] items-center justify-center rounded-card bg-brand-box-soft text-brand-box-dark/40">
-                <Camera size={28} weight="bold" aria-hidden />
-                <span className="absolute top-2 left-2 rounded-chip bg-surface-white px-2 py-1 text-caption font-extrabold text-brand-plum">
-                  {kit.toolCount} tools
+            <li key={kit.id} className="w-40 shrink-0">
+              <Link href={`/search?hobby=${encodeURIComponent(kit.hobby)}`} className="flex flex-col gap-2 rounded-card">
+                <span className="relative flex h-[120px] items-center justify-center rounded-card bg-brand-box-soft text-brand-box-dark/40">
+                  <Camera size={28} weight="bold" aria-hidden />
+                  <span className="absolute top-2 left-2 rounded-chip bg-surface-white px-2 py-1 text-caption font-extrabold text-brand-plum">
+                    {kit.toolCount} tools
+                  </span>
                 </span>
-              </div>
-              <p className="text-body-s font-bold text-ink-900">{kit.title}</p>
-              <p className="text-caption text-ink-600">@{kit.authorHandle}</p>
+                <span className="text-body-s font-bold text-ink-900">{kit.title}</span>
+                <span className="text-caption text-ink-600">@{kit.authorHandle}</span>
+              </Link>
             </li>
           ))}
         </ul>
