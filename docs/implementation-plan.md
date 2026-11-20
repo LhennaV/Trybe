@@ -327,7 +327,7 @@ Goal: a trade can go all the way from offer to rating.
     `app.rating_submit` (locks the trade, completed trades only, once per person). New error code
     `TRADE_NOT_COMPLETED` (409) in `common.ts`, for Lhenna to confirm. Profiles now show the real
     rating, review count, and completed trades; the small user cards still show none (left).
-    Left: `GET /api/users/:handle/reviews` for the reviews tab.
+    Reviews tab: `GET /api/users/:handle/reviews` (done 2026-11-20, shown ratings only, paged).
 - [x] **[BE]** Hide ratings until both rate or 7 days pass, using a scheduled job (RATE-02)
   - The second rating reveals both at once; the hourly `ratings_reveal` pg_cron job reveals
     the rest after 7 days. pg_cron is turned on by migration 0014 (first job).

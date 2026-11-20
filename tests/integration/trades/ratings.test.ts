@@ -1,6 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { POST as rateRoute } from "@/app/api/trades/[id]/ratings/route";
+import { GET as reviewsRoute } from "@/app/api/users/[handle]/reviews/route";
 import { GET as profileRoute } from "@/app/api/users/[handle]/route";
+import { pageSchema } from "@/shared/contracts/common";
+import { reviewSchema } from "@/shared/contracts/trades";
 import { categoryId, newItem, propose } from "../db/tradeHelpers";
 import { accessToken, apiRequest, createUser, deleteUsers, readJson, testSql } from "../helpers";
 
@@ -138,6 +141,54 @@ describe("revealing ratings (RATE-02)", () => {
   it("is scheduled hourly with pg_cron", async () => {
     const [job] = await sql`select schedule, command from cron.job where jobname = 'ratings_reveal'`;
     expect(job).toEqual({ schedule: "0 * * * *", command: "select app.ratings_reveal()" });
+  });
+});
+
+describe("GET /api/users/:handle/reviews", () => {
+  async function reviews(handle: string, query = "") {
+    const res = await readJson(
+      await reviewsRoute(apiRequest(`/api/users/${handle}/reviews${query}`), { params: Promise.resolve({ handle }) }),
+    );
+    return { status: res.status, page: res.status === 200 ? pageSchema(reviewSchema).parse(res.body.data) : null };
+  }
+
+  it("lists only shown ratings, newest first, paged without repeats", async () => {
+    const star = await person("star");
+    const [fan1, fan2, shy] = [await person("fan1"), await person("fan2"), await person("shy")];
+
+    // Two mutual ratings (shown), then one still waiting for the other side.
+    for (const [fan, note] of [
+      [fan1, "First"],
+      [fan2, "Second"],
+    ] as const) {
+      const tradeId = await tradeBetween(fan, star);
+      await rate(fan, tradeId, { score: 5, tags: ["Friendly"], note });
+      await rate(star, tradeId, { score: 4 });
+    }
+    await rate(shy, await tradeBetween(shy, star), { score: 1, note: "Hidden" });
+
+    const all = await reviews(star.handle);
+    expect(all.page!.items.map((r) => r.note)).toEqual(["Second", "First"]);
+    expect(all.page!.items[0]).toMatchObject({ score: 5, tags: ["Friendly"], author: { handle: fan2.handle } });
+
+    const first = await reviews(star.handle, "?limit=1");
+    const second = await reviews(star.handle, `?limit=1&cursor=${first.page!.nextCursor}`);
+    expect([...first.page!.items, ...second.page!.items].map((r) => r.note)).toEqual(["Second", "First"]);
+    expect(second.page!.nextCursor).toBeNull();
+  });
+
+  it("shows a deleted author as no one, and 404s for unknown people", async () => {
+    const star = await person("star2");
+    const leaver = await person("leaver3");
+    const tradeId = await tradeBetween(leaver, star);
+    await rate(leaver, tradeId, { score: 3, note: "Gone" });
+    await rate(star, tradeId);
+    await deleteUsers([leaver.id]);
+
+    const res = await reviews(star.handle);
+    expect(res.page!.items).toHaveLength(1);
+    expect(res.page!.items[0]).toMatchObject({ author: null, note: "Gone" });
+    expect((await reviews("no_such_person")).status).toBe(404);
   });
 });
 

@@ -207,6 +207,20 @@ export const submitRatingSchema = z.strictObject({
 });
 export type SubmitRating = z.infer<typeof submitRatingSchema>;
 
+// A row in GET /api/users/:handle/reviews (PROF-03). Only ratings already
+// shown (RATE-02), newest first.
+export const reviewSchema = z.object({
+  id: z.uuid(),
+  // null when the author deleted their account: show "Deleted user".
+  author: userSummarySchema.nullable(),
+  score: z.number().int().min(1).max(5),
+  tags: z.array(ratingTagSchema),
+  note: z.string().nullable(),
+  // When it became visible.
+  createdAt: z.iso.datetime({ offset: true }),
+});
+export type Review = z.infer<typeof reviewSchema>;
+
 // GET /api/trades?status=&cursor=
 export const tradesQuerySchema = pageQuerySchema.extend({
   status: tradeStatusSchema.optional(),
