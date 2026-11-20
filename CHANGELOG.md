@@ -17,6 +17,7 @@ How versions work (details in the README, "Versions and releases"):
 - Rate a trade after it's completed: stars, tags, and a note. Ratings stay
   hidden until both people rate or 7 days pass. Profiles show the real
   rating, review count, and number of completed trades.
+- Backend for the reviews tab on profiles (`GET /api/users/:handle/reviews`).
 
 ## [0.3.0] - 2026-11-18
 

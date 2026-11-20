@@ -481,7 +481,7 @@ POST   /api/me/photo                        profile photo
 DELETE /api/me/photo
 GET    /api/users/:handle/posts?cursor=      profile posts tab
 GET    /api/users/:handle/items?cursor=      profile gear tab: up for trade and available only
-GET    /api/users/:handle/reviews
+GET    /api/users/:handle/reviews?cursor=   reviews tab: shown ratings only (RATE-02), newest first
 GET    /api/me
 PATCH  /api/me
 DELETE /api/me
