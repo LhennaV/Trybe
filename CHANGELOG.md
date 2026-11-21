@@ -12,6 +12,8 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-21
+
 ### Added
 
 - Rate a trade after it's completed: stars, tags, and a note. Ratings stay
@@ -145,7 +147,8 @@ Live at https://trybe-puce.vercel.app on the dev database.
   every pull request.
 - Error tracking with Sentry and deploys to Vercel.
 
-[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/LhennaV/Trybe/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/LhennaV/Trybe/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LhennaV/Trybe/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/LhennaV/Trybe/releases/tag/v0.1.0
