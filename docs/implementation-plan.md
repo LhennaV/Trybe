@@ -465,9 +465,16 @@ website. Each screen is built once its endpoints exist.
 - [ ] **[FE]** App shell: native tab bar (Feed, Explore, +, Trades, Profile), stack screens, safe areas
 - [ ] **[FE]** API client: `apiRequest` from `src/shared/` with the API URL and Bearer token, TanStack Query
 - [ ] **[FE]** App icon and splash screen from the Figma App Logo page
-- [ ] **[BE]** Log in and sign up return the session for the app (TRD section 10, Auth)
-- [ ] **[BE]** `/captcha` page for Turnstile in a WebView, or another bot check (TRD section 21)
-- [ ] **[BE]** Confirm the API accepts Bearer tokens on every endpoint
+- [x] **[BE]** Log in and sign up return the session for the app (TRD section 10, Auth)
+  - Done 2026-11-21: `POST /api/auth/token` (same body as login) returns
+    `{ user, session: { accessToken, refreshToken, expiresAt } }`, no cookies. Sign up needs no
+    change (no session until the email is verified). Logout takes the Bearer token too.
+- [ ] **[FE]** `/captcha` page for Turnstile in a WebView (TRD section 21; a page, so Lhenna's, decided
+      2026-11-21). It posts the token back to the app; the API side already takes `captchaToken`.
+- [x] **[BE]** Confirm the API accepts Bearer tokens on every endpoint
+  - Checked 2026-11-21: every signed-in route goes through `getSessionUser`, which reads the
+    Bearer token first. Only the website's cookie log in and the email link (`/api/auth/confirm`)
+    use cookies, by design.
 
 ### Screens
 

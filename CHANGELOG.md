@@ -18,6 +18,8 @@ How versions work (details in the README, "Versions and releases"):
   hidden until both people rate or 7 days pass. Profiles show the real
   rating, review count, and number of completed trades.
 - Backend for the reviews tab on profiles (`GET /api/users/:handle/reviews`).
+- Log in for the mobile app (`POST /api/auth/token`): returns the session
+  tokens instead of cookies. Log out also works with the app's token.
 - Confirm the handoff (`POST /api/trades/:id/complete`): a trade is completed
   only when both people confirm, and its items are marked traded.
 

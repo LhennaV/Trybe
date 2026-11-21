@@ -137,6 +137,25 @@ export const sessionUserSchema = z.object({
   emailVerified: z.boolean(),
 });
 
+// POST /api/auth/token. Log in for the mobile app (decided 2026-11-21): same
+// body as POST /api/auth/login, but the session comes back in the response
+// instead of cookies. The app keeps it in expo-secure-store, sends
+// `Authorization: Bearer <accessToken>`, and hands both tokens to
+// supabase.auth.setSession(), which refreshes them and powers Realtime.
+export const tokenLogInSchema = logInSchema;
+export type TokenLogIn = LogIn;
+
+export const authSessionSchema = z.object({
+  user: sessionUserSchema,
+  session: z.object({
+    accessToken: z.string(),
+    refreshToken: z.string(),
+    // When the access token stops working; refresh before then.
+    expiresAt: z.iso.datetime({ offset: true }),
+  }),
+});
+export type AuthSession = z.infer<typeof authSessionSchema>;
+
 // ---------------------------------------------------------------------------
 // Email links
 // ---------------------------------------------------------------------------

@@ -429,15 +429,21 @@ Error:
 Session comes from Supabase Auth. The website uses cookies. The mobile app
 sends `Authorization: Bearer <token>`. The API accepts both.
 
-Mobile log in and sign up (**Proposed**, Tristan to confirm):
+Mobile log in and sign up (**Decided 2026-11-21**, Tristan):
 
-- The same `POST /api/auth/login` and `/signup`, with a way to ask for the
-  session in the response (`access_token`, `refresh_token`) instead of
-  cookies.
+- Sign up is the same `POST /api/auth/signup`; it returns no session, since
+  the email must be verified first.
+- The app logs in with `POST /api/auth/token`: the same body as
+  `/api/auth/login`, answered with `{ user, session: { accessToken,
+  refreshToken, expiresAt } }` and no cookies (`authSessionSchema` in
+  `src/shared/contracts/auth.ts`).
+- `POST /api/auth/logout` with the Bearer token ends that session; its
+  refresh token stops working.
 - The app stores the tokens in `expo-secure-store` and hands them to
   `supabase.auth.setSession()`, which refreshes them and powers Realtime.
 - Turnstile still runs: the app shows the widget from a small page on our
   site (`/captcha`) in a WebView and sends the token like the website does.
+  Lhenna builds the page (decided 2026-11-21).
 
 ### Pagination
 
@@ -450,7 +456,8 @@ Cursor based: `?cursor=<opaque>&limit=20`. Responses include `nextCursor` or
 Auth
 POST   /api/auth/signup
 POST   /api/auth/login
-POST   /api/auth/logout
+POST   /api/auth/logout                  cookies (website) or Bearer (app)
+POST   /api/auth/token                   app log in: returns the session instead of cookies
 POST   /api/auth/password/forgot
 POST   /api/auth/password
 POST   /api/auth/verify/resend
@@ -749,7 +756,7 @@ Check current pricing before paying. Prices change.
 | -------------------------------- | ----------------------------------- | ------- |
 | Store apps                       | **Decided 2026-11-18:** native Expo app in `mobile/`, not the PWA packaged with PWABuilder. The Next.js app stays as the website | Both    |
 | App Store at launch              | At launch or after (Apple Developer account, USD 99 a year) | Both    |
-| Mobile log in and bot check      | **Proposed:** login returns tokens for the app; Turnstile in a WebView (section 10, Auth) | Tristan |
+| Mobile log in and bot check      | **Decided 2026-11-21:** `POST /api/auth/token` returns the session for the app; Turnstile from a `/captcha` page in a WebView, built by Lhenna (section 10, Auth) | Tristan |
 | Minimum age                      | 18+ or another age                  | Both    |
 | Followers                        | v1 or later                         | Both    |
 | Saved boards                     | Boards or simple save               | Both    |
