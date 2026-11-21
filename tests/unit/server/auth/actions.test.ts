@@ -162,7 +162,7 @@ describe("logIn", () => {
 describe("logOut", () => {
   it("is fine when already logged out", async () => {
     auth.signOut.mockResolvedValue({ error: new AuthSessionMissingError() });
-    await expect(logOut()).resolves.toBeUndefined();
+    await expect(logOut(null)).resolves.toBeUndefined();
     expect(auth.signOut).toHaveBeenCalledWith({ scope: "local" });
   });
 });

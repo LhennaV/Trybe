@@ -467,7 +467,11 @@ export const trades = pgTable(
     currentOfferId: uuid("current_offer_id").references((): AnyPgColumn => tradeOffers.id, { onDelete: "set null" }),
     cancelledBy: uuid("cancelled_by").references(() => users.id, { onDelete: "set null" }),
     cancelReason: text("cancel_reason", { enum: CANCEL_REASONS }),
-    // Meetup and completion columns arrive with Phase 4.
+    // MEET-05: each person confirms the handoff; the trade completes when
+    // both have. Meetup columns arrive with the meetup endpoints.
+    initiatorConfirmedAt: timestamp("initiator_confirmed_at", { withTimezone: true }),
+    recipientConfirmedAt: timestamp("recipient_confirmed_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
     ...timestamps(),
   },
   (t) => [
@@ -483,6 +487,8 @@ export const trades = pgTable(
     check("ck_trades_not_self", sql`${t.initiatorId} <> ${t.recipientId}`),
     // A cancel reason exactly when the trade is cancelled.
     check("ck_trades_cancel_reason_when_cancelled", sql`(${t.status} = 'cancelled') = (${t.cancelReason} is not null)`),
+    // A completion time exactly when the trade is completed.
+    check("ck_trades_completed_at_when_completed", sql`(${t.status} = 'completed') = (${t.completedAt} is not null)`),
   ],
 ).enableRLS();
 

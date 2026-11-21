@@ -1,7 +1,14 @@
 import "server-only";
 import { isAuthApiError, isAuthSessionMissingError, type EmailOtpType } from "@supabase/supabase-js";
 import { eq } from "drizzle-orm";
-import { AUTH_REDIRECTS, type EmailRequest, type LogIn, type SignUp } from "@/shared/contracts/auth";
+import {
+  AUTH_REDIRECTS,
+  type AuthSession,
+  type EmailRequest,
+  type LogIn,
+  type SignUp,
+  type TokenLogIn,
+} from "@/shared/contracts/auth";
 import { toAuthAppError } from "@/server/auth/errors";
 import type { SessionUser } from "@/server/auth/session";
 import { createAdminClient, createAnonClient, createCookieClient } from "@/server/auth/supabase";
@@ -68,8 +75,40 @@ export async function logIn(input: LogIn): Promise<SessionUser> {
   return { id: user.id, email: user.email ?? input.email, emailVerified: Boolean(user.email_confirmed_at) };
 }
 
+// Log in for the mobile app (AUTH-06, decided 2026-11-21). Same checks as
+// logIn, including Turnstile and EMAIL_NOT_VERIFIED, but returns the session
+// instead of setting cookies.
+export async function logInForToken(input: TokenLogIn): Promise<AuthSession> {
+  const { data, error } = await createAnonClient().auth.signInWithPassword({
+    email: input.email,
+    password: input.password,
+    options: { captchaToken: input.captchaToken },
+  });
+  if (error) throw toAuthAppError(error);
+
+  const { user, session } = data;
+  return {
+    user: { id: user.id, email: user.email ?? input.email, emailVerified: Boolean(user.email_confirmed_at) },
+    session: {
+      accessToken: session.access_token,
+      refreshToken: session.refresh_token,
+      expiresAt: new Date((session.expires_at ?? 0) * 1000).toISOString(),
+    },
+  };
+}
+
 // Log out this device (AUTH-06). Safe to call when already logged out.
-export async function logOut() {
+// The app sends its access token; the website uses its cookies. Either way
+// only this session ends, and its refresh token stops working.
+export async function logOut(bearer: string | null) {
+  if (bearer) {
+    const { error } = await createAdminClient().auth.admin.signOut(bearer, "local");
+    // An expired or already revoked token is already logged out. Supabase says
+    // so with AuthSessionMissingError, or a 4xx API error.
+    const alreadyOut = isAuthSessionMissingError(error) || (isAuthApiError(error) && error.status < 500);
+    if (error && !alreadyOut) throw toAuthAppError(error);
+    return;
+  }
   const supabase = await createCookieClient();
   const { error } = await supabase.auth.signOut({ scope: "local" });
   if (error && !isAuthSessionMissingError(error)) throw toAuthAppError(error);

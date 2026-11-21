@@ -70,6 +70,12 @@ export async function declineTrade(user: SessionUser, tradeId: string): Promise<
   await run(user.id, (tx) => tx.execute(sql`select app.trade_decline(${tradeId}, ${user.id})`));
 }
 
+// POST /api/trades/:id/complete (MEET-05). Confirms my side of the handoff;
+// the trade completes when both people have. Safe to repeat.
+export async function completeTrade(user: SessionUser, tradeId: string): Promise<void> {
+  await run(user.id, (tx) => tx.execute(sql`select app.trade_confirm_complete(${tradeId}, ${user.id})`));
+}
+
 // POST /api/trades/:id/ratings (RATE-01). Hidden from the other person until
 // they rate too or 7 days pass (RATE-02).
 export async function rateTrade(user: SessionUser, tradeId: string, input: SubmitRating): Promise<void> {

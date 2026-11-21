@@ -12,12 +12,18 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-21
+
 ### Added
 
 - Rate a trade after it's completed: stars, tags, and a note. Ratings stay
   hidden until both people rate or 7 days pass. Profiles show the real
   rating, review count, and number of completed trades.
 - Backend for the reviews tab on profiles (`GET /api/users/:handle/reviews`).
+- Log in for the mobile app (`POST /api/auth/token`): returns the session
+  tokens instead of cookies. Log out also works with the app's token.
+- Confirm the handoff (`POST /api/trades/:id/complete`): a trade is completed
+  only when both people confirm, and its items are marked traded.
 
 ## [0.3.0] - 2026-11-18
 
@@ -141,7 +147,8 @@ Live at https://trybe-puce.vercel.app on the dev database.
   every pull request.
 - Error tracking with Sentry and deploys to Vercel.
 
-[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/LhennaV/Trybe/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/LhennaV/Trybe/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LhennaV/Trybe/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/LhennaV/Trybe/releases/tag/v0.1.0

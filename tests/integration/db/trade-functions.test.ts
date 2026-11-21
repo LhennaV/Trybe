@@ -8,6 +8,7 @@ import {
   cancel,
   categoryId,
   codeOf,
+  complete,
   counter,
   decline,
   itemStatus,
@@ -36,12 +37,14 @@ async function pendingTrade() {
   return { tradeId: await propose(sql, maker, [give], [want]), give, want };
 }
 
-// A trade in `status`, built only through the functions (except "completed",
-// which needs Phase 4's confirm function).
+// A trade in `status`, built only through the functions.
 async function tradeIn(status: MatrixCase["status"]) {
   const { tradeId } = await pendingTrade();
   if (status === "accepted" || status === "completed") await accept(sql, tradeId, responder);
-  if (status === "completed") await sql`update public.trades set status = 'completed' where id = ${tradeId}`;
+  if (status === "completed") {
+    await complete(sql, tradeId, maker);
+    await complete(sql, tradeId, responder);
+  }
   if (status === "declined") await decline(sql, tradeId, responder);
   if (status === "cancelled") await cancel(sql, tradeId, maker);
   return tradeId;
@@ -64,8 +67,7 @@ afterAll(async () => {
 });
 
 describe("rules matrix against the database (docs/testing.md section 7.1)", () => {
-  // confirm_complete comes with Phase 4.
-  const cases = TRADE_MATRIX.filter((c) => c.action !== "confirm_complete");
+  const cases = TRADE_MATRIX;
   const actorId = (actor: MatrixCase["actor"]) => ({ maker, responder, outsider })[actor];
 
   it.each(cases)("$status: $actor $action → $expected", async ({ status, action, actor, expected }) => {
@@ -78,7 +80,8 @@ describe("rules matrix against the database (docs/testing.md section 7.1)", () =
       accept: () => accept(sql, tradeId, who),
       decline: () => decline(sql, tradeId, who),
       cancel: () => cancel(sql, tradeId, who),
-    }[action as "counter" | "accept" | "decline" | "cancel"];
+      confirm_complete: () => complete(sql, tradeId, who),
+    }[action];
 
     const code = await codeOf(call());
     const result = code ?? (await tradeRow(sql, tradeId)).status;
@@ -238,6 +241,37 @@ describe("trade_cancel", () => {
   it("refuses reasons only the server sets", async () => {
     const { tradeId } = await pendingTrade();
     expect(await codeOf(cancel(sql, tradeId, maker, "item_unavailable"))).toBe("VALIDATION_FAILED");
+  });
+});
+
+describe("trade_confirm_complete (MEET-05)", () => {
+  it("waits for both people, then completes and marks the items traded", async () => {
+    const { tradeId, give, want } = await pendingTrade();
+    await accept(sql, tradeId, responder);
+
+    expect(await complete(sql, tradeId, maker)).toBe("accepted");
+    // Confirming twice changes nothing.
+    expect(await complete(sql, tradeId, maker)).toBe("accepted");
+    const [half] = await sql`
+      select status, initiator_confirmed_at, recipient_confirmed_at, completed_at
+      from public.trades where id = ${tradeId}`;
+    expect(half.status).toBe("accepted");
+    expect(half.initiator_confirmed_at).not.toBeNull();
+    expect(half.recipient_confirmed_at).toBeNull();
+    expect(await itemStatus(sql, give)).toBe("reserved");
+
+    expect(await complete(sql, tradeId, responder)).toBe("completed");
+    const [done] = await sql`select status, completed_at from public.trades where id = ${tradeId}`;
+    expect(done.status).toBe("completed");
+    expect(done.completed_at).not.toBeNull();
+    expect([await itemStatus(sql, give), await itemStatus(sql, want)]).toEqual(["traded", "traded"]);
+  });
+
+  it("keeps the completion time in step with the status", async () => {
+    const { tradeId } = await pendingTrade();
+    await expect(sql`update public.trades set status = 'completed' where id = ${tradeId}`).rejects.toThrow(
+      /ck_trades_completed_at_when_completed/,
+    );
   });
 });
 

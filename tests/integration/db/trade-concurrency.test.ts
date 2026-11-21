@@ -91,6 +91,22 @@ describe("trade concurrency", () => {
     expect([await itemStatus(sql, give), await itemStatus(sql, want)]).toEqual(["available", "available"]);
   });
 
+  it("both people confirming the handoff at once complete the trade exactly once", async () => {
+    const give = await item(alice);
+    const want = await item(bob);
+    const tradeId = await propose(sql, alice, [give], [want]);
+    await accept(sql, tradeId, bob);
+
+    const [a, b] = await Promise.all([
+      first`select app.trade_confirm_complete(${tradeId}, ${alice}) as status`,
+      second`select app.trade_confirm_complete(${tradeId}, ${bob}) as status`,
+    ]);
+    // Whoever got the lock second sees both confirms and completes it.
+    expect([a[0].status, b[0].status].sort()).toEqual(["accepted", "completed"]);
+    expect((await tradeRow(sql, tradeId)).status).toBe("completed");
+    expect([await itemStatus(sql, give), await itemStatus(sql, want)]).toEqual(["traded", "traded"]);
+  });
+
   it("many trades racing for one item never reserve it twice", async () => {
     for (let round = 0; round < 5; round++) {
       const shared = await item(bob);
