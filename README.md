@@ -1,6 +1,25 @@
-# Trybe
+<p align="center">
+  <img src="public/brand/storm-logo.png" alt="Trybe logo: a tortoiseshell cat peeking out of a cardboard box above the Trybe wordmark" width="220" />
+</p>
 
-> Curiosity killed the cat. Trybe brought it back.
+<h1 align="center">Trybe</h1>
+
+<p align="center"><em>Curiosity killed the cat. Trybe brought it back.</em></p>
+
+<p align="center">
+  <img alt="Version 0.4.0" src="https://img.shields.io/badge/version-0.4.0-6B3FA0" />
+  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white" />
+  <img alt="React 19" src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white" />
+  <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white" />
+  <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" />
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Postgres-3FCF8E?logo=supabase&logoColor=white" />
+  <img alt="Drizzle ORM" src="https://img.shields.io/badge/Drizzle-ORM-C5F74F?logo=drizzle&logoColor=black" />
+  <img alt="Zod" src="https://img.shields.io/badge/Zod-validation-3E67B1?logo=zod&logoColor=white" />
+  <img alt="Expo" src="https://img.shields.io/badge/Expo-React_Native-000020?logo=expo&logoColor=white" />
+  <img alt="Vercel" src="https://img.shields.io/badge/Vercel-hosting-000000?logo=vercel&logoColor=white" />
+  <img alt="Vitest" src="https://img.shields.io/badge/Vitest-tests-6E9F18?logo=vitest&logoColor=white" />
+  <img alt="Playwright" src="https://img.shields.io/badge/Playwright-E2E-2EAD33?logo=playwright&logoColor=white" />
+</p>
 
 Trybe is a mobile-first app for trading hobby tools and equipment. Post photos of what you've made along with the tools you used, browse a feed by hobby, and propose trades on tagged items: item for item, or with a cash or item top-up when the values don't match.
 
@@ -8,24 +27,51 @@ Trust comes from ratings, trade history, account age, email verification, and a 
 
 ## Status
 
-Phase 1 (accounts and profiles). Sign up, log in, email verification, and profiles work against the real backend. The other screens still use sample data. Live at <https://trybe-puce.vercel.app>, running on the dev database. See [the implementation plan](docs/implementation-plan.md).
+Version **0.4.0**. Phases 0 to 3 are done (accounts, profiles, items, posts, feed, and the full trade flow from offer to accept). Phase 4 is under way: completing a trade and ratings work; chat, meetups, and notifications are next. The mobile app (Phase M) can log in with tokens. Live at <https://trybe-puce.vercel.app>, running on the dev database. See [the implementation plan](docs/implementation-plan.md) and the [changelog](CHANGELOG.md).
 
 ## Team
 
 - **Lhenna**: design and frontend
 - **Tristan**: backend
 
-## Stack
+## Tech stack
 
-- **App:** Next.js 16 (App Router, `src/`), React 19, TypeScript (strict), Tailwind CSS 4
-- **Database:** PostgreSQL on Supabase, Drizzle ORM and migrations
-- **Validation:** Zod, schemas shared by client and server in `src/shared/`
-- **Auth, storage, realtime chat:** Supabase
-- **Errors:** Sentry
-- **Bot protection:** Cloudflare Turnstile
-- **Tests:** Vitest (unit and integration), Playwright (end to end), k6 (performance)
-- **Hosting:** Vercel. The website is also an installable PWA.
-- **Mobile app:** Expo (React Native) in `mobile/`, released to Google Play with EAS (decided 2026-11-18).
+**Website and API**
+
+| Area | Choice |
+| --- | --- |
+| Framework | Next.js 16 (App Router, `src/`), React 19 |
+| Language | TypeScript, strict mode |
+| Styling | Tailwind CSS 4, design tokens in `src/app/globals.css` ([design guide](src/styles/DESIGN.md)) |
+| Fonts | Lilita One (headings, wordmark), Nunito (body and UI) |
+| Database | PostgreSQL on Supabase, Drizzle ORM and migrations |
+| Critical operations | Postgres functions with row locking (trades, ratings), audit log triggers, pg_cron jobs |
+| Validation | Zod, contracts shared by the website, the app, and the server in `src/shared/` |
+| Auth | Supabase Auth with email verification. Cookies for the website, Bearer tokens for the app |
+| Storage | Supabase Storage. Photos are shrunk, stripped of EXIF and GPS, and saved as WebP |
+| Realtime chat | Supabase Realtime, with Row Level Security |
+| Maps | Leaflet and OpenStreetMap |
+| Bot protection | Cloudflare Turnstile |
+| Errors | Sentry |
+| Hosting | Vercel. The website is also an installable PWA |
+
+**Mobile app** (`mobile/`, decided 2026-11-18)
+
+| Area | Choice |
+| --- | --- |
+| Framework | Expo (React Native), Expo Router |
+| Styling | NativeWind with the same design tokens |
+| Data | TanStack Query with the shared Zod contracts |
+| Session | `expo-secure-store`, Bearer token |
+| Releases | EAS Build and EAS Submit to Google Play |
+
+**Testing**
+
+| Kind | Tool |
+| --- | --- |
+| Unit and integration | Vitest, with a local Supabase stack in Docker |
+| End to end | Playwright (website), Maestro (app) |
+| Performance | k6 |
 
 Full details are in [the technical requirements](docs/technical-requirements.md).
 
@@ -68,6 +114,7 @@ Integration, end-to-end, and performance tests have their own commands and need 
 ## Project structure
 
 ```
+mobile/             Expo app (not started yet)        Lhenna
 src/
 ├── app/            pages and layouts                 Lhenna
 │   └── api/        REST route handlers (thin)        Tristan
