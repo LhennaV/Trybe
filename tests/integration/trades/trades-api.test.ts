@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { POST as acceptRoute } from "@/app/api/trades/[id]/accept/route";
 import { POST as cancelRoute } from "@/app/api/trades/[id]/cancel/route";
+import { POST as completeRoute } from "@/app/api/trades/[id]/complete/route";
 import { POST as counterRoute } from "@/app/api/trades/[id]/counter/route";
 import { POST as declineRoute } from "@/app/api/trades/[id]/decline/route";
 import { GET as detailRoute } from "@/app/api/trades/[id]/route";
@@ -203,6 +204,31 @@ describe("counter, accept, decline, cancel", () => {
     const declined = await act(declineRoute, "decline", ben, id);
     expect(declined.body.data.status).toBe("declined");
     expect((await act(declineRoute, "decline", cy, id)).body.error.code).toBe("NOT_TRADE_MEMBER");
+  });
+});
+
+describe("POST /api/trades/:id/complete (MEET-05)", () => {
+  it("shows each side's confirmation and completes when both confirm", async () => {
+    const { id } = await anaProposes();
+
+    const early = await act(completeRoute, "complete", ana, id);
+    expect(early.status).toBe(409);
+    expect(early.body.error.code).toBe("TRADE_NOT_ACCEPTED");
+
+    await act(acceptRoute, "accept", ben, id);
+    const half = tradeDetailSchema.parse((await act(completeRoute, "complete", ana, id)).body.data);
+    expect(half.status).toBe("accepted");
+    expect(half.completion).toEqual({ confirmedByMe: true, confirmedByThem: false });
+    expect((await detail(ben, id)).body.data.completion).toEqual({ confirmedByMe: false, confirmedByThem: true });
+
+    const done = tradeDetailSchema.parse((await act(completeRoute, "complete", ben, id)).body.data);
+    expect(done.status).toBe("completed");
+    expect(done.completion).toEqual({ confirmedByMe: true, confirmedByThem: true });
+
+    expect((await act(completeRoute, "complete", cy, id)).body.error.code).toBe("NOT_TRADE_MEMBER");
+    expect((await act(cancelRoute, "cancel", ana, id, { reason: "withdrawn" })).body.error.code).toBe(
+      "TRADE_NOT_PENDING",
+    );
   });
 });
 

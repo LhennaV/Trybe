@@ -54,6 +54,11 @@ export async function decline(sql: Sql, tradeId: string, actor: string) {
   await sql`select app.trade_decline(${tradeId}, ${actor})`;
 }
 
+export async function complete(sql: Sql, tradeId: string, actor: string) {
+  const [row] = await sql`select app.trade_confirm_complete(${tradeId}, ${actor}) as status`;
+  return row.status as string;
+}
+
 export async function cancel(sql: Sql, tradeId: string, actor: string, reason = "withdrawn") {
   await sql`select app.trade_cancel(${tradeId}, ${actor}, ${reason})`;
 }

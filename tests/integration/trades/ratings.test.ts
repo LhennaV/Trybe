@@ -27,7 +27,11 @@ async function person(label: string): Promise<Person> {
 // A trade between Ana and Ben, completed unless `status` says otherwise.
 async function tradeBetween(a: Person, b: Person, status = "completed") {
   const tradeId = await propose(sql, a.id, [await newItem(sql, a.id, category)], [await newItem(sql, b.id, category)]);
-  await sql`update public.trades set status = ${status} where id = ${tradeId}`;
+  // A completion time keeps ck_trades_completed_at_when_completed happy.
+  await sql`
+    update public.trades
+    set status = ${status}, completed_at = case when ${status} = 'completed' then now() end
+    where id = ${tradeId}`;
   return tradeId;
 }
 

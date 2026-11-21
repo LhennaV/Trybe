@@ -35,6 +35,14 @@ function otherId(trade: TradeRow, viewerId: string): string | null {
   return trade.initiatorId === viewerId ? trade.recipientId : trade.initiatorId;
 }
 
+function completionFor(trade: TradeRow, viewerId: string) {
+  const mine = viewerSide(trade, viewerId) === "initiator";
+  const [me, them] = mine
+    ? [trade.initiatorConfirmedAt, trade.recipientConfirmedAt]
+    : [trade.recipientConfirmedAt, trade.initiatorConfirmedAt];
+  return { confirmedByMe: me !== null, confirmedByThem: them !== null };
+}
+
 // "me" or "them" for a user id; a deleted account (null) is always "them".
 function whoIs(userId: string | null, viewerId: string): Side {
   return userId === viewerId ? "me" : "them";
@@ -179,9 +187,10 @@ export async function getTrade(viewerId: string, tradeId: string): Promise<Trade
   return {
     ...summary,
     offers,
-    // Meetup and completion come later in Phase 4.
+    // Meetup comes later in Phase 4.
     meetup: { spot: null, at: null, proposedBy: null, confirmedByMe: false, confirmedByThem: false },
-    completion: { confirmedByMe: false, confirmedByThem: false },
+    // MEET-05: each side's handoff confirmation.
+    completion: completionFor(trade, viewerId),
     cancelledBy: trade.cancelledBy ? whoIs(trade.cancelledBy, viewerId) : null,
     cancelReason: trade.cancelReason,
     ratedByMe: myRating !== undefined,

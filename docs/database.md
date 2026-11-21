@@ -162,7 +162,7 @@ Only the server connection (`DATABASE_URL`) calls `app` functions.
 | `app.trade_cancel(trade_id, actor, reason)` ✅                                                | Cancels, frees reserved items, files a report on no-show          | TRD-08, MEET-06        |
 | `app.trade_set_meetup(trade_id, actor, spot_id, meetup_at)`                                 | Proposes a meetup                                                 | MEET-01                |
 | `app.trade_confirm_meetup(trade_id, actor)`                                                 | Confirms the meetup                                               | MEET-01                |
-| `app.trade_confirm_complete(trade_id, actor)`                                               | Records one side; completes when both confirm, marks items traded | MEET-05                |
+| `app.trade_confirm_complete(trade_id, actor)` ✅ (0016)                                     | Records one side; completes when both confirm, marks items traded | MEET-05                |
 | `app.rating_submit(trade_id, actor, score, tags, note)` ✅                                    | Saves a rating; reveals both if both are in                       | RATE-01, RATE-02       |
 | `app.account_delete(user_id)`                                                               | Cancels active trades, frees items, deletes and anonymizes data   | DEL-01, DEL-03         |
 | `app.trades_cancel_for_deleted_item()` ✅ (trigger on `items`)                                | Before an item is deleted: cancels active trades using it (`item_unavailable`), frees the other person's items | ITEM-05, DEL-03 |

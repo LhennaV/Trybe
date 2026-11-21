@@ -496,7 +496,7 @@ POST   /api/trades/:id/decline
 POST   /api/trades/:id/cancel        reason withdrawn or no_show (no_show only after accepting)
 POST   /api/trades/:id/meetup
 POST   /api/trades/:id/meetup/confirm
-POST   /api/trades/:id/complete
+POST   /api/trades/:id/complete      confirm my side of the handoff; completes when both have
 POST   /api/trades/:id/ratings
 GET    /api/trades/:id/messages?cursor=
 POST   /api/trades/:id/messages

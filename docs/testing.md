@@ -207,8 +207,8 @@ connections and check that exactly one wins.
 | Two different trades accept the same item at once         | One succeeds, the other gets 409 or is cancelled |
 | Both people confirm completion at the same moment         | Trade ends completed exactly once                |
 
-Built in `tests/integration/db/trade-concurrency.test.ts` (2026-11-17), all but the last row,
-which waits for Phase 4. Counter vs accept is the same lock as double accept, so it is covered
+Built in `tests/integration/db/trade-concurrency.test.ts` (2026-11-17); the last row was
+added 2026-11-21 with the completion function. Counter vs accept is the same lock as double accept, so it is covered
 by that test. A deadlock (`40P01`) between two trades racing for one item is allowed: the API
 returns it as `CONFLICT` (409) and the client retries.
 
