@@ -17,6 +17,9 @@ How versions work (details in the README, "Versions and releases"):
 - Trade chat backend: send and read messages (`/api/trades/:id/messages`),
   live updates through Supabase Realtime for the two people in the trade only,
   and a warning flag when a message asks for a phone number or another app.
+- The chat tells the story of the trade by itself: every offer and counter
+  shows as an offer card, and accepting, declining, completing, or cancelling
+  (with the reason) adds a short line.
 
 ## [0.4.0] - 2026-11-21
 

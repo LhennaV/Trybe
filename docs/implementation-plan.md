@@ -328,7 +328,11 @@ Goal: a trade can go all the way from offer to rating.
 - [x] **[BE]** Contact info detection for phone numbers and outside apps (CHAT-04)
   - `asksForContact()` in `src/server/messages/contactInfo.ts`: phone numbers, emails, app names,
     and "number mo" style asks. The message is still sent; `asksForContact: true` shows the warning.
-- [ ] **[BE]** Offer and system messages written automatically on trade actions
+- [x] **[BE]** Offer and system messages written automatically on trade actions
+  - Done 2026-11-22 (migration 0019): triggers, so every change writes them in the same
+    transaction, including system cancels. Each offer or counter becomes an offer card from its
+    maker; accepted, declined, completed, and cancelled (with the reason) add a short system line
+    without names, so it reads right for both people.
 - [ ] **[BE]** meetup_spots table, seed safe spots for starting cities (MEET-02)
 - [ ] **[BE]** Meetup propose and confirm endpoints (MEET-01)
 - [x] **[BE]** Both-sides completion and "didn't show up" cancel (MEET-05, MEET-06)

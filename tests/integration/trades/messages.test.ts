@@ -2,8 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { GET as listRoute, POST as sendRoute } from "@/app/api/trades/[id]/messages/route";
 import { pageSchema } from "@/shared/contracts/common";
-import { messageSchema } from "@/shared/contracts/trades";
-import { categoryId, decline, newItem, propose } from "../db/tradeHelpers";
+import { messageSchema, type Message } from "@/shared/contracts/trades";
+import { accept, cancel, categoryId, complete, counter, decline, newItem, propose } from "../db/tradeHelpers";
 import { accessToken, anonClient, apiRequest, createUser, deleteUsers, readJson, testSql } from "../helpers";
 
 // Trade chat (migrations 0017 and 0018, CHAT-01, CHAT-04, TRD section 12):
@@ -26,6 +26,8 @@ async function person(label: string): Promise<Person> {
 async function newTrade() {
   return propose(sql, ana.id, [await newItem(sql, ana.id, category)], [await newItem(sql, ben.id, category)]);
 }
+
+const texts = (items: Message[]) => items.filter((m) => m.type === "text");
 
 const params = (id: string) => ({ params: Promise.resolve({ id }) });
 
@@ -76,7 +78,7 @@ describe("POST and GET /api/trades/:id/messages", () => {
     await send(ben, tradeId, { body: "Yes! Add me on viber" });
 
     const page = pageSchema(messageSchema).parse((await list(ben, tradeId)).body.data);
-    expect(page.items.map((m) => (m.type === "text" ? [m.from, m.body, m.asksForContact] : null))).toEqual([
+    expect(texts(page.items).map((m) => [m.from, m.body, m.asksForContact])).toEqual([
       ["me", "Yes! Add me on viber", true],
       ["them", "Is the wheel still available?", false],
     ]);
@@ -92,11 +94,12 @@ describe("POST and GET /api/trades/:id/messages", () => {
       const page = pageSchema(messageSchema).parse(
         (await list(ana, tradeId, `?limit=2${cursor && `&cursor=${cursor}`}`)).body.data,
       );
-      seen.push(...page.items.map((m) => (m.type === "text" ? m.body : "")));
+      seen.push(...page.items.map((m) => (m.type === "text" ? m.body : m.type)));
       if (!page.nextCursor) break;
       cursor = page.nextCursor;
     }
-    expect(seen).toEqual(["three", "two", "one"]);
+    // The offer card from proposing is the oldest, so it comes last.
+    expect(seen).toEqual(["three", "two", "one", "offer"]);
   });
 
   it("hides the chat from everyone else and checks the body", async () => {
@@ -117,7 +120,54 @@ describe("POST and GET /api/trades/:id/messages", () => {
     const res = await send(ana, tradeId, { body: "After" });
     expect(res.status).toBe(409);
     expect(res.body.error.code).toBe("TRADE_NOT_PENDING");
-    expect((await list(ben, tradeId)).body.data.items).toHaveLength(1);
+    expect(texts((await list(ben, tradeId)).body.data.items)).toHaveLength(1);
+  });
+});
+
+describe("offer cards and system lines (migration 0019)", () => {
+  // The chat oldest first, as the app shows it, in a short form.
+  async function story(as: Person, tradeId: string) {
+    const page = pageSchema(messageSchema).parse((await list(as, tradeId, "?limit=50")).body.data);
+    return page.items.reverse().map((m) => (m.type === "system" ? m.body : `${m.type} from ${m.from}`));
+  }
+
+  it("tells the whole trade in the chat", async () => {
+    const tradeId = await newTrade();
+    await counter(sql, tradeId, ben.id, [await newItem(sql, ben.id, category)], [await newItem(sql, ana.id, category)]);
+    await accept(sql, tradeId, ana.id);
+    await complete(sql, tradeId, ana.id);
+    await complete(sql, tradeId, ben.id);
+
+    expect(await story(ana, tradeId)).toEqual([
+      "offer from me",
+      "offer from them",
+      "Offer accepted! The items are reserved. Set up a meetup next.",
+      "Trade completed! Don't forget to rate each other.",
+    ]);
+    // Offer cards point at real offers of this trade.
+    const page = pageSchema(messageSchema).parse((await list(ben, tradeId)).body.data);
+    const cards = page.items.filter((m) => m.type === "offer");
+    const offers = await sql`select id from public.trade_offers where trade_id = ${tradeId}`;
+    expect(cards.map((c) => c.offerId).sort()).toEqual(offers.map((o) => o.id).sort());
+  });
+
+  it("explains why a trade ended", async () => {
+    const declined = await newTrade();
+    await decline(sql, declined, ben.id);
+    expect((await story(ben, declined)).at(-1)).toBe("Offer declined.");
+
+    const noShow = await newTrade();
+    await accept(sql, noShow, ben.id);
+    await cancel(sql, noShow, ana.id, "no_show");
+    expect((await story(ben, noShow)).at(-1)).toBe("Trade cancelled: someone didn't show up.");
+
+    const lostItem = await newTrade();
+    const [line] = await sql`
+      select toi.item_id from public.trade_offer_items toi
+      join public.trades t on t.current_offer_id = toi.offer_id
+      where t.id = ${lostItem} and toi.side = 'initiator'`;
+    await sql`delete from public.items where id = ${line.item_id}`;
+    expect((await story(ana, lostItem)).at(-1)).toBe("Trade cancelled: an item is no longer available.");
   });
 });
 
@@ -127,7 +177,7 @@ describe("reading messages straight from Supabase (RLS, TRD section 12)", () => 
     await send(ana, tradeId, { body: "Only for Ben" });
 
     const read = (client: ReturnType<typeof anonClient>) =>
-      client.from("messages").select("body").eq("trade_id", tradeId);
+      client.from("messages").select("body").eq("trade_id", tradeId).eq("type", "text");
 
     expect((await read(supabaseAs(ana))).data).toEqual([{ body: "Only for Ben" }]);
     expect((await read(supabaseAs(ben))).data).toEqual([{ body: "Only for Ben" }]);
@@ -139,7 +189,8 @@ describe("reading messages straight from Supabase (RLS, TRD section 12)", () => 
     const tradeId = await newTrade();
     const insert = await supabaseAs(ana).from("messages").insert({ trade_id: tradeId, sender_id: ana.id, type: "text", body: "sneaky" });
     expect(insert.error).not.toBeNull();
-    const [count] = await sql`select count(*)::int as n from public.messages where trade_id = ${tradeId}`;
+    const [count] = await sql`
+      select count(*)::int as n from public.messages where trade_id = ${tradeId} and type = 'text'`;
     expect(count.n).toBe(0);
   });
 
