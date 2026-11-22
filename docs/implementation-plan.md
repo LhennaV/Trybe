@@ -314,10 +314,20 @@ Goal: a trade can go all the way from offer to rating.
 
 ### Tasks
 
-- [ ] **[BE]** messages table with RLS so only trade members can read (TRD section 12)
-- [ ] **[BE]** Send message endpoint with validation and block check (CHAT-01)
+- [x] **[BE]** messages table with RLS so only trade members can read (TRD section 12)
+  - Done 2026-11-22 (migrations 0017 and 0018): one select policy for the two people in the trade,
+    through `rls.is_trade_member()` (a small `rls` schema for policy helpers), and `messages` added
+    to the `supabase_realtime` publication. No write policies. Tested with real user tokens.
+    For Lhenna: subscribe to `postgres_changes` INSERT on `messages` with `trade_id=eq.<id>`
+    while signed in; load older ones from `GET /api/trades/:id/messages`.
+- [x] **[BE]** Send message endpoint with validation and block check (CHAT-01)
+  - `POST` and `GET /api/trades/:id/messages` (newest first, cursor paging). Open while the
+    trade is pending or accepted, read only after. 404 for anyone outside the trade. Left: the
+    block check waits for the blocks table (Phase 5), in the endpoint and in the RLS helper.
 - [ ] **[BE]** Requests inbox logic for first contact (CHAT-02)
-- [ ] **[BE]** Contact info detection for phone numbers and outside apps (CHAT-04)
+- [x] **[BE]** Contact info detection for phone numbers and outside apps (CHAT-04)
+  - `asksForContact()` in `src/server/messages/contactInfo.ts`: phone numbers, emails, app names,
+    and "number mo" style asks. The message is still sent; `asksForContact: true` shows the warning.
 - [ ] **[BE]** Offer and system messages written automatically on trade actions
 - [ ] **[BE]** meetup_spots table, seed safe spots for starting cities (MEET-02)
 - [ ] **[BE]** Meetup propose and confirm endpoints (MEET-01)

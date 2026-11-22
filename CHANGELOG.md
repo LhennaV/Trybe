@@ -12,6 +12,12 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+### Added
+
+- Trade chat backend: send and read messages (`/api/trades/:id/messages`),
+  live updates through Supabase Realtime for the two people in the trade only,
+  and a warning flag when a message asks for a phone number or another app.
+
 ## [0.4.0] - 2026-11-21
 
 ### Added
