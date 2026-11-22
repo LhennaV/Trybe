@@ -252,8 +252,10 @@ and logged in, exactly like a browser:
 - ✅ No inserts into any of them.
 - ✅ The private `app` schema (audit log) can't be reached.
 - ⏳ Add every new table to `TABLES` in that file.
-- ⏳ `messages`: a trade member can read that trade's messages; a non-member
-  gets no rows (Phase 4).
+- ✅ `messages`: a trade member can read that trade's messages; a non-member
+  gets no rows, and nobody can insert (`tests/integration/trades/messages.test.ts`,
+  2026-11-22, with real user tokens). The live Realtime push itself isn't
+  tested: the local stack leaves Realtime off (`scripts/test-db.mjs`).
 
 ### 7.5 Other areas
 

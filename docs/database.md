@@ -371,6 +371,7 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | trade_offer_items | `uq_trade_offer_items_offer_id_item_id (offer_id, item_id)`                       | Items in an offer, once each   |
 | trade_offer_items | `idx_trade_offer_items_item_id (item_id)`                                       | Conflicting trades on accept   |
 | messages          | `idx_messages_trade_id_created_at (trade_id, created_at)`                       | Chat history                   |
+| messages          | `idx_messages_sender_id`, `idx_messages_offer_id`                                 | Foreign key checks (section 6.1 rule 9) |
 | ratings           | `uq_ratings_trade_id_rater_id`                                                  | One rating per rater per trade |
 | ratings           | `idx_ratings_ratee_id_visible (ratee_id) where visible_at is not null`          | Reviews on a profile           |
 | ratings           | `idx_ratings_hidden_created_at (created_at) where visible_at is null`           | Rating reveal job              |
@@ -581,7 +582,10 @@ These periods must match the privacy policy. Change both together.
 - Tables the browser never reads directly have RLS on and **no policies**,
   so only the server connection can use them.
 - `messages` has a select policy for trade members who have not blocked each
-  other (TRD section 12).
+  other (TRD section 12): `messages_select_trade_members` (migration 0018). It calls
+  `rls.is_trade_member()`, a security definer helper in the small `rls` schema, since
+  policies run as the signed-in user and can't read `trades` or use `app`. The
+  block check joins it in Phase 5.
 - No table has insert, update, or delete policies for `anon` or
   `authenticated`. All writes go through the API.
 

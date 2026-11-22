@@ -573,6 +573,11 @@ If a check fails because something changed, return `409`.
   recipient of that trade and neither has blocked the other.
 - Sending a message always goes through `POST /api/trades/:id/messages` so
   validation, block checks, and the contact info warning run on the server.
+- Built 2026-11-22: `messages` is in the `supabase_realtime` publication. A
+  signed-in client subscribes to INSERT on `messages` filtered by
+  `trade_id=eq.<id>` and loads older messages from
+  `GET /api/trades/:id/messages` (newest first). The chat is read only once
+  the trade is completed, declined, or cancelled.
 
 ## 13. Files and images
 

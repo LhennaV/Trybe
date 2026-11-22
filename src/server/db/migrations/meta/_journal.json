@@ -120,6 +120,27 @@
       "when": 1795226390263,
       "tag": "0016_trade_complete_function",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1795356298550,
+      "tag": "0017_messages",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1795356308808,
+      "tag": "0018_messages_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795357505056,
+      "tag": "0019_trade_chat_events",
+      "breakpoints": true
     }
   ]
 }

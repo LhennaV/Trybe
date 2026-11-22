@@ -33,6 +33,7 @@ import { POST_CAPTION_MAX, POST_PHOTOS_MAX, POST_TITLE_MAX } from "@/shared/cont
 import {
   CANCEL_REASONS,
   CASH_MAX,
+  MESSAGE_MAX,
   RATING_NOTE_MAX,
   RATING_TAGS,
   RATING_TAGS_MAX,
@@ -598,5 +599,48 @@ export const ratings = pgTable(
     ),
     check("ck_ratings_note_length", sql`char_length(${t.note}) <= ${num(RATING_NOTE_MAX)}`),
     check("ck_ratings_not_self", sql`${t.raterId} <> ${t.rateeId}`),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// messages
+// ---------------------------------------------------------------------------
+
+export const MESSAGE_TYPES = ["text", "offer", "system"] as const;
+
+// The chat thread of a trade (CHAT-01). Written only by the server; the two
+// people in the trade read new rows live through Supabase Realtime, allowed
+// by the one select policy in migration 0018 (TRD section 12). Not audited:
+// too frequent, and the chat is its own record (docs/database.md section 7.1).
+export const messages = pgTable(
+  "messages",
+  {
+    id: id(),
+    tradeId: uuid("trade_id")
+      .notNull()
+      .references(() => trades.id, { onDelete: "cascade" }),
+    // Null for system messages, and after the sender deletes their account.
+    senderId: uuid("sender_id").references(() => users.id, { onDelete: "set null" }),
+    type: text("type", { enum: MESSAGE_TYPES }).notNull(),
+    // Text and system messages.
+    body: text("body"),
+    // Offer cards point at the offer they show.
+    offerId: uuid("offer_id").references(() => tradeOffers.id, { onDelete: "cascade" }),
+    // CHAT-04: the text seems to ask for a phone number or another app.
+    asksForContact: boolean("asks_for_contact").notNull().default(false),
+    ...timestamps(),
+  },
+  (t) => [
+    // Chat history, newest first, and the trade_id key.
+    index("idx_messages_trade_id_created_at").on(t.tradeId, t.createdAt),
+    index("idx_messages_sender_id").on(t.senderId),
+    index("idx_messages_offer_id").on(t.offerId),
+    check("ck_messages_type", sql`${t.type} in (${inList(MESSAGE_TYPES)})`),
+    check("ck_messages_body_length", sql`char_length(${t.body}) between 1 and ${num(MESSAGE_MAX)}`),
+    // Each type carries what it needs.
+    check(
+      "ck_messages_shape",
+      sql`(${t.type} = 'offer') = (${t.offerId} is not null) and (${t.type} = 'offer' or ${t.body} is not null)`,
+    ),
   ],
 ).enableRLS();
