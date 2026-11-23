@@ -24,6 +24,7 @@ const TABLES = [
   "trade_offer_items",
   "ratings",
   "messages",
+  "meetup_spots",
 ] as const;
 const created: string[] = [];
 let signedIn: ReturnType<typeof anonClient>;

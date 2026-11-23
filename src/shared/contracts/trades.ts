@@ -8,7 +8,7 @@
 import { z } from "zod";
 import { pageQuerySchema } from "@/shared/contracts/common";
 import { itemConditionSchema } from "@/shared/contracts/items";
-import { userSummarySchema } from "@/shared/contracts/users";
+import { CITY_MAX, userSummarySchema } from "@/shared/contracts/users";
 
 // ---------------------------------------------------------------------------
 // Fields
@@ -176,6 +176,13 @@ export const setMeetupSchema = z.strictObject({
   meetupAt: z.iso.datetime({ offset: true }),
 });
 export type SetMeetup = z.infer<typeof setMeetupSchema>;
+
+// GET /api/meetup-spots?city= (MEET-02). Without a city, every active spot.
+// The city matches without caring about upper or lower case.
+export const meetupSpotsQuerySchema = z.strictObject({
+  city: z.string().trim().min(1).max(CITY_MAX).optional(),
+});
+export type MeetupSpotsQuery = z.infer<typeof meetupSpotsQuerySchema>;
 
 // POST /api/trades/:id/messages
 export const sendMessageSchema = z.strictObject({

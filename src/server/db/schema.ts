@@ -11,6 +11,7 @@ import {
   type AnyPgColumn,
   boolean,
   check,
+  doublePrecision,
   index,
   integer,
   pgTable,
@@ -468,8 +469,14 @@ export const trades = pgTable(
     currentOfferId: uuid("current_offer_id").references((): AnyPgColumn => tradeOffers.id, { onDelete: "set null" }),
     cancelledBy: uuid("cancelled_by").references(() => users.id, { onDelete: "set null" }),
     cancelReason: text("cancel_reason", { enum: CANCEL_REASONS }),
+    // MEET-01: one person suggests a spot and time; the other confirms it or
+    // suggests another, which replaces it. The suggester counts as confirmed.
+    meetupSpotId: uuid("meetup_spot_id").references((): AnyPgColumn => meetupSpots.id, { onDelete: "restrict" }),
+    meetupAt: timestamp("meetup_at", { withTimezone: true }),
+    meetupProposedBy: uuid("meetup_proposed_by").references(() => users.id, { onDelete: "set null" }),
+    meetupConfirmedAt: timestamp("meetup_confirmed_at", { withTimezone: true }),
     // MEET-05: each person confirms the handoff; the trade completes when
-    // both have. Meetup columns arrive with the meetup endpoints.
+    // both have.
     initiatorConfirmedAt: timestamp("initiator_confirmed_at", { withTimezone: true }),
     recipientConfirmedAt: timestamp("recipient_confirmed_at", { withTimezone: true }),
     completedAt: timestamp("completed_at", { withTimezone: true }),
@@ -488,6 +495,12 @@ export const trades = pgTable(
     check("ck_trades_not_self", sql`${t.initiatorId} <> ${t.recipientId}`),
     // A cancel reason exactly when the trade is cancelled.
     check("ck_trades_cancel_reason_when_cancelled", sql`(${t.status} = 'cancelled') = (${t.cancelReason} is not null)`),
+    // A meetup has both a spot and a time, or neither.
+    check("ck_trades_meetup_pair", sql`(${t.meetupSpotId} is null) = (${t.meetupAt} is null)`),
+    // The expired meetup job (docs/database.md section 8), and foreign keys.
+    index("idx_trades_meetup_at_accepted").on(t.meetupAt).where(sql`${t.status} = 'accepted'`),
+    index("idx_trades_meetup_spot_id").on(t.meetupSpotId),
+    index("idx_trades_meetup_proposed_by").on(t.meetupProposedBy),
     // A completion time exactly when the trade is completed.
     check("ck_trades_completed_at_when_completed", sql`(${t.status} = 'completed') = (${t.completedAt} is not null)`),
   ],
@@ -642,5 +655,33 @@ export const messages = pgTable(
       "ck_messages_shape",
       sql`(${t.type} = 'offer') = (${t.offerId} is not null) and (${t.type} = 'offer' or ${t.body} is not null)`,
     ),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// meetup_spots
+// ---------------------------------------------------------------------------
+
+// Curated safe places to meet, per city (MEET-02): public, busy, with guards
+// or CCTV. Seeded by migration; retired spots are switched off, never deleted,
+// so old trades still point at them.
+export const meetupSpots = pgTable(
+  "meetup_spots",
+  {
+    id: id(),
+    city: text("city").notNull(),
+    name: text("name").notNull(),
+    description: text("description").notNull(),
+    lat: doublePrecision("lat").notNull(),
+    lng: doublePrecision("lng").notNull(),
+    active: boolean("active").notNull().default(true),
+    ...timestamps(),
+  },
+  (t) => [
+    // GET /api/meetup-spots?city=
+    index("idx_meetup_spots_city_active").on(sql`lower(${t.city})`).where(sql`${t.active}`),
+    uniqueIndex("uq_meetup_spots_city_name").on(t.city, t.name),
+    check("ck_meetup_spots_lat", sql`${t.lat} between -90 and 90`),
+    check("ck_meetup_spots_lng", sql`${t.lng} between -180 and 180`),
   ],
 ).enableRLS();

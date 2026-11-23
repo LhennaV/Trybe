@@ -160,8 +160,8 @@ Only the server connection (`DATABASE_URL`) calls `app` functions.
 | `app.trade_accept(trade_id, actor)` ✅                                                        | Accepts, reserves items, cancels conflicting trades               | TRD-04, TRD-06         |
 | `app.trade_decline(trade_id, actor)` ✅                                                       | Declines the current offer                                        | TRD-04                 |
 | `app.trade_cancel(trade_id, actor, reason)` ✅                                                | Cancels, frees reserved items, files a report on no-show          | TRD-08, MEET-06        |
-| `app.trade_set_meetup(trade_id, actor, spot_id, meetup_at)`                                 | Proposes a meetup                                                 | MEET-01                |
-| `app.trade_confirm_meetup(trade_id, actor)`                                                 | Confirms the meetup                                               | MEET-01                |
+| `app.trade_set_meetup(trade_id, actor, spot_id, meetup_at)` ✅ (0021)                       | Proposes a meetup                                                 | MEET-01                |
+| `app.trade_confirm_meetup(trade_id, actor)` ✅ (0021)                                       | Confirms the meetup                                               | MEET-01                |
 | `app.trade_confirm_complete(trade_id, actor)` ✅ (0016)                                     | Records one side; completes when both confirm, marks items traded | MEET-05                |
 | `app.rating_submit(trade_id, actor, score, tags, note)` ✅                                    | Saves a rating; reveals both if both are in                       | RATE-01, RATE-02       |
 | `app.account_delete(user_id)`                                                               | Cancels active trades, frees items, deletes and anonymizes data   | DEL-01, DEL-03         |
@@ -367,6 +367,8 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | trades            | `idx_trades_current_offer_id`, `idx_trades_cancelled_by`                          | Foreign key checks (section 6.1 rule 9) |
 | trade_offers      | `idx_trade_offers_made_by (made_by)`                                              | Account deletion                |
 | trades            | `idx_trades_meetup_at_accepted (meetup_at) where status = 'accepted'`           | Expired meetup job             |
+| trades            | `idx_trades_meetup_spot_id`, `idx_trades_meetup_proposed_by`                      | Foreign key checks (section 6.1 rule 9) |
+| meetup_spots      | `idx_meetup_spots_city_active (lower(city)) where active`, `uq_meetup_spots_city_name` | Spots by city                  |
 | trade_offers      | `idx_trade_offers_trade_id_created_at (trade_id, created_at)`                   | Offer history                  |
 | trade_offer_items | `uq_trade_offer_items_offer_id_item_id (offer_id, item_id)`                       | Items in an offer, once each   |
 | trade_offer_items | `idx_trade_offer_items_item_id (item_id)`                                       | Conflicting trades on accept   |

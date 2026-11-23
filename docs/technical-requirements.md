@@ -501,8 +501,8 @@ POST   /api/trades/:id/counter
 POST   /api/trades/:id/accept
 POST   /api/trades/:id/decline
 POST   /api/trades/:id/cancel        reason withdrawn or no_show (no_show only after accepting)
-POST   /api/trades/:id/meetup
-POST   /api/trades/:id/meetup/confirm
+POST   /api/trades/:id/meetup          suggest a spot and time (accepted trades); replaces the last one
+POST   /api/trades/:id/meetup/confirm  the other person agrees
 POST   /api/trades/:id/complete      confirm my side of the handoff; completes when both have
 POST   /api/trades/:id/ratings
 GET    /api/trades/:id/messages?cursor=
@@ -517,7 +517,7 @@ DELETE /api/mutes/:userId
 
 Other
 GET    /api/hobbies
-GET    /api/meetup-spots?city=
+GET    /api/meetup-spots?city=            public; active spots, city in any case
 GET    /api/notifications
 POST   /api/notifications/read
 GET    /api/search?q=

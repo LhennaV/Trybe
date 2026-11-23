@@ -20,6 +20,9 @@ How versions work (details in the README, "Versions and releases"):
 - The chat tells the story of the trade by itself: every offer and counter
   shows as an offer card, and accepting, declining, completing, or cancelling
   (with the reason) adds a short line.
+- Meetups: suggest a safe spot and time after a trade is accepted, and the
+  other person confirms it (`/api/trades/:id/meetup`). Safe spots per city
+  come from `GET /api/meetup-spots`, starting with two in Quezon City.
 
 ## [0.4.0] - 2026-11-21
 

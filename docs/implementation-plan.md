@@ -333,8 +333,16 @@ Goal: a trade can go all the way from offer to rating.
     transaction, including system cancels. Each offer or counter becomes an offer card from its
     maker; accepted, declined, completed, and cancelled (with the reason) add a short system line
     without names, so it reads right for both people.
-- [ ] **[BE]** meetup_spots table, seed safe spots for starting cities (MEET-02)
-- [ ] **[BE]** Meetup propose and confirm endpoints (MEET-01)
+- [x] **[BE]** meetup_spots table, seed safe spots for starting cities (MEET-02)
+  - Done 2026-11-23 (migrations 0020 and 0021) with the two Quezon City spots from the meetup
+    screen, same ids, so its sample data keeps working. `GET /api/meetup-spots?city=` (public).
+    Left: more spots and cities before launch; retired spots are switched off, never deleted.
+- [x] **[BE]** Meetup propose and confirm endpoints (MEET-01)
+  - `POST /api/trades/:id/meetup` and `/meetup/confirm` through `app.trade_set_meetup` and
+    `app.trade_confirm_meetup` (trade locked first). Accepted trades only, an active spot, a time
+    within 60 days. A new suggestion replaces the old one; the suggester counts as confirmed.
+    Trade detail fills `meetup`, and the chat gets "Meetup suggested" and "Meetup confirmed"
+    lines (Philippine time). Left: the `trades_expire_meetups` job (docs/database.md section 8).
 - [x] **[BE]** Both-sides completion and "didn't show up" cancel (MEET-05, MEET-06)
   - Done 2026-11-21 (migrations 0015 and 0016): `POST /api/trades/:id/complete` through
     `app.trade_confirm_complete`. Each side confirms once (safe to repeat); when both have, the
