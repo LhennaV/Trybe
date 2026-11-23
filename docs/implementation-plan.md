@@ -324,7 +324,14 @@ Goal: a trade can go all the way from offer to rating.
   - `POST` and `GET /api/trades/:id/messages` (newest first, cursor paging). Open while the
     trade is pending or accepted, read only after. 404 for anyone outside the trade. Left: the
     block check waits for the blocks table (Phase 5), in the endpoint and in the RLS helper.
-- [ ] **[BE]** Requests inbox logic for first contact (CHAT-02)
+- [x] **[BE]** Requests inbox logic for first contact (CHAT-02)
+  - Done 2026-11-23 (migrations 0022 and 0023, rules in TRD section 21, agreed by both):
+    `conversations` table, one per pair, for messages outside a trade. `POST /api/conversations`
+    (by handle), `GET /api/conversations?box=chats|requests`, `GET`/`POST /api/conversations/:id/messages`,
+    and `/accept`, `/decline`. No completed trade together: a request, one message until accepted
+    or replied to. "Traded only" refuses strangers (403). Declining is silent; asking again works
+    after 7 days. Messages RLS now covers conversations too. Contract:
+    `src/shared/contracts/conversations.ts`. Left: block checks (Phase 5).
 - [x] **[BE]** Contact info detection for phone numbers and outside apps (CHAT-04)
   - `asksForContact()` in `src/server/messages/contactInfo.ts`: phone numbers, emails, app names,
     and "number mo" style asks. The message is still sent; `asksForContact: true` shows the warning.

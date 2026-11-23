@@ -20,6 +20,10 @@ How versions work (details in the README, "Versions and releases"):
 - The chat tells the story of the trade by itself: every offer and counter
   shows as an offer card, and accepting, declining, completing, or cancelling
   (with the reason) adds a short line.
+- Message requests: message someone without a trade (`/api/conversations`).
+  From someone you haven't traded with, it lands in Requests and they can send
+  one message until you accept or reply. "Traded only" now blocks strangers
+  from messaging. Declining is quiet.
 - Meetups: suggest a safe spot and time after a trade is accepted, and the
   other person confirms it (`/api/trades/:id/meetup`). Safe spots per city
   come from `GET /api/meetup-spots`, starting with two in Quezon City.

@@ -505,6 +505,12 @@ POST   /api/trades/:id/meetup          suggest a spot and time (accepted trades)
 POST   /api/trades/:id/meetup/confirm  the other person agrees
 POST   /api/trades/:id/complete      confirm my side of the handoff; completes when both have
 POST   /api/trades/:id/ratings
+GET    /api/conversations?box=chats|requests&cursor=   direct messages outside trades (CHAT-02)
+POST   /api/conversations                          message someone by handle; a request if you haven't traded
+GET    /api/conversations/:id/messages?cursor=
+POST   /api/conversations/:id/messages             replying to a request accepts it
+POST   /api/conversations/:id/accept
+POST   /api/conversations/:id/decline              silent; they can ask again after 7 days
 GET    /api/trades/:id/messages?cursor=
 POST   /api/trades/:id/messages
 
@@ -776,6 +782,7 @@ Check current pricing before paying. Prices change.
 | "Other" hobby in onboarding      | **Decided 2026-11-10:** saved as a hobby request, not shown on the profile; popular ones are added to the list | Both    |
 | Branch protection on `main`      | **Decided 2026-11-10:** off. Merge only when CI is green (docs/testing.md section 10) | Both    |
 | Post and trade details           | **Decided 2026-11-08:** one hobby per post; offers need an item on both sides (no cash-only); fixed rating tags (`RATING_TAGS` in `src/shared/contracts/trades.ts`); item condition "worn" shows as "Well loved" | Both    |
+| Message requests (CHAT-02)       | **Decided 2026-11-23 (Tristan and Lhenna), built the same day:** people can message without a trade, one conversation per pair (new `conversations` table; trade chats stay inside trades). Someone you have no completed trade with lands in Requests and can send one message until you "Accept chat". "Traded only" refuses messages from them (403) but still allows trade proposals. Decline is silent; they can ask again after 7 days (block to stop for good, Phase 5). Trade proposals always go to Trades, not Requests | Both    |
 | Who can message by default       | **Decided 2026-11-05:** anyone via Requests (`message_permission` default `anyone`); users can switch to traded-only | Both    |
 | Rate limit store                 | Postgres table or Upstash Redis (free tier). Decide in Phase 5 | Tristan |
 | Item photo limit and upload size | See section 13                      | Tristan |

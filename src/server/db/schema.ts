@@ -629,9 +629,9 @@ export const messages = pgTable(
   "messages",
   {
     id: id(),
-    tradeId: uuid("trade_id")
-      .notNull()
-      .references(() => trades.id, { onDelete: "cascade" }),
+    // A message lives in a trade's chat or in a conversation, never both.
+    tradeId: uuid("trade_id").references(() => trades.id, { onDelete: "cascade" }),
+    conversationId: uuid("conversation_id").references((): AnyPgColumn => conversations.id, { onDelete: "cascade" }),
     // Null for system messages, and after the sender deletes their account.
     senderId: uuid("sender_id").references(() => users.id, { onDelete: "set null" }),
     type: text("type", { enum: MESSAGE_TYPES }).notNull(),
@@ -648,6 +648,12 @@ export const messages = pgTable(
     index("idx_messages_trade_id_created_at").on(t.tradeId, t.createdAt),
     index("idx_messages_sender_id").on(t.senderId),
     index("idx_messages_offer_id").on(t.offerId),
+    // Conversation history, and the conversation_id key.
+    index("idx_messages_conversation_id_created_at").on(t.conversationId, t.createdAt),
+    // In a trade or in a conversation, exactly one. Conversations only carry
+    // text: offer cards and system lines belong to trades.
+    check("ck_messages_one_thread", sql`(${t.tradeId} is null) <> (${t.conversationId} is null)`),
+    check("ck_messages_conversation_text", sql`${t.conversationId} is null or ${t.type} = 'text'`),
     check("ck_messages_type", sql`${t.type} in (${inList(MESSAGE_TYPES)})`),
     check("ck_messages_body_length", sql`char_length(${t.body}) between 1 and ${num(MESSAGE_MAX)}`),
     // Each type carries what it needs.
@@ -683,5 +689,51 @@ export const meetupSpots = pgTable(
     uniqueIndex("uq_meetup_spots_city_name").on(t.city, t.name),
     check("ck_meetup_spots_lat", sql`${t.lat} between -90 and 90`),
     check("ck_meetup_spots_lng", sql`${t.lng} between -180 and 180`),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// conversations
+// ---------------------------------------------------------------------------
+
+export const CONVERSATION_STATUSES = ["requested", "accepted", "declined"] as const;
+
+// Direct messages outside a trade, one conversation per pair of people
+// (CHAT-02, decided 2026-11-23). Someone you have no completed trade with
+// lands in Requests and can send one message until you accept. Messages live
+// in `messages` with conversation_id set. Deleting either account deletes the
+// conversation and its messages.
+export const conversations = pgTable(
+  "conversations",
+  {
+    id: id(),
+    // The pair, in a fixed order (a < b), so each pair has one row.
+    userAId: uuid("user_a_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    userBId: uuid("user_b_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // Who sent the request. Only they wait; only the other person accepts.
+    startedBy: uuid("started_by")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    status: text("status", { enum: CONVERSATION_STATUSES }).notNull().default("requested"),
+    // When the current request was sent: a declined one can be sent again
+    // 7 days later.
+    requestedAt: timestamp("requested_at", { withTimezone: true }).notNull().defaultNow(),
+    // Orders the Chats and Requests lists.
+    lastMessageAt: timestamp("last_message_at", { withTimezone: true }).notNull().defaultNow(),
+    ...timestamps(),
+  },
+  (t) => [
+    uniqueIndex("uq_conversations_user_a_id_user_b_id").on(t.userAId, t.userBId),
+    // Each person's lists, newest first (and the user keys).
+    index("idx_conversations_user_a_id_last_message_at").on(t.userAId, t.lastMessageAt),
+    index("idx_conversations_user_b_id_last_message_at").on(t.userBId, t.lastMessageAt),
+    index("idx_conversations_started_by").on(t.startedBy),
+    check("ck_conversations_pair_order", sql`${t.userAId} < ${t.userBId}`),
+    check("ck_conversations_started_by", sql`${t.startedBy} in (${t.userAId}, ${t.userBId})`),
+    check("ck_conversations_status", sql`${t.status} in (${inList(CONVERSATION_STATUSES)})`),
   ],
 ).enableRLS();

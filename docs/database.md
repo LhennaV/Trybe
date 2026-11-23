@@ -587,7 +587,9 @@ These periods must match the privacy policy. Change both together.
   other (TRD section 12): `messages_select_trade_members` (migration 0018). It calls
   `rls.is_trade_member()`, a security definer helper in the small `rls` schema, since
   policies run as the signed-in user and can't read `trades` or use `app`. The
-  block check joins it in Phase 5.
+  block check joins it in Phase 5. Since migration 0023 the policy is
+  `messages_select_members`: trade messages through `rls.is_trade_member()`,
+  conversation messages through `rls.is_conversation_member()`.
 - No table has insert, update, or delete policies for `anon` or
   `authenticated`. All writes go through the API.
 

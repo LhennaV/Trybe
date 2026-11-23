@@ -70,11 +70,16 @@ export async function sendMessage(user: SessionUser, tradeId: string, input: Sen
 // is the latest messages, and the cursor goes back in time. Clients show them
 // oldest at the top.
 export async function listMessages(viewerId: string, tradeId: string, query: PageQuery): Promise<Page<Message>> {
-  const db = getDb();
-  await findTrade(db, viewerId, tradeId);
+  await findTrade(getDb(), viewerId, tradeId);
+  return pageOfMessages(eq(messages.tradeId, tradeId), viewerId, query);
+}
 
+// A page of one thread's messages (a trade's or a conversation's), newest
+// first, from the viewer's side.
+export async function pageOfMessages(thread: SQL, viewerId: string, query: PageQuery): Promise<Page<Message>> {
+  const db = getDb();
   const cursor = decodeCursor(query.cursor);
-  const conditions: SQL[] = [eq(messages.tradeId, tradeId)];
+  const conditions: SQL[] = [thread];
   if (cursor) {
     conditions.push(sql`(${messages.createdAt}, ${messages.id}) < (${cursor.at}::timestamptz, ${cursor.id}::uuid)`);
   }
