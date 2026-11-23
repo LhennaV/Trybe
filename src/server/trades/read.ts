@@ -10,9 +10,10 @@ import type {
   TradesQuery,
 } from "@/shared/contracts/trades";
 import { getDb } from "@/server/db";
-import { itemPhotos, items, photos, ratings, tradeOfferItems, tradeOffers, trades, users } from "@/server/db/schema";
+import { itemPhotos, items, meetupSpots, photos, ratings, tradeOfferItems, tradeOffers, trades, users } from "@/server/db/schema";
 import { AppError } from "@/server/errors";
 import { decodeCursor, encodeCursor } from "@/server/http/cursor";
+import { toMeetupSpot } from "@/server/trades/meetups";
 import { canRespond } from "@/server/trades/stateMachine";
 import { publicPhotoUrl } from "@/server/uploads/storage";
 import { toUserSummary } from "@/server/users/summary";
@@ -33,6 +34,22 @@ function viewerSide(trade: TradeRow, viewerId: string): DbSide {
 
 function otherId(trade: TradeRow, viewerId: string): string | null {
   return trade.initiatorId === viewerId ? trade.recipientId : trade.initiatorId;
+}
+
+// MEET-01: the suggester counts as confirmed; the other person confirms.
+function meetupFor(trade: TradeRow, spot: typeof meetupSpots.$inferSelect | null, viewerId: string) {
+  if (!trade.meetupAt || !spot) {
+    return { spot: null, at: null, proposedBy: null, confirmedByMe: false, confirmedByThem: false };
+  }
+  const suggestedByMe = trade.meetupProposedBy === viewerId;
+  const otherConfirmed = trade.meetupConfirmedAt !== null;
+  return {
+    spot: toMeetupSpot(spot),
+    at: trade.meetupAt.toISOString(),
+    proposedBy: whoIs(trade.meetupProposedBy, viewerId),
+    confirmedByMe: suggestedByMe || otherConfirmed,
+    confirmedByThem: !suggestedByMe || otherConfirmed,
+  };
 }
 
 function completionFor(trade: TradeRow, viewerId: string) {
@@ -174,21 +191,23 @@ export async function getTrade(viewerId: string, tradeId: string): Promise<Trade
     .limit(1);
   if (!trade) throw new AppError("TRADE_NOT_FOUND");
 
-  const [offers, [myRating]] = await Promise.all([
+  const [offers, [myRating], [spot]] = await Promise.all([
     loadOffers(eq(tradeOffers.tradeId, trade.id), () => trade, viewerId),
     getDb()
       .select({ id: ratings.id })
       .from(ratings)
       .where(and(eq(ratings.tradeId, trade.id), eq(ratings.raterId, viewerId)))
       .limit(1),
+    trade.meetupSpotId
+      ? getDb().select().from(meetupSpots).where(eq(meetupSpots.id, trade.meetupSpotId)).limit(1)
+      : Promise.resolve([]),
   ]);
   const [summary] = await buildSummaries([trade], viewerId, new Map(offers.map((o) => [o.id, o])));
 
   return {
     ...summary,
     offers,
-    // Meetup comes later in Phase 4.
-    meetup: { spot: null, at: null, proposedBy: null, confirmedByMe: false, confirmedByThem: false },
+    meetup: meetupFor(trade, spot ?? null, viewerId),
     // MEET-05: each side's handoff confirmation.
     completion: completionFor(trade, viewerId),
     cancelledBy: trade.cancelledBy ? whoIs(trade.cancelledBy, viewerId) : null,

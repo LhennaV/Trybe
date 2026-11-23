@@ -324,7 +324,14 @@ Goal: a trade can go all the way from offer to rating.
   - `POST` and `GET /api/trades/:id/messages` (newest first, cursor paging). Open while the
     trade is pending or accepted, read only after. 404 for anyone outside the trade. Left: the
     block check waits for the blocks table (Phase 5), in the endpoint and in the RLS helper.
-- [ ] **[BE]** Requests inbox logic for first contact (CHAT-02)
+- [x] **[BE]** Requests inbox logic for first contact (CHAT-02)
+  - Done 2026-11-23 (migrations 0022 and 0023, rules in TRD section 21, agreed by both):
+    `conversations` table, one per pair, for messages outside a trade. `POST /api/conversations`
+    (by handle), `GET /api/conversations?box=chats|requests`, `GET`/`POST /api/conversations/:id/messages`,
+    and `/accept`, `/decline`. No completed trade together: a request, one message until accepted
+    or replied to. "Traded only" refuses strangers (403). Declining is silent; asking again works
+    after 7 days. Messages RLS now covers conversations too. Contract:
+    `src/shared/contracts/conversations.ts`. Left: block checks (Phase 5).
 - [x] **[BE]** Contact info detection for phone numbers and outside apps (CHAT-04)
   - `asksForContact()` in `src/server/messages/contactInfo.ts`: phone numbers, emails, app names,
     and "number mo" style asks. The message is still sent; `asksForContact: true` shows the warning.
@@ -333,8 +340,16 @@ Goal: a trade can go all the way from offer to rating.
     transaction, including system cancels. Each offer or counter becomes an offer card from its
     maker; accepted, declined, completed, and cancelled (with the reason) add a short system line
     without names, so it reads right for both people.
-- [ ] **[BE]** meetup_spots table, seed safe spots for starting cities (MEET-02)
-- [ ] **[BE]** Meetup propose and confirm endpoints (MEET-01)
+- [x] **[BE]** meetup_spots table, seed safe spots for starting cities (MEET-02)
+  - Done 2026-11-23 (migrations 0020 and 0021) with the two Quezon City spots from the meetup
+    screen, same ids, so its sample data keeps working. `GET /api/meetup-spots?city=` (public).
+    Left: more spots and cities before launch; retired spots are switched off, never deleted.
+- [x] **[BE]** Meetup propose and confirm endpoints (MEET-01)
+  - `POST /api/trades/:id/meetup` and `/meetup/confirm` through `app.trade_set_meetup` and
+    `app.trade_confirm_meetup` (trade locked first). Accepted trades only, an active spot, a time
+    within 60 days. A new suggestion replaces the old one; the suggester counts as confirmed.
+    Trade detail fills `meetup`, and the chat gets "Meetup suggested" and "Meetup confirmed"
+    lines (Philippine time). Left: the `trades_expire_meetups` job (docs/database.md section 8).
 - [x] **[BE]** Both-sides completion and "didn't show up" cancel (MEET-05, MEET-06)
   - Done 2026-11-21 (migrations 0015 and 0016): `POST /api/trades/:id/complete` through
     `app.trade_confirm_complete`. Each side confirms once (safe to repeat); when both have, the

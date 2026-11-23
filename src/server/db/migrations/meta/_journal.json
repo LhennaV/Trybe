@@ -141,6 +141,34 @@
       "when": 1795357505056,
       "tag": "0019_trade_chat_events",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1795444562860,
+      "tag": "0020_meetups",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795444579140,
+      "tag": "0021_meetup_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1795446047043,
+      "tag": "0022_conversations",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1795446056487,
+      "tag": "0023_conversations_rls",
+      "breakpoints": true
     }
   ]
 }
