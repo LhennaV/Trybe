@@ -12,6 +12,8 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-24
+
 ### Added
 
 - Trade chat backend: send and read messages (`/api/trades/:id/messages`),
@@ -168,7 +170,8 @@ Live at https://trybe-puce.vercel.app on the dev database.
   every pull request.
 - Error tracking with Sentry and deploys to Vercel.
 
-[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/LhennaV/Trybe/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/LhennaV/Trybe/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/LhennaV/Trybe/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LhennaV/Trybe/compare/v0.1.0...v0.2.0

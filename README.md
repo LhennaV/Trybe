@@ -7,7 +7,7 @@
 <p align="center"><em>Curiosity killed the cat. Trybe brought it back.</em></p>
 
 <p align="center">
-  <img alt="Version 0.4.0" src="https://img.shields.io/badge/version-0.4.0-6B3FA0" />
+  <img alt="Version 0.5.0" src="https://img.shields.io/badge/version-0.5.0-6B3FA0" />
   <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white" />
   <img alt="React 19" src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white" />
   <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white" />
@@ -27,7 +27,7 @@ Trust comes from ratings, trade history, account age, email verification, and a 
 
 ## Status
 
-Version **0.4.0**. Phases 0 to 3 are done (accounts, profiles, items, posts, feed, and the full trade flow from offer to accept). Phase 4 is under way: completing a trade and ratings work; chat, meetups, and notifications are next. The mobile app (Phase M) can log in with tokens. Live at <https://trybe-puce.vercel.app>, running on the dev database. See [the implementation plan](docs/implementation-plan.md) and the [changelog](CHANGELOG.md).
+Version **0.5.0**. Phases 0 to 3 are done (accounts, profiles, items, posts, feed, and the full trade flow from offer to accept). Phase 4's backend is done too: chat with live updates, message requests, meetups at safe spots, completing a trade, ratings, and notifications. The mobile app (Phase M) can log in with tokens. Live at <https://trybe-puce.vercel.app>, running on the dev database. See [the implementation plan](docs/implementation-plan.md) and the [changelog](CHANGELOG.md).
 
 ## Team
 
