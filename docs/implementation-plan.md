@@ -34,7 +34,7 @@ Tags: **[BE]** Tristan, **[FE]** Lhenna, **[Both]** together.
 | 1     | Accounts and profiles             | TBD    | Done        |
 | 2     | Items, posts, and feed            | TBD    | Done, except the block filter (waits for Phase 5) |
 | 3     | Trades core                       | TBD    | Done (2026-11-18) |
-| 4     | Chat, meetup, completion, ratings | TBD    | In progress |
+| 4     | Chat, meetup, completion, ratings | TBD    | Backend done (2026-11-24); chat screen left |
 | 5     | Safety and compliance             | TBD    | In progress |
 | 6     | Explore, PWA, and polish          | TBD    | In progress |
 | M     | Mobile app (Expo)                 | TBD    | Not started |
@@ -349,7 +349,7 @@ Goal: a trade can go all the way from offer to rating.
     `app.trade_confirm_meetup` (trade locked first). Accepted trades only, an active spot, a time
     within 60 days. A new suggestion replaces the old one; the suggester counts as confirmed.
     Trade detail fills `meetup`, and the chat gets "Meetup suggested" and "Meetup confirmed"
-    lines (Philippine time). Left: the `trades_expire_meetups` job (docs/database.md section 8).
+    lines (Philippine time). The `trades_expire_meetups` job runs daily (migration 0025).
 - [x] **[BE]** Both-sides completion and "didn't show up" cancel (MEET-05, MEET-06)
   - Done 2026-11-21 (migrations 0015 and 0016): `POST /api/trades/:id/complete` through
     `app.trade_confirm_complete`. Each side confirms once (safe to repeat); when both have, the
@@ -365,7 +365,13 @@ Goal: a trade can go all the way from offer to rating.
 - [x] **[BE]** Hide ratings until both rate or 7 days pass, using a scheduled job (RATE-02)
   - The second rating reveals both at once; the hourly `ratings_reveal` pg_cron job reveals
     the rest after 7 days. pg_cron is turned on by migration 0014 (first job).
-- [ ] **[BE]** notifications table and in-app notification endpoints (NOTIF-01)
+- [x] **[BE]** notifications table and in-app notification endpoints (NOTIF-01)
+  - Done 2026-11-24 (migrations 0024 and 0025): triggers write them for offers, counters,
+    accept, decline, cancel, complete, meetups, messages (unread ones from one chat fold into
+    one), message requests, and ratings. The person who acted is never told.
+    `GET /api/notifications`, `GET /api/notifications/unread` (bell badge), `POST /api/notifications/read`.
+    Contract: `src/shared/contracts/notifications.ts`. Also built: `trades_expire_meetups` and
+    `notifications_purge` daily jobs. Left: push (NOTIF-02, Phase 6).
 - [ ] **[FE]** Chat screen with Supabase Realtime subscription (CHAT-05)
   - Chat UI done on sample messages. Left: the Realtime subscription and the send endpoint.
 - [x] **[FE]** Requests tab with "Reply" or "Accept chat" wording (CHAT-03)

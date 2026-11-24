@@ -12,6 +12,8 @@ How versions work (details in the README, "Versions and releases"):
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-24
+
 ### Added
 
 - Trade chat backend: send and read messages (`/api/trades/:id/messages`),
@@ -20,6 +22,11 @@ How versions work (details in the README, "Versions and releases"):
 - The chat tells the story of the trade by itself: every offer and counter
   shows as an offer card, and accepting, declining, completing, or cancelling
   (with the reason) adds a short line.
+- Notifications for offers, counters, accepted, declined, cancelled, and
+  completed trades, meetups, messages, message requests, and ratings
+  (`/api/notifications`), with an unread count for the bell.
+- Accepted trades are cancelled automatically 72 hours after a missed meetup,
+  and their items are freed. Read notifications are cleaned up after 90 days.
 - Message requests: message someone without a trade (`/api/conversations`).
   From someone you haven't traded with, it lands in Requests and they can send
   one message until you accept or reply. "Traded only" now blocks strangers
@@ -163,7 +170,8 @@ Live at https://trybe-puce.vercel.app on the dev database.
   every pull request.
 - Error tracking with Sentry and deploys to Vercel.
 
-[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/LhennaV/Trybe/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/LhennaV/Trybe/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/LhennaV/Trybe/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/LhennaV/Trybe/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LhennaV/Trybe/compare/v0.1.0...v0.2.0

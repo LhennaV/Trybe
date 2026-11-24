@@ -30,6 +30,7 @@ import {
   ITEM_STATUSES,
   LOOKING_FOR_MAX,
 } from "@/shared/contracts/items";
+import { NOTIFICATION_TYPES } from "@/shared/contracts/notifications";
 import { POST_CAPTION_MAX, POST_PHOTOS_MAX, POST_TITLE_MAX } from "@/shared/contracts/posts";
 import {
   CANCEL_REASONS,
@@ -735,5 +736,44 @@ export const conversations = pgTable(
     check("ck_conversations_pair_order", sql`${t.userAId} < ${t.userBId}`),
     check("ck_conversations_started_by", sql`${t.startedBy} in (${t.userAId}, ${t.userBId})`),
     check("ck_conversations_status", sql`${t.status} in (${inList(CONVERSATION_STATUSES)})`),
+  ],
+).enableRLS();
+
+// ---------------------------------------------------------------------------
+// notifications
+// ---------------------------------------------------------------------------
+
+// In-app notifications (NOTIF-01). Written by triggers on the tables that
+// change (migration 0025), so every way something happens notifies the same
+// way. Unread chat messages from one thread fold into a single row. Not
+// audited (docs/database.md section 7.1); read ones are purged after 90 days.
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: id(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type", { enum: NOTIFICATION_TYPES }).notNull(),
+    // Who caused it, when it was a person.
+    actorId: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    // Where it points: a trade, or a conversation.
+    tradeId: uuid("trade_id").references(() => trades.id, { onDelete: "cascade" }),
+    conversationId: uuid("conversation_id").references(() => conversations.id, { onDelete: "cascade" }),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    ...timestamps(),
+  },
+  (t) => [
+    // The list, newest first, and the user_id key.
+    index("idx_notifications_user_id_created_at").on(t.userId, t.createdAt.desc()),
+    // The unread badge.
+    index("idx_notifications_unread").on(t.userId).where(sql`${t.readAt} is null`),
+    // The purge job.
+    index("idx_notifications_read_at").on(t.readAt).where(sql`${t.readAt} is not null`),
+    // Foreign key checks (section 6.1 rule 9).
+    index("idx_notifications_actor_id").on(t.actorId),
+    index("idx_notifications_trade_id").on(t.tradeId),
+    index("idx_notifications_conversation_id").on(t.conversationId),
+    check("ck_notifications_type", sql`${t.type} in (${inList(NOTIFICATION_TYPES)})`),
   ],
 ).enableRLS();

@@ -383,6 +383,7 @@ export async function acceptTrade(tradeId: string, actorId: string) {
 | blocks            | `idx_blocks_blocked_id (blocked_id)`                                            | "Who blocked me" filtering     |
 | notifications     | `idx_notifications_user_id_created_at (user_id, created_at desc)`               | Notification list              |
 | notifications     | `idx_notifications_unread (user_id) where read_at is null`                      | Unread badge                   |
+| notifications     | `idx_notifications_read_at` (read only), and the actor, trade, and conversation keys | Purge job, foreign key checks  |
 | audit_log         | `idx_audit_log_table_record (table_name, record_id)`                            | History of one record          |
 | audit_log         | `idx_audit_log_actor_id (actor_id)`                                             | Actions by a user              |
 | audit_log         | `idx_audit_log_changed_at (changed_at)`                                         | Purge job                      |
@@ -510,12 +511,13 @@ lowest.
 | Job                      | Schedule              | Does                                                                                              | Built            |
 | ------------------------ | --------------------- | ------------------------------------------------------------------------------------------------- | ---------------- |
 | `ratings_reveal`         | `0 * * * *` (hourly)  | Sets `visible_at` on ratings where both sides rated or 7 days passed (RATE-02)                    | ✅ 0014          |
-| `trades_expire_meetups`  | `0 19 * * *` (daily)  | Cancels accepted trades 72 hours after `meetup_at` with no completion, frees items, notifies both | ⏳ Phase 4       |
+| `trades_expire_meetups` ✅ 0025 | `0 19 * * *` (daily)  | Cancels accepted trades 72 hours after `meetup_at` with no completion, frees items, notifies both | ⏳ Phase 4       |
 | `users_purge_unverified` | `15 19 * * *` (daily) | Deletes accounts never verified after 7 days, and their photos                                    | ⏳ before launch |
-| `notifications_purge`    | `30 19 * * *` (daily) | Deletes read notifications older than 90 days                                                     | ⏳ Phase 4       |
+| `notifications_purge` ✅ 0025 | `30 19 * * *` (daily) | Deletes read notifications older than 90 days                                                     | ⏳ Phase 4       |
 | `audit_log_purge`        | `0 20 * * 0` (weekly) | Deletes audit rows older than 1 year                                                              | ⏳ before launch |
 
-**Jobs running (2026-11-18):** `ratings_reveal` (migration 0014, which also turned on
+**Jobs running (2026-11-24):** `ratings_reveal` (migration 0014, which also turned on
+pg_cron), `trades_expire_meetups` and `notifications_purge` (migration 0025). Earlier note:
 pg_cron). Each other job is built with the feature it
 cleans up after. The two marked "before launch" have nothing to wait for and
 must exist before real users arrive.

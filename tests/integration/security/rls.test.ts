@@ -26,6 +26,7 @@ const TABLES = [
   "messages",
   "meetup_spots",
   "conversations",
+  "notifications",
 ] as const;
 const created: string[] = [];
 let signedIn: ReturnType<typeof anonClient>;

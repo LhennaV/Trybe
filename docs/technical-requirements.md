@@ -524,8 +524,9 @@ DELETE /api/mutes/:userId
 Other
 GET    /api/hobbies
 GET    /api/meetup-spots?city=            public; active spots, city in any case
-GET    /api/notifications
-POST   /api/notifications/read
+GET    /api/notifications?cursor=            mine, newest first (NOTIF-01)
+GET    /api/notifications/unread             { count } for the bell badge
+POST   /api/notifications/read               { ids } or {} for all; returns the new { count }
 GET    /api/search?q=
 ```
 
