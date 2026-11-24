@@ -20,6 +20,11 @@ How versions work (details in the README, "Versions and releases"):
 - The chat tells the story of the trade by itself: every offer and counter
   shows as an offer card, and accepting, declining, completing, or cancelling
   (with the reason) adds a short line.
+- Notifications for offers, counters, accepted, declined, cancelled, and
+  completed trades, meetups, messages, message requests, and ratings
+  (`/api/notifications`), with an unread count for the bell.
+- Accepted trades are cancelled automatically 72 hours after a missed meetup,
+  and their items are freed. Read notifications are cleaned up after 90 days.
 - Message requests: message someone without a trade (`/api/conversations`).
   From someone you haven't traded with, it lands in Requests and they can send
   one message until you accept or reply. "Traded only" now blocks strangers
